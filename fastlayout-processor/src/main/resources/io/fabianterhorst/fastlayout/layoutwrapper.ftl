@@ -13,6 +13,10 @@ import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
 public class ${keyWrapperClassName} extends ${rootLayout.name} {
 
+    <#list rootLayout.children as child>
+    ${child.name} ${child.id};
+    </#list>
+
     public ${keyWrapperClassName}(Context context) {
         super(context);
         init();
@@ -38,7 +42,7 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} {
         this.setLayoutParams(${rootLayout.id}LayoutParams);
         <#assign parent = "this">
         <#list rootLayout.children as child>
-        ${child.name} ${child.id} = new ${child.name}(getContext());
+        ${child.id} = new ${child.name}(getContext());
         ${child.layoutParams.name} ${child.id}LayoutParams = new ${child.layoutParams.name}(${child.layoutParams.width}, ${child.layoutParams.height});
         ${child.id}.setLayoutParams(${child.id}LayoutParams);
         <#if child.hasChildren>
@@ -48,4 +52,11 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} {
         </#if>
         </#list>
     }
+
+    <#list rootLayout.children as child>
+    public ${child.name} get${child.id?capitalize}() {
+        return ${child.id};
+    }
+    
+    </#list>
 }
