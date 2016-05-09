@@ -1,0 +1,1 @@
+include ':app', ':fastlayout-processor', ':fastlayout'
