@@ -14,9 +14,9 @@ import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 public class ${keyWrapperClassName} extends ${rootLayout.name} {
 
     <#list rootLayout.children as child>
-    ${child.name} ${child.id};
-    </#list>
+    private ${child.name} ${child.id};
 
+    </#list>
     public ${keyWrapperClassName}(Context context) {
         super(context);
         init();
@@ -57,6 +57,6 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} {
     public ${child.name} get${child.id?capitalize}() {
         return ${child.id};
     }
-    
+
     </#list>
 }
