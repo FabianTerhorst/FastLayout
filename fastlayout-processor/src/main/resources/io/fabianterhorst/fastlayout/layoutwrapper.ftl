@@ -40,6 +40,9 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} {
     private void init() {
         ${rootLayout.layoutParams.name} ${rootLayout.id}LayoutParams = new ${rootLayout.layoutParams.name}(${rootLayout.layoutParams.width}, ${rootLayout.layoutParams.height});
         this.setLayoutParams(${rootLayout.id}LayoutParams);
+        <#if rootLayout.layoutParams.margins??>
+        ${rootLayout.id}LayoutParams.setMargins(${rootLayout.layoutParams.margins[0]}, ${rootLayout.layoutParams.margins[1]}, ${rootLayout.layoutParams.margins[2]}, ${rootLayout.layoutParams.margins[3]});
+        </#if>
         <#if rootLayout.layoutParams.padding??>
         setPadding(${rootLayout.layoutParams.padding[0]}, ${rootLayout.layoutParams.padding[1]}, ${rootLayout.layoutParams.padding[2]}, ${rootLayout.layoutParams.padding[3]});
         </#if>
@@ -51,6 +54,9 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} {
         ${child.id} = new ${child.name}(getContext());
         ${child.layoutParams.name} ${child.id}LayoutParams = new ${child.layoutParams.name}(${child.layoutParams.width}, ${child.layoutParams.height});
         ${child.id}.setLayoutParams(${child.id}LayoutParams);
+        <#if child.layoutParams.margins??>
+        ${child.id}LayoutParams.setMargins(${child.layoutParams.margins[0]}, ${child.layoutParams.margins[1]}, ${child.layoutParams.margins[2]}, ${child.layoutParams.margins[3]});
+        </#if>
         <#if child.layoutParams.padding??>
         setPadding(${child.layoutParams.padding[0]}, ${child.layoutParams.padding[1]}, ${child.layoutParams.padding[2]}, ${child.layoutParams.padding[3]});
         </#if>

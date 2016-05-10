@@ -15,6 +15,8 @@ import io.fabianterhorst.fastlayout.annotations.Layout;
         "    android:paddingLeft=\"@dimen/activity_horizontal_margin\"\n" +
         "    android:paddingRight=\"@dimen/activity_horizontal_margin\"\n" +
         "    android:paddingTop=\"@dimen/activity_vertical_margin\"\n" +
+        "    android:layout_marginLeft=\"@dimen/activity_horizontal_margin\"\n" +
+        "    android:layout_marginRight=\"@dimen/activity_horizontal_margin\"\n" +
         "    tools:context=\"io.fabianterhorst.fastlayout.sample.MainActivity\">\n" +
         "\n" +
         "    <TextView\n" +
@@ -22,18 +24,18 @@ import io.fabianterhorst.fastlayout.annotations.Layout;
         "        android:layout_height=\"wrap_content\"\n" +
         "        android:id=\"@+id/textView1\"\n" +
         "        android:text=\"Hello World!\"/>\n" +
-        "    \n" +
+        "\n" +
         "    <LinearLayout\n" +
         "        android:id=\"@+id/linearLayout1\"\n" +
         "        android:layout_width=\"match_parent\"\n" +
         "        android:layout_height=\"match_parent\">\n" +
-        "        \n" +
+        "\n" +
         "        <TextView\n" +
         "            android:id=\"@+id/textView2\"\n" +
         "            android:layout_width=\"match_parent\"\n" +
         "            android:layout_height=\"match_parent\"/>\n" +
-        "        \n" +
+        "\n" +
         "    </LinearLayout>\n" +
-        "</RelativeLayout>\n")
+        "</RelativeLayout>")
 public class ActivityMain {
 }

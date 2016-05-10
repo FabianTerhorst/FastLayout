@@ -43,6 +43,10 @@ public class LayoutProcessor extends AbstractProcessor {
         add("paddingTop");
         add("paddingRight");
         add("paddingBottom");
+        add("layout_marginLeft");
+        add("layout_marginTop");
+        add("layout_marginRight");
+        add("layout_marginBottom");
     }};
 
     private static final String SUFFIX_PREF_WRAPPER = "Layout";
@@ -195,6 +199,25 @@ public class LayoutProcessor extends AbstractProcessor {
         }
         if(paddingLeft != null || paddingTop != null || paddingRight != null || paddingBottom != null) {
             layoutParams.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+        }
+        String marginLeft = null;
+        String marginTop = null;
+        String marginRight = null;
+        String marginBottom = null;
+        if(node.getAttributes().getNamedItem("android:layout_marginLeft") != null) {
+            marginLeft = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginLeft").getNodeValue());
+        }
+        if(node.getAttributes().getNamedItem("android:layout_marginTop") != null) {
+            marginTop = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginTop").getNodeValue());
+        }
+        if(node.getAttributes().getNamedItem("android:layout_marginRight") != null) {
+            marginRight = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginRight").getNodeValue());
+        }
+        if(node.getAttributes().getNamedItem("android:layout_marginBottom") != null) {
+            marginBottom = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginBottom").getNodeValue());
+        }
+        if(marginLeft != null || marginTop != null || marginRight != null || marginBottom != null) {
+            layoutParams.setMargins(marginLeft, marginTop, marginRight, marginBottom);
         }
         layout.setLayoutParams(layoutParams);
         NamedNodeMap attributes = node.getAttributes();
