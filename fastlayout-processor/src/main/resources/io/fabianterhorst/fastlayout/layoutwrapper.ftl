@@ -40,11 +40,23 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} {
     private void init() {
         ${rootLayout.layoutParams.name} ${rootLayout.id}LayoutParams = new ${rootLayout.layoutParams.name}(${rootLayout.layoutParams.width}, ${rootLayout.layoutParams.height});
         this.setLayoutParams(${rootLayout.id}LayoutParams);
+        <#if rootLayout.layoutParams.padding??>
+        setPadding(${rootLayout.layoutParams.padding[0]}, ${rootLayout.layoutParams.padding[1]}, ${rootLayout.layoutParams.padding[2]}, ${rootLayout.layoutParams.padding[3]});
+        </#if>
+        <#list rootLayout.layoutParamsList?keys as key>
+        set${key}("${rootLayout.layoutParamsList[key]}");
+        </#list>
         <#assign parent = "this">
         <#list rootLayout.children as child>
         ${child.id} = new ${child.name}(getContext());
         ${child.layoutParams.name} ${child.id}LayoutParams = new ${child.layoutParams.name}(${child.layoutParams.width}, ${child.layoutParams.height});
         ${child.id}.setLayoutParams(${child.id}LayoutParams);
+        <#if child.layoutParams.padding??>
+        setPadding(${child.layoutParams.padding[0]}, ${child.layoutParams.padding[1]}, ${child.layoutParams.padding[2]}, ${child.layoutParams.padding[3]});
+        </#if>
+        <#list child.layoutParamsList?keys as key>
+        ${child.id}.set${key}("${child.layoutParamsList[key]}");
+        </#list>
         <#if child.hasChildren>
         <#assign parent = child.id>
         <#else>

@@ -3,6 +3,7 @@ package io.fabianterhorst.fastlayout;
 import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -33,6 +34,17 @@ import io.fabianterhorst.fastlayout.annotations.Layout;
 
 @SupportedAnnotationTypes("io.fabianterhorst.fastlayout.annotations.Layout")
 public class LayoutProcessor extends AbstractProcessor {
+
+    private static final ArrayList<String> nativeSupportedAttributes = new ArrayList<String>() {{
+        add("layout_height");
+        add("layout_width");
+        add("id");
+        add("paddingLeft");
+        add("paddingTop");
+        add("paddingRight");
+        add("paddingBottom");
+    }};
+
     private static final String SUFFIX_PREF_WRAPPER = "Layout";
 
     private Configuration mFreemarkerConfiguration;
@@ -67,13 +79,14 @@ public class LayoutProcessor extends AbstractProcessor {
                     is.setCharacterStream(new StringReader(layout));
                     Document document = documentBuilder.parse(is);
                     Element rootLayoutElement = document.getDocumentElement();
-                    rootLayout.setId(normalizeLayoutId(rootLayoutElement.getAttribute("android:id")));
+                    /*rootLayout.setId(normalizeLayoutId(rootLayoutElement.getAttribute("android:id")));
                     rootLayout.setName(rootLayoutElement.getTagName());
                     LayoutParam layoutParam = new LayoutParam();
                     layoutParam.setName(getLayoutParamsForViewGroup(rootLayout.getName()));
                     layoutParam.setWidth(rootLayoutElement.getAttribute("android:layout_width").toUpperCase());
                     layoutParam.setHeight(rootLayoutElement.getAttribute("android:layout_height").toUpperCase());
-                    rootLayout.setLayoutParams(layoutParam);
+                    rootLayout.setLayoutParams(layoutParam);*/
+                    rootLayout = createLayoutFromChild(rootLayoutElement);
                     if (rootLayoutElement.hasChildNodes()) {
                         createChildList(rootLayoutElement);
                         rootLayout.addChildren(mChilds);
@@ -164,7 +177,52 @@ public class LayoutProcessor extends AbstractProcessor {
         layoutParams.setName(getLayoutParamsForViewGroup(node.getNodeName()));
         layoutParams.setWidth(node.getAttributes().getNamedItem("android:layout_width").getNodeValue().toUpperCase());
         layoutParams.setHeight(node.getAttributes().getNamedItem("android:layout_height").getNodeValue().toUpperCase());
+        String paddingLeft = null;
+        String paddingTop = null;
+        String paddingRight = null;
+        String paddingBottom = null;
+        if(node.getAttributes().getNamedItem("android:paddingLeft") != null) {
+            paddingLeft = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingLeft").getNodeValue());
+        }
+        if(node.getAttributes().getNamedItem("android:paddingTop") != null) {
+            paddingTop = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingTop").getNodeValue());
+        }
+        if(node.getAttributes().getNamedItem("android:paddingRight") != null) {
+            paddingRight = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingRight").getNodeValue());
+        }
+        if(node.getAttributes().getNamedItem("android:paddingBottom") != null) {
+            paddingBottom = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingBottom").getNodeValue());
+        }
+        if(paddingLeft != null || paddingTop != null || paddingRight != null || paddingBottom != null) {
+            layoutParams.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+        }
         layout.setLayoutParams(layoutParams);
+        NamedNodeMap attributes = node.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Node attribute = attributes.item(i);
+            String attributeName = attribute.getNodeName();
+            String attributeValue = attribute.getNodeValue();
+            if (attributeName.contains("android:")) {
+                String newName = attributeName.replace("android:", "");
+                if (!nativeSupportedAttributes.contains(newName)) {
+                    String[] split = newName.split("_");
+                    newName = "";
+                    for (String refactor : split) {
+                        String start = refactor.substring(0, 1).toUpperCase();
+                        String end = refactor.substring(1, refactor.length());
+                        newName += start + end;
+                    }
+                    layout.addLayoutParam(newName, attributeValue);
+                }
+            }
+        }
         return layout;
+    }
+
+    private String getLayoutAttribute(String attribute) {
+        if (attribute.contains("@dimen/")) {
+            return "(int) getContext().getResources().getDimension(R.dimen." + attribute.replace("@dimen/", "") + ")";
+        }
+        return attribute;
     }
 }

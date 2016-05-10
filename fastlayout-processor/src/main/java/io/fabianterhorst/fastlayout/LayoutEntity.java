@@ -1,7 +1,9 @@
 package io.fabianterhorst.fastlayout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LayoutEntity {
 
@@ -15,8 +17,12 @@ public class LayoutEntity {
 
     private boolean hasChildren;
 
+    private Map<String, String> layoutParamsList;
+
     public LayoutEntity(){
         children = new ArrayList<>();
+        //Todo : ArrayMap ? !
+        layoutParamsList = new HashMap<>();
         hasChildren = false;
     }
 
@@ -30,6 +36,10 @@ public class LayoutEntity {
 
     public void setHasChildren(boolean hasChildren) {
         this.hasChildren = hasChildren;
+    }
+
+    public void addLayoutParam(String name, String value){
+        layoutParamsList.put(name, value);
     }
 
     public void setLayoutParams(LayoutParam layoutParams) {
@@ -54,6 +64,10 @@ public class LayoutEntity {
 
     public LayoutParam getLayoutParams() {
         return layoutParams;
+    }
+
+    public Map<String, String> getLayoutParamsList() {
+        return layoutParamsList;
     }
 
     public List<LayoutEntity> getChildren() {
