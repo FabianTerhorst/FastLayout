@@ -1,6 +1,5 @@
 package io.fabianterhorst.fastlayout;
 
-//Todo : rename to LayoutParams
 public class LayoutParam {
 
     private String name;
@@ -9,9 +8,11 @@ public class LayoutParam {
 
     private String height;
 
-    private String[] padding;
+    private Object[] padding;
 
-    private String[] margins;
+    private Object[] margins;
+
+    private Object weight;
 
     public void setName(String name) {
         this.name = name;
@@ -25,19 +26,27 @@ public class LayoutParam {
         this.height = height;
     }
 
-    public void setPadding(String paddingLeft, String paddingTop, String paddingRight, String paddingBottom) {
-        this.padding = new String[]{paddingLeft == null ? "0" : paddingLeft, paddingTop == null ? "0" : paddingTop, paddingRight == null ? "0" : paddingRight, paddingBottom == null ? "0" : paddingBottom};
+    public void setPadding(Object paddingLeft, Object paddingTop, Object paddingRight, Object paddingBottom) {
+        this.padding = new Object[]{paddingLeft == null ? 0 : paddingLeft, paddingTop == null ? 0 : paddingTop, paddingRight == null ? 0 : paddingRight, paddingBottom == null ? 0 : paddingBottom};
     }
 
-    public void setMargins(String marginLeft, String marginTop, String marginRight, String marginBottom) {
-        this.margins = new String[]{marginLeft == null ? "0" : marginLeft, marginTop == null ? "0" : marginTop, marginRight == null ? "0" : marginRight, marginBottom == null ? "0" : marginBottom};
+    public void setMargins(Object marginLeft, Object marginTop, Object marginRight, Object marginBottom) {
+        this.margins = new Object[]{marginLeft == null ? 0 : marginLeft, marginTop == null ? 0 : marginTop, marginRight == null ? 0 : marginRight, marginBottom == null ? 0 : marginBottom};
     }
 
-    public String[] getPadding() {
+    public void setWeight(Object weight) {
+        this.weight = weight;
+    }
+
+    public Object getWeight() {
+        return weight;
+    }
+
+    public Object[] getPadding() {
         return padding;
     }
 
-    public String[] getMargins() {
+    public Object[] getMargins() {
         return margins;
     }
 

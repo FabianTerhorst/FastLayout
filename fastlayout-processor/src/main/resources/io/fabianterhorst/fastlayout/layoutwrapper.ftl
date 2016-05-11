@@ -40,7 +40,7 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
     }
 
     private void init() {
-        ${rootLayout.layoutParams.name} ${rootLayout.id}LayoutParams = new ${rootLayout.layoutParams.name}(${rootLayout.layoutParams.width}, ${rootLayout.layoutParams.height});
+        ${rootLayout.layoutParams.name} ${rootLayout.id}LayoutParams = <#if rootLayout.layoutParams.weight?? && rootLayout.layoutParams.name = "ViewGroup.LayoutParams">new TableLayout.LayoutParams<#else>new ${rootLayout.layoutParams.name}</#if>(${rootLayout.layoutParams.width}, ${rootLayout.layoutParams.height}<#if rootLayout.layoutParams.weight??>, ${rootLayout.layoutParams.weight}</#if>);
         this.setLayoutParams(${rootLayout.id}LayoutParams);
         <#if rootLayout.layoutParams.margins??>
         ${rootLayout.id}LayoutParams.setMargins(${rootLayout.layoutParams.margins[0]}, ${rootLayout.layoutParams.margins[1]}, ${rootLayout.layoutParams.margins[2]}, ${rootLayout.layoutParams.margins[3]});
@@ -58,7 +58,7 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
         <#assign parent = "this">
         <#list rootLayout.children as child>
         ${child.id} = new ${child.name}(getContext());
-        ${child.layoutParams.name} ${child.id}LayoutParams = new ${child.layoutParams.name}(${child.layoutParams.width}, ${child.layoutParams.height});
+        ${child.layoutParams.name} ${child.id}LayoutParams = <#if child.layoutParams.weight?? && child.layoutParams.name = "ViewGroup.LayoutParams">new TableLayout.LayoutParams<#else>new ${child.layoutParams.name}</#if>(${child.layoutParams.width}, ${child.layoutParams.height}<#if child.layoutParams.weight??>, ${child.layoutParams.weight}</#if>);
         ${child.id}.setLayoutParams(${child.id}LayoutParams);
         <#if child.layoutParams.margins??>
         ${child.id}LayoutParams.setMargins(${child.layoutParams.margins[0]}, ${child.layoutParams.margins[1]}, ${child.layoutParams.margins[2]}, ${child.layoutParams.margins[3]});

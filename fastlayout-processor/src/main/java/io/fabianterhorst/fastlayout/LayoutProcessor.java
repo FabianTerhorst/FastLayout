@@ -47,6 +47,7 @@ public class LayoutProcessor extends AbstractProcessor {
         add("layout_marginTop");
         add("layout_marginRight");
         add("layout_marginBottom");
+        add("layout_weight");
     }};
 
     private static final String SUFFIX_PREF_WRAPPER = "Layout";
@@ -170,6 +171,9 @@ public class LayoutProcessor extends AbstractProcessor {
     }
 
     private String getLayoutParamsForViewGroup(String viewGroup) {
+        if (viewGroup.contains("Layout")) {
+            return viewGroup + ".LayoutParams";
+        }
         switch (viewGroup) {
             case "TextView":
                 return "ViewGroup.LayoutParams";
@@ -212,10 +216,10 @@ public class LayoutProcessor extends AbstractProcessor {
         layoutParams.setName(getLayoutParamsForViewGroup(node.getNodeName()));
         layoutParams.setWidth(node.getAttributes().getNamedItem("android:layout_width").getNodeValue().toUpperCase());
         layoutParams.setHeight(node.getAttributes().getNamedItem("android:layout_height").getNodeValue().toUpperCase());
-        String paddingLeft = null;
-        String paddingTop = null;
-        String paddingRight = null;
-        String paddingBottom = null;
+        Object paddingLeft = null;
+        Object paddingTop = null;
+        Object paddingRight = null;
+        Object paddingBottom = null;
         if (node.getAttributes().getNamedItem("android:paddingLeft") != null) {
             paddingLeft = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingLeft").getNodeValue());
         }
@@ -231,10 +235,10 @@ public class LayoutProcessor extends AbstractProcessor {
         if (paddingLeft != null || paddingTop != null || paddingRight != null || paddingBottom != null) {
             layoutParams.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
         }
-        String marginLeft = null;
-        String marginTop = null;
-        String marginRight = null;
-        String marginBottom = null;
+        Object marginLeft = null;
+        Object marginTop = null;
+        Object marginRight = null;
+        Object marginBottom = null;
         if (node.getAttributes().getNamedItem("android:layout_marginLeft") != null) {
             marginLeft = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginLeft").getNodeValue());
         }
@@ -249,6 +253,10 @@ public class LayoutProcessor extends AbstractProcessor {
         }
         if (marginLeft != null || marginTop != null || marginRight != null || marginBottom != null) {
             layoutParams.setMargins(marginLeft, marginTop, marginRight, marginBottom);
+        }
+        if (node.getAttributes().getNamedItem("android:layout_weight") != null) {
+            Object weight = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_weight").getNodeValue());
+            layoutParams.setWeight(weight);
         }
         layout.setLayoutParams(layoutParams);
         NamedNodeMap attributes = node.getAttributes();
@@ -278,9 +286,15 @@ public class LayoutProcessor extends AbstractProcessor {
         return layout;
     }
 
-    private String getLayoutAttribute(String attribute) {
+    private Object getLayoutAttribute(String attribute) {
         if (attribute.contains("@dimen/")) {
             return "(int) getContext().getResources().getDimension(R.dimen." + attribute.replace("@dimen/", "") + ")";
+        } else {
+            try {
+                return Integer.parseInt(attribute);
+            } catch (NumberFormatException ignore) {
+
+            }
         }
         return attribute;
     }
