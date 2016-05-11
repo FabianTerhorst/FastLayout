@@ -40,7 +40,7 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
     }
 
     private void init() {
-        ${rootLayout.layoutParams.name} ${rootLayout.id}LayoutParams = <#if rootLayout.layoutParams.weight?? && rootLayout.layoutParams.name = "ViewGroup.LayoutParams">new TableLayout.LayoutParams<#else>new ${rootLayout.layoutParams.name}</#if>(${rootLayout.layoutParams.width}, ${rootLayout.layoutParams.height}<#if rootLayout.layoutParams.weight??>, ${rootLayout.layoutParams.weight}</#if>);
+        <#if rootLayout.layoutParams.weight?? && rootLayout.layoutParams.name = "ViewGroup.LayoutParams">TableLayout.LayoutParams<#else>${rootLayout.layoutParams.name}</#if> ${rootLayout.id}LayoutParams = <#if rootLayout.layoutParams.weight?? && rootLayout.layoutParams.name = "ViewGroup.LayoutParams">new TableLayout.LayoutParams<#else>new ${rootLayout.layoutParams.name}</#if>(${rootLayout.layoutParams.width}, ${rootLayout.layoutParams.height}<#if rootLayout.layoutParams.weight??>, ${rootLayout.layoutParams.weight}</#if>);
         this.setLayoutParams(${rootLayout.id}LayoutParams);
         <#if rootLayout.layoutParams.margins??>
         ${rootLayout.id}LayoutParams.setMargins(${rootLayout.layoutParams.margins[0]}, ${rootLayout.layoutParams.margins[1]}, ${rootLayout.layoutParams.margins[2]}, ${rootLayout.layoutParams.margins[3]});
@@ -49,16 +49,16 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
         setPadding(${rootLayout.layoutParams.padding[0]}, ${rootLayout.layoutParams.padding[1]}, ${rootLayout.layoutParams.padding[2]}, ${rootLayout.layoutParams.padding[3]});
         </#if>
         <#list rootLayout.layoutParamsList?keys as key>
-        <#if rootLayout.layoutParamsList[key]?is_number>
-        set${key}(${rootLayout.layoutParamsList[key]});
+        <#if rootLayout.layoutParamsList[key].value?is_number>
+        set${key}(${rootLayout.layoutParamsList[key].value});
         <#else>
-        set${key}("${rootLayout.layoutParamsList[key]}");
+        set${key}("${rootLayout.layoutParamsList[key].value}");
         </#if>
         </#list>
         <#assign parent = "this">
         <#list rootLayout.children as child>
         ${child.id} = new ${child.name}(getContext());
-        ${child.layoutParams.name} ${child.id}LayoutParams = <#if child.layoutParams.weight?? && child.layoutParams.name = "ViewGroup.LayoutParams">new TableLayout.LayoutParams<#else>new ${child.layoutParams.name}</#if>(${child.layoutParams.width}, ${child.layoutParams.height}<#if child.layoutParams.weight??>, ${child.layoutParams.weight}</#if>);
+        <#if child.layoutParams.weight?? && child.layoutParams.name = "ViewGroup.LayoutParams">TableLayout.LayoutParams<#elseif child.relative>RelativeLayout.LayoutParams<#else>${child.layoutParams.name}</#if> ${child.id}LayoutParams = <#if child.layoutParams.weight?? && child.layoutParams.name = "ViewGroup.LayoutParams">new TableLayout.LayoutParams<#elseif child.relative>new RelativeLayout.LayoutParams<#else>new ${child.layoutParams.name}</#if>(${child.layoutParams.width}, ${child.layoutParams.height}<#if child.layoutParams.weight??>, ${child.layoutParams.weight}</#if>);
         ${child.id}.setLayoutParams(${child.id}LayoutParams);
         <#if child.layoutParams.margins??>
         ${child.id}LayoutParams.setMargins(${child.layoutParams.margins[0]}, ${child.layoutParams.margins[1]}, ${child.layoutParams.margins[2]}, ${child.layoutParams.margins[3]});
@@ -67,16 +67,15 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
         setPadding(${child.layoutParams.padding[0]}, ${child.layoutParams.padding[1]}, ${child.layoutParams.padding[2]}, ${child.layoutParams.padding[3]});
         </#if>
         <#list child.layoutParamsList?keys as key>
-        <#if child.layoutParamsList[key]?is_number>
-        ${child.id}.set${key}(${child.layoutParamsList[key]});
-        <#else>
-        ${child.id}.set${key}("${child.layoutParamsList[key]}");
-        </#if>
+        <#if child.layoutParamsList[key].paramValue>${child.id}LayoutParams<#else>${child.id}</#if>.<#if child.layoutParamsList[key].rule>addRule(${key}<#if !child.layoutParamsList[key].value?boolean>child.layoutParamsList[key].value</#if><#else>set${key}(<#if !child.layoutParamsList[key].value?is_number>"</#if>${child.layoutParamsList[key].value}<#if !child.layoutParamsList[key].value?is_number>"</#if></#if>);
         </#list>
         <#if child.hasChildren>
         <#assign parent = child.id>
         <#else>
         ${parent}.addView(${child.id});
+        <#if parent != "this">
+        this.addView(${parent});
+        </#if>
         </#if>
         </#list>
     }

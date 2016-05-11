@@ -197,6 +197,9 @@ public class LayoutProcessor extends AbstractProcessor {
             Node child = nodeList.item(i);
             if (child.getAttributes() != null && child.getAttributes().getLength() > 0) {
                 LayoutEntity layout = createLayoutFromChild(child);
+                if (node.getNodeName().equals("RelativeLayout")) {
+                    layout.setRelative(true);
+                }
                 mChilds.add(layout);
                 layouts.add(layout);
                 if (child.hasChildNodes()) {
@@ -279,7 +282,12 @@ public class LayoutProcessor extends AbstractProcessor {
                         value = Integer.parseInt(attributeValue);
                     } catch (NumberFormatException ignore) {
                     }
-                    layout.addLayoutParam(newName, value);
+                    String relativeName = getRelativeLayoutParam(newName.replace("Layout", ""));
+                    if(relativeName != null && !value.equals("false")) {
+                        layout.addLayoutParam(relativeName, value, true, true);
+                    } else {
+                        layout.addLayoutParam(newName, value, false, false);
+                    }
                 }
             }
         }
@@ -297,5 +305,13 @@ public class LayoutProcessor extends AbstractProcessor {
             }
         }
         return attribute;
+    }
+
+    private String getRelativeLayoutParam(String name) {
+        switch (name){
+            case "AlignParentBottom":
+                return "RelativeLayout.ALIGN_PARENT_BOTTOM";//LayoutParam.ALIGN_PARENT_BOTTOM;
+        }
+        return null;
     }
 }

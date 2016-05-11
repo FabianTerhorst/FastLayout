@@ -17,13 +17,16 @@ public class LayoutEntity {
 
     private boolean hasChildren;
 
-    private Map<String, Object> layoutParamsList;
+    private Map<Object, LayoutParamEntry> layoutParamsList;
 
-    public LayoutEntity(){
+    private boolean relative;
+
+    public LayoutEntity() {
         children = new ArrayList<>();
         //Todo : ArrayMap ? !
         layoutParamsList = new HashMap<>();
         hasChildren = false;
+        relative = false;
     }
 
     public void setId(String id) {
@@ -38,8 +41,8 @@ public class LayoutEntity {
         this.hasChildren = hasChildren;
     }
 
-    public void addLayoutParam(String name, Object value){
-        layoutParamsList.put(name, value);
+    public void addLayoutParam(Object name, Object value, boolean paramValue, boolean rule) {
+        layoutParamsList.put(name, new LayoutParamEntry(value, paramValue, rule));
     }
 
     public void setLayoutParams(LayoutParam layoutParams) {
@@ -66,7 +69,7 @@ public class LayoutEntity {
         return layoutParams;
     }
 
-    public Map<String, Object> getLayoutParamsList() {
+    public Map<Object, LayoutParamEntry> getLayoutParamsList() {
         return layoutParamsList;
     }
 
@@ -76,5 +79,13 @@ public class LayoutEntity {
 
     public boolean isHasChildren() {
         return hasChildren;
+    }
+
+    public void setRelative(boolean relative) {
+        this.relative = relative;
+    }
+
+    public boolean isRelative() {
+        return relative;
     }
 }
