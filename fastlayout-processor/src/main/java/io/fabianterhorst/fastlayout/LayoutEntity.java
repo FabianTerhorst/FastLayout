@@ -17,7 +17,7 @@ public class LayoutEntity {
 
     private boolean hasChildren;
 
-    private Map<String, String> layoutParamsList;
+    private Map<String, Object> layoutParamsList;
 
     public LayoutEntity(){
         children = new ArrayList<>();
@@ -38,7 +38,7 @@ public class LayoutEntity {
         this.hasChildren = hasChildren;
     }
 
-    public void addLayoutParam(String name, String value){
+    public void addLayoutParam(String name, Object value){
         layoutParamsList.put(name, value);
     }
 
@@ -66,7 +66,7 @@ public class LayoutEntity {
         return layoutParams;
     }
 
-    public Map<String, String> getLayoutParamsList() {
+    public Map<String, Object> getLayoutParamsList() {
         return layoutParamsList;
     }
 

@@ -132,7 +132,7 @@ public class LayoutProcessor extends AbstractProcessor {
             }
         }
 
-        if(layouts.size() > 0) {
+        if (layouts.size() > 0) {
             JavaFileObject javaFileObject;
             try {
                 Map<String, Object> args = new HashMap<>();
@@ -216,38 +216,38 @@ public class LayoutProcessor extends AbstractProcessor {
         String paddingTop = null;
         String paddingRight = null;
         String paddingBottom = null;
-        if(node.getAttributes().getNamedItem("android:paddingLeft") != null) {
+        if (node.getAttributes().getNamedItem("android:paddingLeft") != null) {
             paddingLeft = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingLeft").getNodeValue());
         }
-        if(node.getAttributes().getNamedItem("android:paddingTop") != null) {
+        if (node.getAttributes().getNamedItem("android:paddingTop") != null) {
             paddingTop = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingTop").getNodeValue());
         }
-        if(node.getAttributes().getNamedItem("android:paddingRight") != null) {
+        if (node.getAttributes().getNamedItem("android:paddingRight") != null) {
             paddingRight = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingRight").getNodeValue());
         }
-        if(node.getAttributes().getNamedItem("android:paddingBottom") != null) {
+        if (node.getAttributes().getNamedItem("android:paddingBottom") != null) {
             paddingBottom = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingBottom").getNodeValue());
         }
-        if(paddingLeft != null || paddingTop != null || paddingRight != null || paddingBottom != null) {
+        if (paddingLeft != null || paddingTop != null || paddingRight != null || paddingBottom != null) {
             layoutParams.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
         }
         String marginLeft = null;
         String marginTop = null;
         String marginRight = null;
         String marginBottom = null;
-        if(node.getAttributes().getNamedItem("android:layout_marginLeft") != null) {
+        if (node.getAttributes().getNamedItem("android:layout_marginLeft") != null) {
             marginLeft = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginLeft").getNodeValue());
         }
-        if(node.getAttributes().getNamedItem("android:layout_marginTop") != null) {
+        if (node.getAttributes().getNamedItem("android:layout_marginTop") != null) {
             marginTop = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginTop").getNodeValue());
         }
-        if(node.getAttributes().getNamedItem("android:layout_marginRight") != null) {
+        if (node.getAttributes().getNamedItem("android:layout_marginRight") != null) {
             marginRight = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginRight").getNodeValue());
         }
-        if(node.getAttributes().getNamedItem("android:layout_marginBottom") != null) {
+        if (node.getAttributes().getNamedItem("android:layout_marginBottom") != null) {
             marginBottom = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginBottom").getNodeValue());
         }
-        if(marginLeft != null || marginTop != null || marginRight != null || marginBottom != null) {
+        if (marginLeft != null || marginTop != null || marginRight != null || marginBottom != null) {
             layoutParams.setMargins(marginLeft, marginTop, marginRight, marginBottom);
         }
         layout.setLayoutParams(layoutParams);
@@ -266,7 +266,12 @@ public class LayoutProcessor extends AbstractProcessor {
                         String end = refactor.substring(1, refactor.length());
                         newName += start + end;
                     }
-                    layout.addLayoutParam(newName, attributeValue);
+                    Object value = attributeValue;
+                    try {
+                        value = Integer.parseInt(attributeValue);
+                    } catch (NumberFormatException ignore) {
+                    }
+                    layout.addLayoutParam(newName, value);
                 }
             }
         }

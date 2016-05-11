@@ -49,7 +49,11 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
         setPadding(${rootLayout.layoutParams.padding[0]}, ${rootLayout.layoutParams.padding[1]}, ${rootLayout.layoutParams.padding[2]}, ${rootLayout.layoutParams.padding[3]});
         </#if>
         <#list rootLayout.layoutParamsList?keys as key>
+        <#if rootLayout.layoutParamsList[key]?is_number>
+        set${key}(${rootLayout.layoutParamsList[key]});
+        <#else>
         set${key}("${rootLayout.layoutParamsList[key]}");
+        </#if>
         </#list>
         <#assign parent = "this">
         <#list rootLayout.children as child>
@@ -63,7 +67,11 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
         setPadding(${child.layoutParams.padding[0]}, ${child.layoutParams.padding[1]}, ${child.layoutParams.padding[2]}, ${child.layoutParams.padding[3]});
         </#if>
         <#list child.layoutParamsList?keys as key>
+        <#if child.layoutParamsList[key]?is_number>
+        ${child.id}.set${key}(${child.layoutParamsList[key]});
+        <#else>
         ${child.id}.set${key}("${child.layoutParamsList[key]}");
+        </#if>
         </#list>
         <#if child.hasChildren>
         <#assign parent = child.id>
