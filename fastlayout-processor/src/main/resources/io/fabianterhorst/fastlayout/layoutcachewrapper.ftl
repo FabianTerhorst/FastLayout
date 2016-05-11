@@ -50,7 +50,7 @@ public class LayoutCache {
                 break;
         </#list>
         }
-        mLayouts.put(name, layout);
+        mLayouts.put(name, layout.clone());
         return (T) layout;
     }
 }
