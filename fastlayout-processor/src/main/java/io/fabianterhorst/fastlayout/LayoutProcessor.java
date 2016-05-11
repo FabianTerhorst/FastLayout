@@ -71,12 +71,19 @@ public class LayoutProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         String debug = "Log" + System.currentTimeMillis() + ": ";
+        String packageName = null;
+
+        List<LayoutObject> layouts = new ArrayList<>();
+
         for (TypeElement te : annotations) {
             for (javax.lang.model.element.Element element : roundEnv.getElementsAnnotatedWith(te)) {
                 TypeElement classElement = (TypeElement) element;
                 PackageElement packageElement = (PackageElement) classElement.getEnclosingElement();
                 String layout = element.getAnnotation(Layout.class).value();
                 LayoutEntity rootLayout = new LayoutEntity();
+
+                packageName = packageElement.getQualifiedName().toString();
+
                 try {
                     DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
                     InputSource is = new InputSource();
@@ -101,9 +108,11 @@ public class LayoutProcessor extends AbstractProcessor {
 
                 JavaFileObject javaFileObject;
                 try {
+                    String layoutName = classElement.getQualifiedName() + SUFFIX_PREF_WRAPPER;
+                    layouts.add(new LayoutObject(layoutName));
                     Map<String, Object> args = new HashMap<>();
                     //Layout Wrapper
-                    javaFileObject = processingEnv.getFiler().createSourceFile(classElement.getQualifiedName() + SUFFIX_PREF_WRAPPER);
+                    javaFileObject = processingEnv.getFiler().createSourceFile(layoutName);
                     Template template = getFreemarkerConfiguration().getTemplate("layoutwrapper.ftl");
                     args.put("package", packageElement.getQualifiedName());
                     args.put("keyWrapperClassName", classElement.getSimpleName() + SUFFIX_PREF_WRAPPER);
@@ -121,6 +130,26 @@ public class LayoutProcessor extends AbstractProcessor {
                     return true;
                 }
             }
+        }
+
+        JavaFileObject javaFileObject;
+        try {
+            Map<String, Object> args = new HashMap<>();
+            //Layout Cache Wrapper
+            javaFileObject = processingEnv.getFiler().createSourceFile("LayoutCache");
+            Template template = getFreemarkerConfiguration().getTemplate("layoutcachewrapper.ftl");
+            args.put("package", packageName);
+            args.put("layouts", layouts);
+            Writer writer = javaFileObject.openWriter();
+            template.process(args, writer);
+            IOUtils.closeQuietly(writer);
+
+        } catch (Exception e) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                    "En error occurred while generating Prefs code " + e.getClass() + e.getMessage());
+            e.printStackTrace();
+            // Problem detected: halt
+            return true;
         }
 
         /*try {

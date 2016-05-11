@@ -6,12 +6,14 @@ import android.util.AttributeSet;
 import android.view.*;
 import android.widget.*;
 
+import io.fabianterhorst.fastlayout.annotations.ILayout;
+
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
 /*${log}*/
 
-public class ${keyWrapperClassName} extends ${rootLayout.name} {
+public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayout {
 
     <#list rootLayout.children as child>
     private ${child.name} ${child.id};
@@ -77,4 +79,12 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} {
     }
 
     </#list>
+    @Override
+    public ILayout clone() {
+        try {
+            return (${keyWrapperClassName}) super.clone();
+        } catch (CloneNotSupportedException ignore) {
+            return new ${keyWrapperClassName}(getContext());
+        }
+    }
 }
