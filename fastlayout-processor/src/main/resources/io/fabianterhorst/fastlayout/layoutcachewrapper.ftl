@@ -32,7 +32,7 @@ public class LayoutCache {
     }
 
     public static LayoutCache getInstance(Context context) {
-        if(mInstance == null) {
+        if (mInstance == null) {
             mInstance = new LayoutCache(context);
         }
         return mInstance;
@@ -47,7 +47,7 @@ public class LayoutCache {
         <#list layouts as layout>
             case "${layout.name}":
                 layout = new ${layout.name}(mContext);
-            break;
+                break;
         </#list>
         }
         mLayouts.put(name, layout);
