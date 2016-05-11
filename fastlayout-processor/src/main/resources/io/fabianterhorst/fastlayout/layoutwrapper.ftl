@@ -13,7 +13,7 @@ import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
 /*${log}*/
 
-public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayout {
+public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayout, Cloneable {
 
     <#list rootLayout.children as child>
     private ${child.name} ${child.id};
