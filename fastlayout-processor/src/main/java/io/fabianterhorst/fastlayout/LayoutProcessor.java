@@ -132,24 +132,26 @@ public class LayoutProcessor extends AbstractProcessor {
             }
         }
 
-        JavaFileObject javaFileObject;
-        try {
-            Map<String, Object> args = new HashMap<>();
-            //Layout Cache Wrapper
-            javaFileObject = processingEnv.getFiler().createSourceFile("LayoutCache");
-            Template template = getFreemarkerConfiguration().getTemplate("layoutcachewrapper.ftl");
-            args.put("package", packageName);
-            args.put("layouts", layouts);
-            Writer writer = javaFileObject.openWriter();
-            template.process(args, writer);
-            IOUtils.closeQuietly(writer);
+        if(layouts.size() > 0) {
+            JavaFileObject javaFileObject;
+            try {
+                Map<String, Object> args = new HashMap<>();
+                //Layout Cache Wrapper
+                javaFileObject = processingEnv.getFiler().createSourceFile("LayoutCache");
+                Template template = getFreemarkerConfiguration().getTemplate("layoutcachewrapper.ftl");
+                args.put("package", packageName);
+                args.put("layouts", layouts);
+                Writer writer = javaFileObject.openWriter();
+                template.process(args, writer);
+                IOUtils.closeQuietly(writer);
 
-        } catch (Exception e) {
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
-                    "En error occurred while generating Prefs code " + e.getClass() + e.getMessage());
-            e.printStackTrace();
-            // Problem detected: halt
-            return true;
+            } catch (Exception e) {
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                        "En error occurred while generating Prefs code " + e.getClass() + e.getMessage());
+                e.printStackTrace();
+                // Problem detected: halt
+                return true;
+            }
         }
 
         /*try {
