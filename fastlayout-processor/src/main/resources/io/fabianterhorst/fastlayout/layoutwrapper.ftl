@@ -55,7 +55,6 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
         <#list rootLayout.children as child>
         ${child.id} = new ${child.name}(getContext());
         <#if child.layoutParams.weight?? && child.layoutParams.name = "ViewGroup.LayoutParams">TableLayout.LayoutParams<#elseif child.relative>RelativeLayout.LayoutParams<#else>${child.layoutParams.name}</#if> ${child.id}LayoutParams = <#if child.layoutParams.weight?? && child.layoutParams.name = "ViewGroup.LayoutParams">new TableLayout.LayoutParams<#elseif child.relative>new RelativeLayout.LayoutParams<#else>new ${child.layoutParams.name}</#if>(${child.layoutParams.width}, ${child.layoutParams.height}<#if child.layoutParams.weight??>, ${child.layoutParams.weight}</#if>);
-        ${child.id}.setLayoutParams(${child.id}LayoutParams);
         <#if child.layoutParams.margins??>
         ${child.id}LayoutParams.setMargins(${child.layoutParams.margins[0]}, ${child.layoutParams.margins[1]}, ${child.layoutParams.margins[2]}, ${child.layoutParams.margins[3]});
         </#if>
@@ -65,6 +64,7 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
         <#list child.layoutParamsList?keys as key>
         <#if child.layoutParamsList[key].paramValue>${child.id}LayoutParams<#else>${child.id}</#if>.<#if child.layoutParamsList[key].rule>addRule(${key}<#if child.layoutParamsList[key].value != "true">,${child.layoutParamsList[key].value}</#if><#else>set${key}(<#if !child.layoutParamsList[key].value?is_number>"</#if>${child.layoutParamsList[key].value}<#if !child.layoutParamsList[key].value?is_number>"</#if></#if>);
         </#list>
+        ${child.id}.setLayoutParams(${child.id}LayoutParams);
         <#if child.hasChildren>
         <#assign parent = child.id>
         <#else>
