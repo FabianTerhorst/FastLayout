@@ -8,6 +8,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(new ActivityMainLayout(this));
+        //Default
+        //setContentView(new ActivityMainLayout(this));
+        //The cache is reusing the object to improve the performance
+        ActivityMainLayout layout = LayoutCache.getInstance(this).getLayout(LayoutCache.Activity_Main_Layout);
+        setContentView(layout);
     }
 }
