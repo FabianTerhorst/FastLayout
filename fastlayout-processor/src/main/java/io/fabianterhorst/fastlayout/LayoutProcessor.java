@@ -287,8 +287,10 @@ public class LayoutProcessor extends AbstractProcessor {
                     } catch (NumberFormatException ignore) {
                     }*/
                     String relativeName = getRelativeLayoutParam(newName.replace("Layout", ""));
-                    if (relativeName != null && !value.equals("false")) {
-                        layout.addLayoutParam(relativeName, getLayoutId(value), true, true);
+                    if (relativeName != null && relativeName.contains("_")) {
+                        if(!value.equals("false")) {
+                            layout.addLayoutParam(relativeName, getLayoutId(value), true, true);
+                        }
                     } else {
                         layout.addLayoutParam(newName, value, false, false);
                     }
@@ -319,13 +321,25 @@ public class LayoutProcessor extends AbstractProcessor {
         return attribute;
     }
 
+    /**
+     * convert for example AlignParentBottom to RelativeLayout.ALIGN_PARENT_BOTTOM
+     *
+     * @param name attribute name
+     * @return relative layout attribute
+     */
     private String getRelativeLayoutParam(String name) {
-        switch (name) {
-            case "AlignParentBottom":
-                return "RelativeLayout.ALIGN_PARENT_BOTTOM";
-            case "AlignEnd":
-                return "RelativeLayout.ALIGN_END";
+        int length = name.length();
+        for (int i = 0; i < length; i++) {
+            char character = name.charAt(i);
+            if (character != "_".charAt(0) && Character.isUpperCase(character) && i != 0) {
+                String firstPart = name.substring(0, i);
+                String secondPart = name.substring(i, length);
+                String newFirstPart = firstPart + "_";
+                name = newFirstPart + secondPart;
+                i = newFirstPart.length();
+                length++;
+            }
         }
-        return null;
+        return "RelativeLayout." + name.toUpperCase();
     }
 }
