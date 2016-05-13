@@ -138,7 +138,7 @@ public class LayoutProcessor extends AbstractProcessor {
             try {
                 Map<String, Object> args = new HashMap<>();
                 //Layout Cache Wrapper
-                javaFileObject = processingEnv.getFiler().createSourceFile("LayoutCache");
+                javaFileObject = processingEnv.getFiler().createSourceFile(packageName + ".LayoutCache");
                 Template template = getFreemarkerConfiguration().getTemplate("layoutcachewrapper.ftl");
                 args.put("package", packageName);
                 args.put("layouts", layouts);
