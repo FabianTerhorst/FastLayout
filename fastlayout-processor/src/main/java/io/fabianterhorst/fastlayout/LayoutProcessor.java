@@ -133,15 +133,21 @@ public class LayoutProcessor extends AbstractProcessor {
             }
         }
 
-        if (layouts.size() > 0) {
+        if (layouts.size() > 0 && packageName != null) {
             JavaFileObject javaFileObject;
             try {
+                Map<String, LayoutObject> layoutMap = new HashMap<>();
+                for (LayoutObject layout : layouts) {
+                    String name = layout.getName();
+                    layoutMap.put(stringToConstant(name.replace(packageName + ".", "")), layout);
+                }
+
                 Map<String, Object> args = new HashMap<>();
                 //Layout Cache Wrapper
                 javaFileObject = processingEnv.getFiler().createSourceFile(packageName + ".LayoutCache");
                 Template template = getFreemarkerConfiguration().getTemplate("layoutcachewrapper.ftl");
                 args.put("package", packageName);
-                args.put("layouts", layouts);
+                args.put("layouts", layoutMap);
                 Writer writer = javaFileObject.openWriter();
                 template.process(args, writer);
                 IOUtils.closeQuietly(writer);
@@ -288,7 +294,7 @@ public class LayoutProcessor extends AbstractProcessor {
                     }*/
                     String relativeName = getRelativeLayoutParam(newName.replace("Layout", ""));
                     if (relativeName != null && relativeName.contains("_")) {
-                        if(!value.equals("false")) {
+                        if (!value.equals("false")) {
                             layout.addLayoutParam(relativeName, getLayoutId(value), true, true);
                         }
                     } else {
@@ -328,18 +334,28 @@ public class LayoutProcessor extends AbstractProcessor {
      * @return relative layout attribute
      */
     private String getRelativeLayoutParam(String name) {
-        int length = name.length();
+        return "RelativeLayout." + stringToConstant(name).toUpperCase();
+    }
+
+    /**
+     * convert a string to a constant schema
+     *
+     * @param string string
+     * @return constant schema string
+     */
+    private String stringToConstant(String string) {
+        int length = string.length();
         for (int i = 0; i < length; i++) {
-            char character = name.charAt(i);
+            char character = string.charAt(i);
             if (character != "_".charAt(0) && Character.isUpperCase(character) && i != 0) {
-                String firstPart = name.substring(0, i);
-                String secondPart = name.substring(i, length);
+                String firstPart = string.substring(0, i);
+                String secondPart = string.substring(i, length);
                 String newFirstPart = firstPart + "_";
-                name = newFirstPart + secondPart;
+                string = newFirstPart + secondPart;
                 i = newFirstPart.length();
                 length++;
             }
         }
-        return "RelativeLayout." + name.toUpperCase();
+        return string;
     }
 }

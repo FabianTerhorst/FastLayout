@@ -17,11 +17,11 @@ public class LayoutCache {
 
     private final Context mContext;
 
-    <#list layouts as layout>
-    public static final String ${layout.name?split(".")[layout.name?split(".")?size-1]?upper_case} = "${layout.name}";
+    <#list layouts?keys as key>
+    public static final String ${key} = "${layouts[key].name}";
 
     </#list>
-    @StringDef({<#list layouts as layout>${layout.name?split(".")[layout.name?split(".")?size-1]?upper_case},</#list>})
+    @StringDef({<#list layouts?keys as key>${key},</#list>})
     @Retention(RetentionPolicy.SOURCE)
     public @interface LayoutName {
     }
@@ -44,9 +44,9 @@ public class LayoutCache {
         }
         ILayout layout = null;
         switch (name) {
-        <#list layouts as layout>
-            case "${layout.name}":
-                layout = new ${layout.name}(mContext);
+        <#list layouts?keys as key>
+            case "${key}":
+                layout = new ${layouts[key].name}(mContext);
                 break;
         </#list>
         }
