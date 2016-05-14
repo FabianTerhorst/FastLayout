@@ -269,11 +269,7 @@ public class LayoutProcessor extends AbstractProcessor {
                         String end = refactor.substring(1, refactor.length());
                         newName += start + end;
                     }
-                    Object value = attributeValue;
-                    try {
-                        value = Integer.parseInt(attributeValue);
-                    } catch (NumberFormatException ignore) {
-                    }
+                    Object value = getLayoutAttribute(attributeValue);
                     /*try {
                         value = Boolean.parseBoolean(attributeValue);
                     } catch (NumberFormatException ignore) {
@@ -284,7 +280,13 @@ public class LayoutProcessor extends AbstractProcessor {
                             layout.addLayoutParam(relativeName, getLayoutId(value), true, true);
                         }
                     } else {
-                        layout.addLayoutParam(newName, value, false, false);
+                        boolean number = false;
+                        if(String.valueOf(value).contains("R.")){
+                            number = true;
+                        } else if(isNumber(value)){
+                            number = true;
+                        }
+                        layout.addLayoutParam(newName, value, false, false, number);
                     }
                 }
             }
@@ -303,6 +305,8 @@ public class LayoutProcessor extends AbstractProcessor {
     private Object getLayoutAttribute(String attribute) {
         if (attribute.contains("@dimen/")) {
             return "(int) getContext().getResources().getDimension(R.dimen." + attribute.replace("@dimen/", "") + ")";
+        } else if (attribute.contains("@string/")) {
+            return "getContext().getString(R.string." + attribute.replace("@string/", "") + ")";
         } else {
             try {
                 return Integer.parseInt(attribute);
@@ -381,6 +385,16 @@ public class LayoutProcessor extends AbstractProcessor {
     private String readFile(File file) throws IOException {
         try (FileInputStream inputStream = new FileInputStream(file)) {
             return IOUtils.toString(inputStream);
+        }
+    }
+
+    @SuppressWarnings("Ignore")
+    private boolean isNumber(Object text) {
+        try {
+            Integer.parseInt(String.valueOf(text));
+            return true;
+        }catch(NumberFormatException ignore){
+            return false;
         }
     }
 }

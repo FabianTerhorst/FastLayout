@@ -45,6 +45,10 @@ public class LayoutEntity {
         layoutParamsList.put(name, new LayoutParamEntry(value, paramValue, rule));
     }
 
+    public void addLayoutParam(Object name, Object value, boolean paramValue, boolean rule, boolean number) {
+        layoutParamsList.put(name, new LayoutParamEntry(value, paramValue, rule, number));
+    }
+
     public void setLayoutParams(LayoutParam layoutParams) {
         this.layoutParams = layoutParams;
     }
