@@ -370,9 +370,7 @@ public class LayoutProcessor extends AbstractProcessor {
 
         File dummyFile = new File(cleanURI);
 
-        File sourcesGenerationFolder = dummyFile.getParentFile();
-
-        File projectRoot = sourcesGenerationFolder.getParentFile().getParentFile().getParentFile().getParentFile().getParentFile();
+        File projectRoot = dummyFile.getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile();
 
         return new File(projectRoot.getAbsolutePath() + "/src/main/res/layout");
     }
