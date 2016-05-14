@@ -156,9 +156,9 @@ public class LayoutProcessor extends AbstractProcessor {
                 // Problem detected: halt
                 return true;
             }
+            
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, String.valueOf(layouts.size()) + " layouts generated.");
         }
-
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, String.valueOf(layouts.size()) + " layouts generated.");
 
         return true;
     }
