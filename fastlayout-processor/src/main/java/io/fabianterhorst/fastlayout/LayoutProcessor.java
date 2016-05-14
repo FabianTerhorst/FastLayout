@@ -8,8 +8,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.Writer;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +21,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Filer;
+import javax.annotation.processing.Messager;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.SourceVersion;
@@ -71,66 +77,58 @@ public class LayoutProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        String debug = "Log" + System.currentTimeMillis() + ": ";
         String packageName = null;
 
         List<LayoutObject> layouts = new ArrayList<>();
-
-        for (TypeElement te : annotations) {
-            for (javax.lang.model.element.Element element : roundEnv.getElementsAnnotatedWith(te)) {
-                TypeElement classElement = (TypeElement) element;
-                PackageElement packageElement = (PackageElement) classElement.getEnclosingElement();
-                String layout = element.getAnnotation(Layout.class).value();
-                LayoutEntity rootLayout = new LayoutEntity();
-
-                packageName = packageElement.getQualifiedName().toString();
-
-                try {
-                    DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                    InputSource is = new InputSource();
-                    is.setCharacterStream(new StringReader(layout));
-                    Document document = documentBuilder.parse(is);
-                    Element rootLayoutElement = document.getDocumentElement();
-                    /*rootLayout.setId(normalizeLayoutId(rootLayoutElement.getAttribute("android:id")));
-                    rootLayout.setName(rootLayoutElement.getTagName());
-                    LayoutParam layoutParam = new LayoutParam();
-                    layoutParam.setName(getLayoutParamsForViewGroup(rootLayout.getName()));
-                    layoutParam.setWidth(rootLayoutElement.getAttribute("android:layout_width").toUpperCase());
-                    layoutParam.setHeight(rootLayoutElement.getAttribute("android:layout_height").toUpperCase());
-                    rootLayout.setLayoutParams(layoutParam);*/
-                    rootLayout = createLayoutFromChild(rootLayoutElement);
-                    if (rootLayoutElement.hasChildNodes()) {
-                        createChildList(rootLayoutElement);
-                        rootLayout.addChildren(mChilds);
+        try {
+            File layoutsFile = findLayouts();
+            for (TypeElement te : annotations) {
+                for (javax.lang.model.element.Element element : roundEnv.getElementsAnnotatedWith(te)) {
+                    TypeElement classElement = (TypeElement) element;
+                    PackageElement packageElement = (PackageElement) classElement.getEnclosingElement();
+                    String layoutValue = element.getAnnotation(Layout.class).value();
+                    String layout = readFile(findLayout(layoutsFile, layoutValue));
+                    LayoutEntity rootLayout = new LayoutEntity();
+                    packageName = packageElement.getQualifiedName().toString();
+                    try {
+                        DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                        InputSource is = new InputSource();
+                        is.setCharacterStream(new StringReader(layout));
+                        Document document = documentBuilder.parse(is);
+                        Element rootLayoutElement = document.getDocumentElement();
+                        rootLayout = createLayoutFromChild(rootLayoutElement);
+                        if (rootLayoutElement.hasChildNodes()) {
+                            createChildList(rootLayoutElement);
+                            rootLayout.addChildren(mChilds);
+                        }
+                    } catch (Exception ignore) {
                     }
-                } catch (Exception ignore) {
-                    debug += " exception:" + ignore.getMessage();
-                }
 
-                JavaFileObject javaFileObject;
-                try {
-                    String layoutName = classElement.getQualifiedName() + SUFFIX_PREF_WRAPPER;
-                    layouts.add(new LayoutObject(layoutName));
-                    Map<String, Object> args = new HashMap<>();
-                    //Layout Wrapper
-                    javaFileObject = processingEnv.getFiler().createSourceFile(layoutName);
-                    Template template = getFreemarkerConfiguration().getTemplate("layoutwrapper.ftl");
-                    args.put("package", packageElement.getQualifiedName());
-                    args.put("keyWrapperClassName", classElement.getSimpleName() + SUFFIX_PREF_WRAPPER);
-                    args.put("rootLayout", rootLayout);
-                    args.put("log", debug);
-                    Writer writer = javaFileObject.openWriter();
-                    template.process(args, writer);
-                    IOUtils.closeQuietly(writer);
+                    JavaFileObject javaFileObject;
+                    try {
+                        String layoutName = classElement.getQualifiedName() + SUFFIX_PREF_WRAPPER;
+                        layouts.add(new LayoutObject(layoutName));
+                        Map<String, Object> args = new HashMap<>();
+                        //Layout Wrapper
+                        javaFileObject = processingEnv.getFiler().createSourceFile(layoutName);
+                        Template template = getFreemarkerConfiguration().getTemplate("layout.ftl");
+                        args.put("package", packageElement.getQualifiedName());
+                        args.put("keyWrapperClassName", classElement.getSimpleName() + SUFFIX_PREF_WRAPPER);
+                        args.put("rootLayout", rootLayout);
+                        Writer writer = javaFileObject.openWriter();
+                        template.process(args, writer);
+                        IOUtils.closeQuietly(writer);
 
-                } catch (Exception e) {
-                    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
-                            "En error occurred while generating Prefs code " + e.getClass() + e.getMessage(), element);
-                    e.printStackTrace();
-                    // Problem detected: halt
-                    return true;
+                    } catch (Exception e) {
+                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                                "En error occurred while generating Prefs code " + e.getClass() + e.getMessage(), element);
+                        e.printStackTrace();
+                        // Problem detected: halt
+                        return true;
+                    }
                 }
             }
+        } catch (Exception ignore) {
         }
 
         if (layouts.size() > 0 && packageName != null) {
@@ -145,7 +143,7 @@ public class LayoutProcessor extends AbstractProcessor {
                 Map<String, Object> args = new HashMap<>();
                 //Layout Cache Wrapper
                 javaFileObject = processingEnv.getFiler().createSourceFile(packageName + ".LayoutCache");
-                Template template = getFreemarkerConfiguration().getTemplate("layoutcachewrapper.ftl");
+                Template template = getFreemarkerConfiguration().getTemplate("layoutcache.ftl");
                 args.put("package", packageName);
                 args.put("layouts", layoutMap);
                 Writer writer = javaFileObject.openWriter();
@@ -160,18 +158,6 @@ public class LayoutProcessor extends AbstractProcessor {
                 return true;
             }
         }
-
-        /*try {
-            JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-            StandardJavaFileManager fm = compiler.getStandardFileManager(null, null, null);
-
-            Iterable<? extends File> locations = fm.getLocation(StandardLocation.SOURCE_PATH);
-            for(File file : locations){
-                System.out.print(file.getAbsolutePath());
-            }
-            //FileInputStream fileInputStream = new FileInputStream("");
-        }catch(Exception ignore){
-        }*/
 
         return true;
     }
@@ -357,5 +343,44 @@ public class LayoutProcessor extends AbstractProcessor {
             }
         }
         return string;
+    }
+
+    private File findLayouts() throws Exception {
+        Filer filer = processingEnv.getFiler();
+
+        JavaFileObject dummySourceFile = filer.createSourceFile("dummy" + System.currentTimeMillis());
+        String dummySourceFilePath = dummySourceFile.toUri().toString();
+
+        if (dummySourceFilePath.startsWith("file:")) {
+            if (!dummySourceFilePath.startsWith("file://")) {
+                dummySourceFilePath = "file://" + dummySourceFilePath.substring("file:".length());
+            }
+        } else {
+            dummySourceFilePath = "file://" + dummySourceFilePath;
+        }
+
+        Messager messager = processingEnv.getMessager();
+        messager.printMessage(Diagnostic.Kind.NOTE, "Dummy source file: " + dummySourceFilePath);
+
+        URI cleanURI = new URI(dummySourceFilePath);
+
+        File dummyFile = new File(cleanURI);
+
+        File sourcesGenerationFolder = dummyFile.getParentFile();
+
+        File projectRoot = sourcesGenerationFolder.getParentFile().getParentFile().getParentFile().getParentFile().getParentFile();
+
+        return new File(projectRoot.getAbsolutePath() + "/src/main/res/layout");
+    }
+
+    private File findLayout(File layouts, String layoutName) throws Exception {
+        return new File(layouts, layoutName + ".xml");
+    }
+
+    @SuppressWarnings("NewApi")
+    private String readFile(File file) throws IOException {
+        try (FileInputStream inputStream = new FileInputStream(file)) {
+            return IOUtils.toString(inputStream);
+        }
     }
 }
