@@ -77,10 +77,12 @@ public class LayoutProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         String packageName = null;
-
+        File layoutsFile = null;
         List<LayoutObject> layouts = new ArrayList<>();
         try {
-            File layoutsFile = findLayouts();
+            if (annotations.size() > 0) {
+                layoutsFile = findLayouts();
+            }
             for (TypeElement te : annotations) {
                 for (javax.lang.model.element.Element element : roundEnv.getElementsAnnotatedWith(te)) {
                     TypeElement classElement = (TypeElement) element;
@@ -156,7 +158,7 @@ public class LayoutProcessor extends AbstractProcessor {
                 // Problem detected: halt
                 return true;
             }
-            
+
             processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, String.valueOf(layouts.size()) + " layouts generated.");
         }
 
@@ -282,9 +284,9 @@ public class LayoutProcessor extends AbstractProcessor {
                         }
                     } else {
                         boolean number = false;
-                        if(String.valueOf(value).contains("R.")){
+                        if (String.valueOf(value).contains("R.")) {
                             number = true;
-                        } else if(isNumber(value)){
+                        } else if (isNumber(value)) {
                             number = true;
                         }
                         layout.addLayoutParam(newName, value, false, false, number);
@@ -391,7 +393,7 @@ public class LayoutProcessor extends AbstractProcessor {
         try {
             Integer.parseInt(String.valueOf(text));
             return true;
-        }catch(NumberFormatException ignore){
+        } catch (NumberFormatException ignore) {
             return false;
         }
     }
