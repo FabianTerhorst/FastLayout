@@ -1,10 +1,10 @@
 # FastLayout
-Generates a Java Object for your xml layout to reduce inflate time to zero
+##Generates a Java Object for your xml layout to reduce inflate time to zero
 
-##The project methodcount is 1, because everythink happen on compile time.
+###The project methodcount is 1, because everythink happen on compile time.
 
-##Add the dependencies
-#main build.gradle
+###Add the dependencies
+####main build.gradle
 ```groovy
 buildscript {
     repositories {
@@ -18,7 +18,7 @@ buildscript {
 	}
 }
 ```
-#app build.gradle
+####app build.gradle
 ```groovy
 apply plugin: 'com.android.application'
 ...
@@ -32,8 +32,8 @@ dependencies {
 }
 ```
 
-##First create your layout java class
-###This is needed to filter the layouts you want to compile
+###First create your layout java class
+####This is needed to filter the layouts you want to compile
 ```java
 //this is compiling all layouts in layout folder
 @Layouts(all = true)
@@ -51,7 +51,7 @@ public class AppLayouts {
     //ILayout activity_main;
 }
 ```
-##Now use the layout inside your Activity for example
+###Now use the layout inside your Activity for example
 ```java
 public class MainActivity extends AppCompatActivity {
 
