@@ -22,7 +22,6 @@ import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
-import javax.annotation.processing.Messager;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.SourceVersion;
@@ -158,6 +157,8 @@ public class LayoutProcessor extends AbstractProcessor {
                 return true;
             }
         }
+
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, String.valueOf(layouts.size()) + " layouts generated.");
 
         return true;
     }
@@ -362,9 +363,6 @@ public class LayoutProcessor extends AbstractProcessor {
         } else {
             dummySourceFilePath = "file://" + dummySourceFilePath;
         }
-
-        Messager messager = processingEnv.getMessager();
-        messager.printMessage(Diagnostic.Kind.NOTE, "Dummy source file: " + dummySourceFilePath);
 
         URI cleanURI = new URI(dummySourceFilePath);
 
