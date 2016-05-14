@@ -272,6 +272,24 @@ public class LayoutProcessor extends AbstractProcessor {
                         layout.addLayoutParam(newName, value, false, false, number);
                     }
                 }
+            } else if (attributeName.contains("app:")) {
+                String newName = attributeName.replace("android:", "");
+                String[] split = newName.split("_");
+                newName = "";
+                for (String refactor : split) {
+                    String start = refactor.substring(0, 1).toUpperCase();
+                    String end = refactor.substring(1, refactor.length());
+                    newName += start + end;
+                }
+                Object value = getLayoutAttribute(attributeValue);
+                boolean number = false;
+                if (String.valueOf(value).contains("R.")) {
+                    number = true;
+                } else if (isNumber(value)) {
+                    number = true;
+                }
+                layout.addLayoutParam(newName, value, false, false, number);
+
             }
         }
         return layout;
@@ -339,7 +357,8 @@ public class LayoutProcessor extends AbstractProcessor {
      * @return object name schema
      */
     private String constantToObjectName(String string) {
-        if(!Character.isUpperCase(string.charAt(0))) {
+        //StringUtils.capitalize();
+        if (!Character.isUpperCase(string.charAt(0))) {
             string = string.substring(0, 1).toUpperCase() + string.substring(1);
             int length = string.length();
             for (int i = 0; i < length; i++) {
@@ -375,8 +394,22 @@ public class LayoutProcessor extends AbstractProcessor {
 
         File dummyFile = new File(cleanURI);
 
-        File projectRoot = dummyFile.getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile();
+        File projectRoot = dummyFile.getParentFile();
 
+        File sourceFile = new File(projectRoot.getAbsolutePath() + "/src/main/res/layout");
+
+        while (true) {
+            if (sourceFile.exists()) {
+                return sourceFile;
+            } else {
+                if (projectRoot.getParentFile() != null) {
+                    projectRoot = projectRoot.getParentFile();
+                    sourceFile = new File(projectRoot.getAbsolutePath() + "/src/main/res/layout");
+                } else {
+                    break;
+                }
+            }
+        }
         return new File(projectRoot.getAbsolutePath() + "/src/main/res/layout");
     }
 
