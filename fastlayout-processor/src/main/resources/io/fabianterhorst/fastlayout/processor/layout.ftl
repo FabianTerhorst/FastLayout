@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import android.view.*;
 import android.widget.*;
 
-import io.fabianterhorst.fastlayout.annotations.ILayout;
+import io.fabianterhorst.fastlayout.ILayout;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;

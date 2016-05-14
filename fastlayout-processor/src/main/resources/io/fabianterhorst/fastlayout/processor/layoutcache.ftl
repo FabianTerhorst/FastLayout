@@ -7,7 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.HashMap;
 
-import io.fabianterhorst.fastlayout.annotations.ILayout;
+import io.fabianterhorst.fastlayout.ILayout;
 
 public class LayoutCache {
 
@@ -45,7 +45,7 @@ public class LayoutCache {
         ILayout layout = null;
         switch (name) {
         <#list layouts?keys as key>
-            case "${key}":
+            case ${key}:
                 layout = new ${layouts[key].name}(mContext);
                 break;
         </#list>

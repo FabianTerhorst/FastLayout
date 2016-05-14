@@ -1,4 +1,4 @@
-package io.fabianterhorst.fastlayout.annotations;
+package io.fabianterhorst.fastlayout;
 
 public interface ILayout {
     ILayout clone();

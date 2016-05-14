@@ -1,4 +1,4 @@
-package io.fabianterhorst.fastlayout;
+package io.fabianterhorst.fastlayout.processor;
 
 import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
@@ -27,6 +27,9 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import javax.xml.parsers.DocumentBuilder;
@@ -35,9 +38,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.Version;
-import io.fabianterhorst.fastlayout.annotations.Layout;
+import io.fabianterhorst.fastlayout.Layout;
+import io.fabianterhorst.fastlayout.Layouts;
 
-@SupportedAnnotationTypes("io.fabianterhorst.fastlayout.annotations.Layout")
+@SupportedAnnotationTypes("io.fabianterhorst.fastlayout.Layouts")
 public class LayoutProcessor extends AbstractProcessor {
 
     private static final ArrayList<String> nativeSupportedAttributes = new ArrayList<String>() {{
@@ -76,8 +80,8 @@ public class LayoutProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        String packageName = null;
         File layoutsFile = null;
+        String packageName = null;
         List<LayoutObject> layouts = new ArrayList<>();
         try {
             if (annotations.size() > 0) {
@@ -87,81 +91,57 @@ public class LayoutProcessor extends AbstractProcessor {
                 for (javax.lang.model.element.Element element : roundEnv.getElementsAnnotatedWith(te)) {
                     TypeElement classElement = (TypeElement) element;
                     PackageElement packageElement = (PackageElement) classElement.getEnclosingElement();
-                    String layoutValue = element.getAnnotation(Layout.class).value();
-                    String layout = readFile(findLayout(layoutsFile, layoutValue));
-                    LayoutEntity rootLayout = new LayoutEntity();
                     packageName = packageElement.getQualifiedName().toString();
-                    try {
-                        DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                        InputSource is = new InputSource();
-                        is.setCharacterStream(new StringReader(layout));
-                        Document document = documentBuilder.parse(is);
-                        Element rootLayoutElement = document.getDocumentElement();
-                        rootLayout = createLayoutFromChild(rootLayoutElement);
-                        if (rootLayoutElement.hasChildNodes()) {
-                            createChildList(rootLayoutElement);
-                            rootLayout.addChildren(mChilds);
+                    Layouts layoutsAnnotation = element.getAnnotation(Layouts.class);
+
+                    for (String layoutName : layoutsAnnotation.layouts()) {
+                        LayoutObject layoutObject = createLayoutObject(layoutsFile, layoutName, packageElement, element, constantToObjectName(layoutName));
+                        if (layoutObject == null) {
+                            return true;
                         }
-                    } catch (Exception ignore) {
+                        layouts.add(layoutObject);
                     }
 
-                    JavaFileObject javaFileObject;
-                    try {
-                        String layoutName = classElement.getQualifiedName() + SUFFIX_PREF_WRAPPER;
-                        layouts.add(new LayoutObject(layoutName));
-                        Map<String, Object> args = new HashMap<>();
-                        //Layout Wrapper
-                        javaFileObject = processingEnv.getFiler().createSourceFile(layoutName);
-                        Template template = getFreemarkerConfiguration().getTemplate("layout.ftl");
-                        args.put("package", packageElement.getQualifiedName());
-                        args.put("keyWrapperClassName", classElement.getSimpleName() + SUFFIX_PREF_WRAPPER);
-                        args.put("rootLayout", rootLayout);
-                        Writer writer = javaFileObject.openWriter();
-                        template.process(args, writer);
-                        IOUtils.closeQuietly(writer);
+                    for (VariableElement variableElement : ElementFilter.fieldsIn(classElement.getEnclosedElements())) {
+                        TypeMirror fieldType = variableElement.asType();//ILayout
+                        String fieldName = variableElement.getSimpleName().toString();
+                        String layoutName = fieldName;
+                        Layout layoutAnnotation = variableElement.getAnnotation(Layout.class);
+                        if (layoutAnnotation != null) {
+                            layoutName = layoutAnnotation.value();
+                        }
+                        LayoutObject layoutObject = createLayoutObject(layoutsFile, layoutName, packageElement, element, constantToObjectName(fieldName));
+                        if (layoutObject == null) {
+                            return true;
+                        }
+                        layouts.add(layoutObject);
+                    }
 
-                    } catch (Exception e) {
-                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
-                                "En error occurred while generating Prefs code " + e.getClass() + e.getMessage(), element);
-                        e.printStackTrace();
-                        // Problem detected: halt
-                        return true;
+                    if (layoutsAnnotation.all() && layoutsFile != null) {
+                        File[] files = layoutsFile.listFiles();
+                        if (files != null) {
+                            for (File file : files) {
+                                String layoutName = file.getName().replace(".xml", "");
+                                LayoutObject layoutObject = createLayoutObject(readFile(file), packageElement, element, constantToObjectName(layoutName));
+                                if (layoutObject == null) {
+                                    return true;
+                                }
+                                layouts.add(layoutObject);
+                            }
+                        }
                     }
                 }
             }
-        } catch (Exception ignore) {
-        }
-
-        if (layouts.size() > 0 && packageName != null) {
-            JavaFileObject javaFileObject;
-            try {
-                Map<String, LayoutObject> layoutMap = new HashMap<>();
-                for (LayoutObject layout : layouts) {
-                    String name = layout.getName();
-                    layoutMap.put(stringToConstant(name.replace(packageName + ".", "")), layout);
+            if (layouts.size() > 0 && packageName != null) {
+                boolean cacheCreated = createLayoutCacheObject(layouts, packageName);
+                if (!cacheCreated) {
+                    return true;
                 }
-
-                Map<String, Object> args = new HashMap<>();
-                //Layout Cache Wrapper
-                javaFileObject = processingEnv.getFiler().createSourceFile(packageName + ".LayoutCache");
-                Template template = getFreemarkerConfiguration().getTemplate("layoutcache.ftl");
-                args.put("package", packageName);
-                args.put("layouts", layoutMap);
-                Writer writer = javaFileObject.openWriter();
-                template.process(args, writer);
-                IOUtils.closeQuietly(writer);
-
-            } catch (Exception e) {
-                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
-                        "En error occurred while generating Prefs code " + e.getClass() + e.getMessage());
-                e.printStackTrace();
-                // Problem detected: halt
-                return true;
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, String.valueOf(layouts.size()) + " layout" + (layouts.size() > 1 ? "s" : "") + " generated.");
             }
-
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, String.valueOf(layouts.size()) + " layouts generated.");
+        } catch (Exception exception) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, exception.getMessage());
         }
-
         return true;
     }
 
@@ -352,6 +332,31 @@ public class LayoutProcessor extends AbstractProcessor {
         return string;
     }
 
+    /**
+     * convert a constant to a object name schema
+     *
+     * @param string constant
+     * @return object name schema
+     */
+    private String constantToObjectName(String string) {
+        if(!Character.isUpperCase(string.charAt(0))) {
+            string = string.substring(0, 1).toUpperCase() + string.substring(1);
+            int length = string.length();
+            for (int i = 0; i < length; i++) {
+                char character = string.charAt(i);
+                if (character == "_".charAt(0)) {
+                    String firstPart = string.substring(0, i);
+                    String secondPart = string.substring(i + 1, length);
+                    String newSecondPart = (secondPart.length() > 0 ? secondPart.substring(0, 1).toUpperCase() : "") + secondPart.substring(1);
+                    string = firstPart + newSecondPart;
+                    i = firstPart.length();
+                    length--;
+                }
+            }
+        }
+        return string;
+    }
+
     private File findLayouts() throws Exception {
         Filer filer = processingEnv.getFiler();
 
@@ -394,5 +399,76 @@ public class LayoutProcessor extends AbstractProcessor {
         } catch (NumberFormatException ignore) {
             return false;
         }
+    }
+
+    private LayoutObject createLayoutObject(File layoutsFile, String layoutName, PackageElement packageElement, javax.lang.model.element.Element element, String fieldName) throws Exception {
+        return createLayoutObject(readFile(findLayout(layoutsFile, layoutName)), packageElement, element, fieldName);
+    }
+
+    private LayoutObject createLayoutObject(String layout, PackageElement packageElement, javax.lang.model.element.Element element, String fieldName) throws Exception {
+        LayoutEntity rootLayout = new LayoutEntity();
+        try {
+            DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            InputSource is = new InputSource();
+            is.setCharacterStream(new StringReader(layout));
+            Document document = documentBuilder.parse(is);
+            Element rootLayoutElement = document.getDocumentElement();
+            rootLayout = createLayoutFromChild(rootLayoutElement);
+            if (rootLayoutElement.hasChildNodes()) {
+                createChildList(rootLayoutElement);
+                rootLayout.addChildren(mChilds);
+            }
+        } catch (Exception ignore) {
+        }
+
+        JavaFileObject javaFileObject;
+        try {
+            String layoutObjectName = packageElement.getQualifiedName().toString() + "." + fieldName + SUFFIX_PREF_WRAPPER;
+            Map<String, Object> args = new HashMap<>();
+            //Layout Wrapper
+            javaFileObject = processingEnv.getFiler().createSourceFile(layoutObjectName);
+            Template template = getFreemarkerConfiguration().getTemplate("layout.ftl");
+            args.put("package", packageElement.getQualifiedName());
+            args.put("keyWrapperClassName", fieldName + SUFFIX_PREF_WRAPPER);
+            args.put("rootLayout", rootLayout);
+            Writer writer = javaFileObject.openWriter();
+            template.process(args, writer);
+            IOUtils.closeQuietly(writer);
+            return new LayoutObject(layoutObjectName);
+        } catch (Exception e) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                    "En error occurred while generating Prefs code " + e.getClass() + e.getMessage(), element);
+            e.printStackTrace();
+            // Problem detected: halt
+            return null;
+        }
+    }
+
+    private boolean createLayoutCacheObject(List<LayoutObject> layouts, String packageName) {
+        JavaFileObject javaFileObject;
+        try {
+            Map<String, LayoutObject> layoutMap = new HashMap<>();
+            for (LayoutObject layout : layouts) {
+                String name = layout.getName();
+                layoutMap.put(stringToConstant(name.replace(packageName + ".", "")), layout);
+            }
+
+            Map<String, Object> args = new HashMap<>();
+            //Layout Cache Wrapper
+            javaFileObject = processingEnv.getFiler().createSourceFile(packageName + ".LayoutCache");
+            Template template = getFreemarkerConfiguration().getTemplate("layoutcache.ftl");
+            args.put("package", packageName);
+            args.put("layouts", layoutMap);
+            Writer writer = javaFileObject.openWriter();
+            template.process(args, writer);
+            IOUtils.closeQuietly(writer);
+        } catch (Exception e) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                    "En error occurred while generating Prefs code " + e.getClass() + e.getMessage());
+            e.printStackTrace();
+            // Problem detected: halt
+            return false;
+        }
+        return true;
     }
 }

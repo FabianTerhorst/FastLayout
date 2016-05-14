@@ -1,4 +1,4 @@
-package io.fabianterhorst.fastlayout;
+package io.fabianterhorst.fastlayout.processor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
