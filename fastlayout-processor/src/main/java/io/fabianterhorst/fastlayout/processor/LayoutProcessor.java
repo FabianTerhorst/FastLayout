@@ -83,6 +83,7 @@ public class LayoutProcessor extends AbstractProcessor {
         File layoutsFile = null;
         String packageName = null;
         List<LayoutObject> layouts = new ArrayList<>();
+        String rOutput = null;
         try {
             if (annotations.size() > 0) {
                 layoutsFile = findLayouts();
@@ -102,14 +103,30 @@ public class LayoutProcessor extends AbstractProcessor {
                         layouts.add(layoutObject);
                     }
 
+                    for (int layoutId : layoutsAnnotation.ids()) {
+                        if (rOutput == null) {
+                            File r = findR(packageName);
+                            rOutput = readFile(r);
+                        }
+                        String layoutName = getFieldNameFromLayoutId(rOutput, layoutId);
+                        LayoutObject layoutObject = createLayoutObject(layoutsFile, layoutName, packageElement, element, constantToObjectName(layoutName));
+                        if (layoutObject == null) {
+                            return true;
+                        }
+                        layouts.add(layoutObject);
+                    }
+
                     for (VariableElement variableElement : ElementFilter.fieldsIn(classElement.getEnclosedElements())) {
                         TypeMirror fieldType = variableElement.asType();//ILayout
                         String fieldName = variableElement.getSimpleName().toString();
                         String layoutName = fieldName;
                         Layout layoutAnnotation = variableElement.getAnnotation(Layout.class);
                         if (layoutAnnotation != null) {
-                            layoutName = layoutAnnotation.value();
+                            layoutName = layoutAnnotation.name();
                         }
+
+                        //int index = rOutput.indexOf(layoutName);
+
                         LayoutObject layoutObject = createLayoutObject(layoutsFile, layoutName, packageElement, element, constantToObjectName(fieldName));
                         if (layoutObject == null) {
                             return true;
@@ -358,6 +375,8 @@ public class LayoutProcessor extends AbstractProcessor {
      */
     private String constantToObjectName(String string) {
         //StringUtils.capitalize();
+        //Character.toUpperCase
+        //Character.toUpperCase()
         if (!Character.isUpperCase(string.charAt(0))) {
             string = string.substring(0, 1).toUpperCase() + string.substring(1);
             int length = string.length();
@@ -376,7 +395,7 @@ public class LayoutProcessor extends AbstractProcessor {
         return string;
     }
 
-    private File findLayouts() throws Exception {
+    private File getProjectRoot() throws Exception {
         Filer filer = processingEnv.getFiler();
 
         JavaFileObject dummySourceFile = filer.createSourceFile("dummy" + System.currentTimeMillis());
@@ -394,7 +413,11 @@ public class LayoutProcessor extends AbstractProcessor {
 
         File dummyFile = new File(cleanURI);
 
-        File projectRoot = dummyFile.getParentFile();
+        return dummyFile.getParentFile();
+    }
+
+    private File findLayouts() throws Exception {
+        File projectRoot = getProjectRoot();
 
         File sourceFile = new File(projectRoot.getAbsolutePath() + "/src/main/res/layout");
 
@@ -411,6 +434,38 @@ public class LayoutProcessor extends AbstractProcessor {
             }
         }
         return new File(projectRoot.getAbsolutePath() + "/src/main/res/layout");
+    }
+
+    private File findR(String packageName) throws Exception {
+        File projectRoot = getProjectRoot();
+
+        String packagePath = packageName.replace(".", "/");
+
+        File sourceFile = new File(projectRoot.getAbsolutePath() + "/r/debug/" + packagePath + "/R.java");
+
+        while (true) {
+            if (sourceFile.exists()) {
+                return sourceFile;
+            } else {
+                if (projectRoot.getParentFile() != null) {
+                    projectRoot = projectRoot.getParentFile();
+                    sourceFile = new File(projectRoot.getAbsolutePath() + "/r/debug/" + packagePath + "/R.java");
+                } else {
+                    break;
+                }
+            }
+        }
+        return new File(projectRoot.getAbsolutePath() + "/src/main/res/layout");
+    }
+
+    private String getFieldNameFromLayoutId(String rOutput, int layoutId) {
+        String hex = "0x" + Integer.toHexString(layoutId);
+        int index = rOutput.indexOf(hex);
+        String subToLayout = rOutput.substring(0, index);
+        String[] splitFields = subToLayout.split("=");
+        String lastField = splitFields[splitFields.length - 1];
+        String[] lastFieldNameSplit = lastField.split(" ");
+        return lastFieldNameSplit[lastFieldNameSplit.length - 1];
     }
 
     private File findLayout(File layouts, String layoutName) throws Exception {

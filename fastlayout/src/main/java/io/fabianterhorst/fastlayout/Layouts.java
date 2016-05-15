@@ -10,6 +10,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Inherited
 public @interface Layouts {
+    int[] ids() default {};
     String[] layouts() default {};
     boolean all() default false;
 }

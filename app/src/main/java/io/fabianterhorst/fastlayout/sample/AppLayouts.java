@@ -5,7 +5,8 @@ import io.fabianterhorst.fastlayout.Layouts;
 /**
  * Created by fabianterhorst on 14.05.16.
  */
-@Layouts(all = true)
+//@Layouts(all = true)
+@Layouts(ids = {R.layout.activity_main})
 //@Layouts(layouts = {"activity_main"})
 //@Layouts
 public class AppLayouts {
