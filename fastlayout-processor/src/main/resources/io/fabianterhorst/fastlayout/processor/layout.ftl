@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 //Todo : find full class name
 import android.view.*;
 import android.widget.*;
+import android.util.TypedValue;
 
 import io.fabianterhorst.fastlayout.ILayout;
 

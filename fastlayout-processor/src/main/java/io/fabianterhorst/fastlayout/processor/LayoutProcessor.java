@@ -1,6 +1,7 @@
 package io.fabianterhorst.fastlayout.processor;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -325,6 +326,8 @@ public class LayoutProcessor extends AbstractProcessor {
             return "(int) getContext().getResources().getDimension(R.dimen." + attribute.replace("@dimen/", "") + ")";
         } else if (attribute.contains("@string/")) {
             return "getContext().getString(R.string." + attribute.replace("@string/", "") + ")";
+        } else if (attribute.endsWith("dp") && StringUtils.isNumeric(attribute.replace("dp", ""))) {
+            return "(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, " + attribute.replace("dp", "") + ", getResources().getDisplayMetrics())";
         } else {
             try {
                 return Integer.parseInt(attribute);
@@ -374,18 +377,15 @@ public class LayoutProcessor extends AbstractProcessor {
      * @return object name schema
      */
     private String constantToObjectName(String string) {
-        //StringUtils.capitalize();
-        //Character.toUpperCase
-        //Character.toUpperCase()
         if (!Character.isUpperCase(string.charAt(0))) {
-            string = string.substring(0, 1).toUpperCase() + string.substring(1);
+            string = StringUtils.capitalize(string);
             int length = string.length();
             for (int i = 0; i < length; i++) {
                 char character = string.charAt(i);
                 if (character == "_".charAt(0)) {
                     String firstPart = string.substring(0, i);
                     String secondPart = string.substring(i + 1, length);
-                    String newSecondPart = (secondPart.length() > 0 ? secondPart.substring(0, 1).toUpperCase() : "") + secondPart.substring(1);
+                    String newSecondPart = StringUtils.capitalize(secondPart);
                     string = firstPart + newSecondPart;
                     i = firstPart.length();
                     length--;
