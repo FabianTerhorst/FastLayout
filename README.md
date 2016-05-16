@@ -25,8 +25,9 @@ apply plugin: 'com.neenbedankt.android-apt'
 ...
 dependencies {
 	...
-    apt 'io.fabianterhorst:fastlayout-processor:0.0.1-alpha5'
-    compile 'io.fabianterhorst:fastlayout:0.0.1-alpha5'
+    apt 'io.fabianterhorst:fastlayout-processor:0.0.1-alpha6'
+    compile 'io.fabianterhorst:fastlayout-annotations:0.0.1-alpha6'
+    compile 'io.fabianterhorst:fastlayout:0.0.1-alpha6'
     ...
 }
 ```
