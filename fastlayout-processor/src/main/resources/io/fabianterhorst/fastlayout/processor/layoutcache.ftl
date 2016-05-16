@@ -38,7 +38,7 @@ public class LayoutCache {
         return mInstance;
     }
 
-    public <T> T getLayout(@LayoutName String name) {
+    public <T extends View> T getLayout(@LayoutName String name) {
         if (mLayouts.containsKey(name)) {
             return (T) mLayouts.get(name).clone();
         }
