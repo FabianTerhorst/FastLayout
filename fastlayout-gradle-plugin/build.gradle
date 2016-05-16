@@ -1,0 +1,156 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:3.1.1'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
+    }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'com.jfrog.bintray'
+
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+/*properties.each { key, val ->
+    project.set(key, val)
+}*/
+def props = new Properties()
+props.load(new FileInputStream("${rootDir}/fastlayout.properties"))
+props.each { key, val ->
+    project.set(key, val)
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+}
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+group = 'io.fabianterhorst'
+version = file("${projectDir}/../version.txt").text.trim();
+
+configurations {
+    provided
+    compile.extendsFrom provided
+}
+
+sourceSets {
+    main {
+        compileClasspath += configurations.provided
+    }
+}
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+    //compile "io.fabianterhorst:fastlayout-transformer:${version}"
+    compile 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+    provided 'com.android.tools.build:gradle:2.1.0'
+
+    testCompile gradleTestKit()
+    testCompile 'junit:junit:4.12'
+}
+
+//for Ant filter
+import org.apache.tools.ant.filters.ReplaceTokens
+
+task generateVersionClass(type: Copy) {
+    from 'src/main/templates/Version.java'
+    into 'build/generated-src/main/java/io/fabianterhorst/fastlayout'
+    filter(ReplaceTokens, tokens: [version: version])
+    outputs.upToDateWhen { false }
+}
+
+// Include the generated Version file
+sourceSets {
+    main {
+        java {
+            srcDir 'build/generated-src/main/java'
+        }
+    }
+}
+
+compileJava.dependsOn generateVersionClass
+
+task wrapper(type: Wrapper) {
+    gradleVersion = project.gradleVersion
+}
+
+def commonPom = {
+    licenses {
+        license {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            distribution 'repo'
+        }
+    }
+    issueManagement {
+        system 'github'
+        url 'https://github.com/fabianterhorst/fastlayout/issues'
+    }
+    scm {
+        url 'scm:https://github.com/fabianterhorst/fastlayout'
+        connection 'scm:git@github.com:fabianterhorst/fastlayout.git'
+        developerConnection 'scm:git@github.com:fabianterhorst/fastlayout.git'
+    }
+}
+
+publishing {
+    publications {
+        fastlayoutPublication(MavenPublication) {
+            groupId 'io.fabianterhorst'
+            artifactId = 'fastlayout-gradle-plugin'
+            from components.java
+            pom.withXml {
+                Node root = asNode()
+                root.appendNode('name', 'fastlayout-gradle-plugin')
+                root.appendNode('description', 'Gradle plugin for Fastlayout.')
+                root.appendNode('url', 'https://github.com/fabianterhorst/fastlayout')
+                root.children().last() + commonPom
+            }
+        }
+    }
+}
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    dryRun = false
+    publish = false
+
+    publications = ['fastlayoutPublication']
+    pkg {
+        repo = 'maven'
+        name = 'fastlayout-gradle-plugin'
+        desc = 'Fastlayout'
+        websiteUrl = 'https://github.com/fabianterhorst/fastlayout'
+        issueTrackerUrl = 'https://github.com/fabianterhorst/fastlayout/issues'
+        vcsUrl = 'https://github.com/fabianterhorst/fastlayout.git'
+        licenses = ['Apache-2.0']
+        labels = ['android', 'fastlayout']
+        publicDownloadNumbers = false
+    }
+}
+
+artifactory {
+    contextUrl = 'https://oss.jfrog.org/artifactory'
+    publish {
+        repository {
+            repoKey = 'oss-snapshot-local'
+            username = properties.getProperty("bintray.user")
+            password = properties.getProperty("bintray.apikey")
+        }
+        defaults {
+            publications ('fastlayoutPublication')
+        }
+    }
+}
