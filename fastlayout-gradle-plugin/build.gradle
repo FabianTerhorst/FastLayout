@@ -14,6 +14,8 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'com.jfrog.bintray'
 
+def siteUrl = 'https://github.com/FabianTerhorst/FastLayout'
+def gitUrl = 'https://github.com/FabianTerhorst/FastLayout.git'
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
@@ -31,8 +33,8 @@ repositories {
     jcenter()
 }
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 group = 'io.fabianterhorst'
 version = file("${projectDir}/../version.txt").text.trim();
@@ -120,7 +122,7 @@ publishing {
     }
 }
 
-bintray {
+/*bintray {
     user = properties.getProperty("bintray.user")
     key = properties.getProperty("bintray.apikey")
 
@@ -139,9 +141,33 @@ bintray {
         labels = ['android', 'fastlayout']
         publicDownloadNumbers = false
     }
+}*/
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    configurations = ['archives']
+    pkg {
+        repo = "maven"
+        // it is the name that appears in bintray when logged
+        name = "fastlayout-gradle-plugin"
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["Apache-2.0"]
+        publish = true
+        version {
+//            mavenCentralSync {
+//                sync = true //Optional (true by default). Determines whether to sync the version to Maven Central.
+//                user = properties.getProperty("bintray.oss.user") //OSS user token
+//                password = properties.getProperty("bintray.oss.password") //OSS user password
+//                close = '1' //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
+//            }
+        }
+    }
 }
 
-artifactory {
+/*artifactory {
     contextUrl = 'https://oss.jfrog.org/artifactory'
     publish {
         repository {
@@ -153,4 +179,4 @@ artifactory {
             publications ('fastlayoutPublication')
         }
     }
-}
+}*/
