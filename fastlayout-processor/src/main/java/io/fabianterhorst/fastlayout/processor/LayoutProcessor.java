@@ -39,10 +39,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.Version;
-import io.fabianterhorst.fastlayout.Layout;
-import io.fabianterhorst.fastlayout.Layouts;
+import io.fabianterhorst.fastlayout.annotations.Layout;
+import io.fabianterhorst.fastlayout.annotations.Layouts;
 
-@SupportedAnnotationTypes("io.fabianterhorst.fastlayout.Layouts")
+@SupportedAnnotationTypes("io.fabianterhorst.fastlayout.annotations.Layouts")
 public class LayoutProcessor extends AbstractProcessor {
 
     private static final ArrayList<String> nativeSupportedAttributes = new ArrayList<String>() {{
@@ -270,7 +270,7 @@ public class LayoutProcessor extends AbstractProcessor {
                         String end = refactor.substring(1, refactor.length());
                         newName += start + end;
                     }
-                    Object value = getLayoutAttribute(attributeValue);
+                    Object value = getLayoutAttribute(attributeValue, newName);
                     /*try {
                         value = Boolean.parseBoolean(attributeValue);
                     } catch (NumberFormatException ignore) {
@@ -281,10 +281,13 @@ public class LayoutProcessor extends AbstractProcessor {
                             layout.addLayoutParam(relativeName, getLayoutId(value), true, true);
                         }
                     } else {
+                        //Todo : rename number to noString or something
                         boolean number = false;
                         if (String.valueOf(value).contains("R.")) {
                             number = true;
                         } else if (isNumber(value)) {
+                            number = true;
+                        } else if (value.equals("true") || value.equals("false")) {
                             number = true;
                         }
                         layout.addLayoutParam(newName, value, false, false, number);
@@ -299,11 +302,14 @@ public class LayoutProcessor extends AbstractProcessor {
                     String end = refactor.substring(1, refactor.length());
                     newName += start + end;
                 }
-                Object value = getLayoutAttribute(attributeValue);
+                Object value = getLayoutAttribute(attributeValue, newName);
+                //Todo : rename number to noString or something
                 boolean number = false;
                 if (String.valueOf(value).contains("R.")) {
                     number = true;
                 } else if (isNumber(value)) {
+                    number = true;
+                } else if (value.equals("true") || value.equals("false")) {
                     number = true;
                 }
                 layout.addLayoutParam(newName, value, false, false, number);
@@ -322,12 +328,20 @@ public class LayoutProcessor extends AbstractProcessor {
     }
 
     private Object getLayoutAttribute(String attribute) {
-        if (attribute.contains("@dimen/")) {
+        return getLayoutAttribute(attribute, null);
+    }
+
+    private Object getLayoutAttribute(String attribute, String attributeName) {
+        if (attribute.startsWith("@dimen/")) {
             return "(int) getContext().getResources().getDimension(R.dimen." + attribute.replace("@dimen/", "") + ")";
-        } else if (attribute.contains("@string/")) {
+        } else if (attribute.startsWith("@string/")) {
             return "getContext().getString(R.string." + attribute.replace("@string/", "") + ")";
         } else if (attribute.endsWith("dp") && StringUtils.isNumeric(attribute.replace("dp", ""))) {
             return "(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, " + attribute.replace("dp", "") + ", getResources().getDisplayMetrics())";
+        } else if (attribute.startsWith("?attr/") && attributeName != null && attributeName.equals("Background")) {
+            return "getAttrDrawable(getContext(), R.attr." + attribute.replace("?attr/", "") + ")";
+        }else if (attribute.startsWith("?attr/")) {
+            return "getAttrInt(getContext(), R.attr." + attribute.replace("?attr/", "") + ")";
         } else {
             try {
                 return Integer.parseInt(attribute);

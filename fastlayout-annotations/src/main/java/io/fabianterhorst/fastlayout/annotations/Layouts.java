@@ -1,4 +1,4 @@
-package io.fabianterhorst.fastlayout;
+package io.fabianterhorst.fastlayout.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;

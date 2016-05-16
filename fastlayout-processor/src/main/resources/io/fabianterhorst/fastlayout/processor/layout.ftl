@@ -12,6 +12,9 @@ import io.fabianterhorst.fastlayout.ILayout;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
+import static io.fabianterhorst.fastlayout.LayoutUtils.getAttrDrawable;
+import static io.fabianterhorst.fastlayout.LayoutUtils.getAttrInt;
+
 public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayout, Cloneable {
 
     <#list rootLayout.children as child>

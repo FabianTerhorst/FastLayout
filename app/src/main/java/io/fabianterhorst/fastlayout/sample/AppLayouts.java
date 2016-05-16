@@ -1,6 +1,6 @@
 package io.fabianterhorst.fastlayout.sample;
 
-import io.fabianterhorst.fastlayout.Layouts;
+import io.fabianterhorst.fastlayout.annotations.Layouts;
 
 /**
  * Created by fabianterhorst on 14.05.16.

@@ -8,7 +8,7 @@ targetCompatibility = JavaVersion.VERSION_1_7
 def siteUrl = 'https://github.com/FabianTerhorst/FastLayout'
 def gitUrl = 'https://github.com/FabianTerhorst/FastLayout.git'
 
-version = "0.0.1-alpha5"
+version = "0.0.1-alpha6"
 group = "io.fabianterhorst"
 
 install {
@@ -91,7 +91,7 @@ bintray {
 }
 
 dependencies {
-    compile project(':fastlayout')
+    compile project(':fastlayout-annotations')
     compile 'org.freemarker:freemarker:2.3.22'
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.commons:commons-lang3:3.4'
