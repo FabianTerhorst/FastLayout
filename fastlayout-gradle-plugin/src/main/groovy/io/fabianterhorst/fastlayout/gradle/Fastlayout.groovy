@@ -20,7 +20,7 @@ class FastLayout implements Plugin<Project> {
         }
 
         if (!isTransformAvailable()) {
-            throw new GradleException('Fastlayout gradle plugin only supports android gradle plugin 1.5.0 or later.')
+            throw new GradleException('FastLayout gradle plugin only supports android gradle plugin 1.5.0 or later.')
         }
 
         def isKotlinProject = project.plugins.find {
