@@ -215,16 +215,16 @@ public class LayoutProcessor extends AbstractProcessor {
         Object paddingRight = null;
         Object paddingBottom = null;
         if (node.getAttributes().getNamedItem("android:paddingLeft") != null) {
-            paddingLeft = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingLeft").getNodeValue());
+            paddingLeft = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingLeft").getNodeValue()).getValue();
         }
         if (node.getAttributes().getNamedItem("android:paddingTop") != null) {
-            paddingTop = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingTop").getNodeValue());
+            paddingTop = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingTop").getNodeValue()).getValue();
         }
         if (node.getAttributes().getNamedItem("android:paddingRight") != null) {
-            paddingRight = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingRight").getNodeValue());
+            paddingRight = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingRight").getNodeValue()).getValue();
         }
         if (node.getAttributes().getNamedItem("android:paddingBottom") != null) {
-            paddingBottom = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingBottom").getNodeValue());
+            paddingBottom = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingBottom").getNodeValue()).getValue();
         }
         if (paddingLeft != null || paddingTop != null || paddingRight != null || paddingBottom != null) {
             layoutParams.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
@@ -234,22 +234,22 @@ public class LayoutProcessor extends AbstractProcessor {
         Object marginRight = null;
         Object marginBottom = null;
         if (node.getAttributes().getNamedItem("android:layout_marginLeft") != null) {
-            marginLeft = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginLeft").getNodeValue());
+            marginLeft = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginLeft").getNodeValue()).getValue();
         }
         if (node.getAttributes().getNamedItem("android:layout_marginTop") != null) {
-            marginTop = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginTop").getNodeValue());
+            marginTop = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginTop").getNodeValue()).getValue();
         }
         if (node.getAttributes().getNamedItem("android:layout_marginRight") != null) {
-            marginRight = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginRight").getNodeValue());
+            marginRight = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginRight").getNodeValue()).getValue();
         }
         if (node.getAttributes().getNamedItem("android:layout_marginBottom") != null) {
-            marginBottom = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginBottom").getNodeValue());
+            marginBottom = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginBottom").getNodeValue()).getValue();
         }
         if (marginLeft != null || marginTop != null || marginRight != null || marginBottom != null) {
             layoutParams.setMargins(marginLeft, marginTop, marginRight, marginBottom);
         }
         if (node.getAttributes().getNamedItem("android:layout_weight") != null) {
-            Object weight = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_weight").getNodeValue());
+            Object weight = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_weight").getNodeValue()).getValue();
             layoutParams.setWeight(weight);
         }
         layout.setLayoutParams(layoutParams);
@@ -268,27 +268,18 @@ public class LayoutProcessor extends AbstractProcessor {
                         String end = refactor.substring(1, refactor.length());
                         newName += start + end;
                     }
-                    Object value = getLayoutAttribute(attributeValue, newName);
-                    /*try {
-                        value = Boolean.parseBoolean(attributeValue);
-                    } catch (NumberFormatException ignore) {
-                    }*/
+
+                    LayoutAttribute layoutAttribute = getLayoutAttribute(attributeValue, newName, node);
+                    boolean string = layoutAttribute.isString();
+                    Object value = layoutAttribute.getValue();
+
                     String relativeName = getRelativeLayoutParam(newName.replace("Layout", ""));
                     if (relativeName != null && relativeName.contains("_")) {
                         if (!value.equals("false")) {
                             layout.addLayoutParam(relativeName, getLayoutId(value), true, true);
                         }
                     } else {
-                        //Todo : rename number to noString or something
-                        boolean number = false;
-                        if (String.valueOf(value).contains("R.")) {
-                            number = true;
-                        } else if (isNumber(value)) {
-                            number = true;
-                        } else if (value.equals("true") || value.equals("false")) {
-                            number = true;
-                        }
-                        layout.addLayoutParam(newName, value, false, false, number);
+                        layout.addLayoutParam(newName, value, false, false, !string);
                     }
                 }
             } else if (attributeName.contains("app:")) {
@@ -300,17 +291,12 @@ public class LayoutProcessor extends AbstractProcessor {
                     String end = refactor.substring(1, refactor.length());
                     newName += start + end;
                 }
-                Object value = getLayoutAttribute(attributeValue, newName);
-                //Todo : rename number to noString or something
-                boolean number = false;
-                if (String.valueOf(value).contains("R.")) {
-                    number = true;
-                } else if (isNumber(value)) {
-                    number = true;
-                } else if (value.equals("true") || value.equals("false")) {
-                    number = true;
-                }
-                layout.addLayoutParam(newName, value, false, false, number);
+                
+                LayoutAttribute layoutAttribute = getLayoutAttribute(attributeValue, newName, node);
+                boolean string = layoutAttribute.isString();
+                Object value = layoutAttribute.getValue();
+
+                layout.addLayoutParam(newName, value, false, false, !string);
 
             }
         }
@@ -325,29 +311,33 @@ public class LayoutProcessor extends AbstractProcessor {
         return value;
     }
 
-    private Object getLayoutAttribute(String attribute) {
-        return getLayoutAttribute(attribute, null);
+    private LayoutAttribute getLayoutAttribute(String attribute) {
+        return getLayoutAttribute(attribute, null, null);
     }
 
-    private Object getLayoutAttribute(String attribute, String attributeName) {
+    private LayoutAttribute getLayoutAttribute(String attribute, String attributeName, Node node) {
         if (attribute.startsWith("@dimen/")) {
-            return "(int) getContext().getResources().getDimension(R.dimen." + attribute.replace("@dimen/", "") + ")";
+            return new LayoutAttribute("(int) getContext().getResources().getDimension(R.dimen." + attribute.replace("@dimen/", "") + ")", false);
         } else if (attribute.startsWith("@string/")) {
-            return "getContext().getString(R.string." + attribute.replace("@string/", "") + ")";
+            return new LayoutAttribute("getContext().getString(R.string." + attribute.replace("@string/", "") + ")", false);
         } else if (attribute.endsWith("dp") && StringUtils.isNumeric(attribute.replace("dp", ""))) {
-            return "(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, " + attribute.replace("dp", "") + ", getResources().getDisplayMetrics())";
+            return new LayoutAttribute("(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, " + attribute.replace("dp", "") + ", getResources().getDisplayMetrics())", false);
         } else if (attribute.startsWith("?attr/") && attributeName != null && attributeName.equals("Background")) {
-            return "LayoutUtils.getAttrDrawable(getContext(), R.attr." + attribute.replace("?attr/", "") + ")";
+            return new LayoutAttribute("LayoutUtils.getAttrDrawable(getContext(), R.attr." + attribute.replace("?attr/", "") + ")", false);
         }else if (attribute.startsWith("?attr/")) {
-            return "LayoutUtils.getAttrInt(getContext(), R.attr." + attribute.replace("?attr/", "") + ")";
+            return new LayoutAttribute("LayoutUtils.getAttrInt(getContext(), R.attr." + attribute.replace("?attr/", "") + ")", false);
+        } else if (attributeName != null && attributeName.equals("Orientation")) {
+            return new LayoutAttribute(node.getNodeName() + "." + attribute.toUpperCase(), false);
+        } else if(attribute.equals("false") || attribute.equals("true")) {
+            return new LayoutAttribute(attribute, false);
         } else {
             try {
-                return Integer.parseInt(attribute);
+                return new LayoutAttribute(Integer.parseInt(attribute), false);
             } catch (NumberFormatException ignore) {
 
             }
         }
-        return attribute;
+        return new LayoutAttribute(attribute, true);
     }
 
     /**
