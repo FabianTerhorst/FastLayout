@@ -126,8 +126,6 @@ public class LayoutProcessor extends AbstractProcessor {
                             layoutName = layoutAnnotation.name();
                         }
 
-                        //int index = rOutput.indexOf(layoutName);
-
                         LayoutObject layoutObject = createLayoutObject(layoutsFile, layoutName, packageElement, element, constantToObjectName(fieldName));
                         if (layoutObject == null) {
                             return true;
