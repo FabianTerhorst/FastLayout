@@ -8,7 +8,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-class Fastlayout implements Plugin<Project> {
+class FastLayout implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
