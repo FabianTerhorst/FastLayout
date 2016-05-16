@@ -8,7 +8,7 @@ targetCompatibility = JavaVersion.VERSION_1_7
 def siteUrl = 'https://github.com/FabianTerhorst/FastLayout'
 def gitUrl = 'https://github.com/FabianTerhorst/FastLayout.git'
 
-version = "0.0.1-alpha6"
+version = file("${projectDir}/../version.txt").text.trim();
 group = "io.fabianterhorst"
 
 install {
