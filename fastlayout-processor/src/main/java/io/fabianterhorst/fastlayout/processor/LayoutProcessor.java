@@ -291,7 +291,7 @@ public class LayoutProcessor extends AbstractProcessor {
                     String end = refactor.substring(1, refactor.length());
                     newName += start + end;
                 }
-                
+
                 LayoutAttribute layoutAttribute = getLayoutAttribute(attributeValue, newName, node);
                 boolean string = layoutAttribute.isString();
                 Object value = layoutAttribute.getValue();
