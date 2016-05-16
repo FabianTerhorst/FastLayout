@@ -64,7 +64,7 @@ public class LayoutProcessor extends AbstractProcessor {
 
     private Configuration mFreemarkerConfiguration;
 
-    private final List<LayoutEntity> mChilds = new ArrayList<>();
+    private List<LayoutEntity> mChilds;
 
     @Override
     public SourceVersion getSupportedSourceVersion() {
@@ -506,6 +506,7 @@ public class LayoutProcessor extends AbstractProcessor {
     }
 
     private LayoutObject createLayoutObject(String layout, PackageElement packageElement, javax.lang.model.element.Element element, String fieldName) throws Exception {
+        mChilds = new ArrayList<>();
         LayoutEntity rootLayout = new LayoutEntity();
         try {
             DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
