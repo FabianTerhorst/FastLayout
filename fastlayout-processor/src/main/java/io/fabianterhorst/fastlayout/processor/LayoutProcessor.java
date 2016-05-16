@@ -337,9 +337,9 @@ public class LayoutProcessor extends AbstractProcessor {
         } else if (attribute.endsWith("dp") && StringUtils.isNumeric(attribute.replace("dp", ""))) {
             return "(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, " + attribute.replace("dp", "") + ", getResources().getDisplayMetrics())";
         } else if (attribute.startsWith("?attr/") && attributeName != null && attributeName.equals("Background")) {
-            return "getAttrDrawable(getContext(), R.attr." + attribute.replace("?attr/", "") + ")";
+            return "LayoutUtils.getAttrDrawable(getContext(), R.attr." + attribute.replace("?attr/", "") + ")";
         }else if (attribute.startsWith("?attr/")) {
-            return "getAttrInt(getContext(), R.attr." + attribute.replace("?attr/", "") + ")";
+            return "LayoutUtils.getAttrInt(getContext(), R.attr." + attribute.replace("?attr/", "") + ")";
         } else {
             try {
                 return Integer.parseInt(attribute);
