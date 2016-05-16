@@ -12,24 +12,16 @@ buildscript {
     }
     dependencies {
         ...
-		classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
+		classpath 'io.fabianterhorst:fastlayout-gradle-plugin:0.0.1-alpha10'
 		...
 	}
 }
 ```
 app build.gradle
 ```groovy
-apply plugin: 'com.android.application'
 ...
-apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'fastlayout'
 ...
-dependencies {
-	...
-    apt 'io.fabianterhorst:fastlayout-processor:0.0.1-alpha7'
-    compile 'io.fabianterhorst:fastlayout-annotations:0.0.1-alpha7'
-    compile 'io.fabianterhorst:fastlayout:0.0.1-alpha7'
-    ...
-}
 ```
 
 ###First create your layout java class
