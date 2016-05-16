@@ -1,7 +1,9 @@
 # FastLayout
 ###Generates a Java Object for your xml layout to reduce inflate time to zero
 
-####The project methodcount is 1, because everythink happen on compile time.
+<a href="http://www.methodscount.com/?lib=io.fabianterhorst%3Afastlayout%3A%2B"><img src="https://img.shields.io/badge/Methods and size-12 | 4 KB-e91e63.svg"></img></a>
+
+####The project methodcount is very low, because everythink happen on compile time.
 
 ###Add the dependencies
 main build.gradle
