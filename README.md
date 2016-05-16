@@ -39,6 +39,7 @@ This is needed to filter the layouts you want to compile
 @Layouts(all = true)
 //there you can specify the layouts
 //@Layouts(layouts = {"activity_main", "fragment_one"})
+//@Layouts(ids = {R.layout.activity_main, R.layout.fragment_one})
 //this is needed when you want to use the class fields
 //@Layouts
 public class AppLayouts {
