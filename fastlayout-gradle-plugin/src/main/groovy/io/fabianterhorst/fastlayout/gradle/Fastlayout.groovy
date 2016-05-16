@@ -3,8 +3,8 @@ package io.fabianterhorst.fastlayout.gradle
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.LibraryPlugin
 import com.neenbedankt.gradle.androidapt.AndroidAptPlugin
-//import io.fabianterhorst.fastlayout.transformer.FastLayoutTransformer
 import org.gradle.api.GradleException
+//import io.fabianterhorst.fastlayout.transformer.FastLayoutTransformer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -36,10 +36,10 @@ class FastLayout implements Plugin<Project> {
         project.dependencies.add("compile", "io.fabianterhorst:fastlayout:${Version.VERSION}")
         project.dependencies.add("compile", "io.fabianterhorst:fastlayout-annotations:${Version.VERSION}")
         if (isKotlinProject) {
-            project.dependencies.add("kapt", "io.fabianterhorst:fastlayout-annotations:${Version.VERSION}")
+            //project.dependencies.add("kapt", "io.fabianterhorst:fastlayout-annotations:${Version.VERSION}")
             project.dependencies.add("kapt", "io.fabianterhorst:fastlayout-processor:${Version.VERSION}")
         } else {
-            project.dependencies.add("apt", "io.fabianterhorst:fastlayout-annotations:${Version.VERSION}")
+            //project.dependencies.add("apt", "io.fabianterhorst:fastlayout-annotations:${Version.VERSION}")
             project.dependencies.add("apt", "io.fabianterhorst:fastlayout-processor:${Version.VERSION}")
         }
     }
