@@ -24,6 +24,8 @@
         android:id="@+id/linearLayout1"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
+        android:clickable="true"
+        android:background="?attr/selectableItemBackground"
         android:layout_alignEnd="@id/linearLayout1"
         android:layout_height="wrap_content">
 
