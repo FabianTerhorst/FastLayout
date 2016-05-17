@@ -14,7 +14,7 @@ buildscript {
     }
     dependencies {
         ...
-		classpath 'io.fabianterhorst:fastlayout-gradle-plugin:0.0.1-alpha15'
+		classpath 'io.fabianterhorst:fastlayout-gradle-plugin:0.0.1-alpha16'
 		...
 	}
 }
