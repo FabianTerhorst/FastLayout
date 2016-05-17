@@ -47,6 +47,9 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
         <#if rootLayout.layoutParams.padding??>
         setPadding(${rootLayout.layoutParams.padding[0]}, ${rootLayout.layoutParams.padding[1]}, ${rootLayout.layoutParams.padding[2]}, ${rootLayout.layoutParams.padding[3]});
         </#if>
+        <#if rootLayout.layoutParams.paddingRelative??>
+        setPaddingRelative(${rootLayout.layoutParams.paddingRelative[0]}, ${rootLayout.layoutParams.paddingRelative[1]}, ${rootLayout.layoutParams.paddingRelative[2]}, ${rootLayout.layoutParams.paddingRelative[3]});
+        </#if>
         <#list rootLayout.layoutParamsList?keys as key>
         set${key}(<#if !rootLayout.layoutParamsList[key].value?is_number && !rootLayout.layoutParamsList[key].number>"</#if>${rootLayout.layoutParamsList[key].value}<#if !rootLayout.layoutParamsList[key].value?is_number && !rootLayout.layoutParamsList[key].number>"</#if>);
         </#list>
@@ -59,7 +62,10 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
         ${child.id}LayoutParams.setMargins(${child.layoutParams.margins[0]}, ${child.layoutParams.margins[1]}, ${child.layoutParams.margins[2]}, ${child.layoutParams.margins[3]});
         </#if>
         <#if child.layoutParams.padding??>
-        setPadding(${child.layoutParams.padding[0]}, ${child.layoutParams.padding[1]}, ${child.layoutParams.padding[2]}, ${child.layoutParams.padding[3]});
+        ${child.id}.setPadding(${child.layoutParams.padding[0]}, ${child.layoutParams.padding[1]}, ${child.layoutParams.padding[2]}, ${child.layoutParams.padding[3]});
+        </#if>
+        <#if child.layoutParams.paddingRelative??>
+        ${child.id}.setPaddingRelative(${child.layoutParams.paddingRelative[0]}, ${child.layoutParams.paddingRelative[1]}, ${child.layoutParams.paddingRelative[2]}, ${child.layoutParams.paddingRelative[3]});
         </#if>
         <#list child.layoutParamsList?keys as key>
         <#if child.layoutParamsList[key].paramValue>${child.id}LayoutParams<#else>${child.id}</#if>.<#if child.layoutParamsList[key].rule>addRule(${key}<#if child.layoutParamsList[key].value != "true">,${child.layoutParamsList[key].value}</#if>)<#elseif !child.layoutParamsList[key].setter>set${key}(<#if !child.layoutParamsList[key].value?is_number && !child.layoutParamsList[key].number>"</#if>${child.layoutParamsList[key].value}<#if !child.layoutParamsList[key].value?is_number && !child.layoutParamsList[key].number>"</#if>)<#else>${key} = <#if !child.layoutParamsList[key].value?is_number && !child.layoutParamsList[key].number>"</#if>${child.layoutParamsList[key].value}<#if !child.layoutParamsList[key].value?is_number && !child.layoutParamsList[key].number>"</#if></#if>;

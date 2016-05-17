@@ -45,6 +45,10 @@
         android:id="@+id/frameLayout1"
         android:layout_alignBaseline="@+id/linearLayout1"
         android:layout_width="match_parent"
+        android:layout_marginEnd="10dp"
+        android:paddingEnd="10dp"
+        android:paddingStart="10dp"
+        android:layout_toEndOf="@id/linearLayout1"
         android:layout_height="wrap_content">
 
         <TextView

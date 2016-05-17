@@ -50,6 +50,8 @@ public class LayoutProcessor extends AbstractProcessor {
         add("layout_width");
         add("id");
         add("padding");
+        add("paddingStart");
+        add("paddingEnd");
         add("paddingLeft");
         add("paddingTop");
         add("paddingRight");
@@ -209,6 +211,8 @@ public class LayoutProcessor extends AbstractProcessor {
         Object paddingTop = null;
         Object paddingRight = null;
         Object paddingBottom = null;
+        Object paddingStart = null;
+        Object paddingEnd = null;
         Object padding = null;
         if (node.getAttributes().getNamedItem("android:paddingLeft") != null) {
             paddingLeft = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingLeft").getNodeValue()).getValue();
@@ -222,14 +226,24 @@ public class LayoutProcessor extends AbstractProcessor {
         if (node.getAttributes().getNamedItem("android:paddingBottom") != null) {
             paddingBottom = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingBottom").getNodeValue()).getValue();
         }
+        if (node.getAttributes().getNamedItem("android:paddingStart") != null) {
+            paddingStart = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingStart").getNodeValue()).getValue();
+        }
+        if (node.getAttributes().getNamedItem("android:paddingEnd") != null) {
+            paddingEnd = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingEnd").getNodeValue()).getValue();
+        }
         if (paddingLeft != null || paddingTop != null || paddingRight != null || paddingBottom != null) {
             layoutParams.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+        }
+        if (paddingStart != null || paddingEnd != null) {
+            layoutParams.setPaddingRelative(paddingStart, paddingTop, paddingEnd, paddingBottom);
         }
         if (node.getAttributes().getNamedItem("android:padding") != null) {
             padding = getLayoutAttribute(node.getAttributes().getNamedItem("android:padding").getNodeValue()).getValue();
         }
         if (padding != null) {
             layoutParams.setPadding(padding, padding, padding, padding);
+            layoutParams.setPaddingRelative(padding, padding, padding, padding);
         }
         Object marginLeft = null;
         Object marginTop = null;
@@ -281,12 +295,14 @@ public class LayoutProcessor extends AbstractProcessor {
                     Object value = layoutAttribute.getValue();
 
                     String relativeName = getRelativeLayoutParam(newName.replace("Layout", ""));
-                    if (relativeName != null && relativeName.contains("_") && attributeName.startsWith("android:layout_")) {
+                    if (relativeName != null && relativeName.contains("_") && attributeName.startsWith("android:layout_") && !attributeName.startsWith("android:layout_margin")) {
                         if (!value.equals("false")) {
                             layout.addLayoutParam(relativeName, getLayoutId(value), true, true);
                         }
                     } else if (attributeName.equals("android:layout_gravity")) {
                         layout.addLayoutParam(newName.replace("Layout", "").toLowerCase(), value, true, false, !string, true);
+                    } else if (attributeName.equals("android:layout_marginEnd") || attributeName.equals("android:layout_marginStart")) {
+                        layout.addLayoutParam(newName.replace("Layout", ""), value, true, false, !string);
                     } else {
                         layout.addLayoutParam(newName, value, false, false, !string);
                     }
@@ -360,6 +376,9 @@ public class LayoutProcessor extends AbstractProcessor {
      * @return relative layout attribute
      */
     private String getRelativeLayoutParam(String name) {
+        if (name.startsWith("To")) {
+            name = name.replace("To", "");
+        }
         return "RelativeLayout." + stringToConstant(name).toUpperCase();
     }
 
