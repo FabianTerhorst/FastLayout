@@ -49,10 +49,12 @@ public class LayoutProcessor extends AbstractProcessor {
         add("layout_height");
         add("layout_width");
         add("id");
+        add("padding");
         add("paddingLeft");
         add("paddingTop");
         add("paddingRight");
         add("paddingBottom");
+        add("layout_margin");
         add("layout_marginLeft");
         add("layout_marginTop");
         add("layout_marginRight");
@@ -207,6 +209,7 @@ public class LayoutProcessor extends AbstractProcessor {
         Object paddingTop = null;
         Object paddingRight = null;
         Object paddingBottom = null;
+        Object padding = null;
         if (node.getAttributes().getNamedItem("android:paddingLeft") != null) {
             paddingLeft = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingLeft").getNodeValue()).getValue();
         }
@@ -222,10 +225,17 @@ public class LayoutProcessor extends AbstractProcessor {
         if (paddingLeft != null || paddingTop != null || paddingRight != null || paddingBottom != null) {
             layoutParams.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
         }
+        if (node.getAttributes().getNamedItem("android:padding") != null) {
+            padding = getLayoutAttribute(node.getAttributes().getNamedItem("android:padding").getNodeValue()).getValue();
+        }
+        if (padding != null) {
+            layoutParams.setPadding(padding, padding, padding, padding);
+        }
         Object marginLeft = null;
         Object marginTop = null;
         Object marginRight = null;
         Object marginBottom = null;
+        Object margin = null;
         if (node.getAttributes().getNamedItem("android:layout_marginLeft") != null) {
             marginLeft = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginLeft").getNodeValue()).getValue();
         }
@@ -240,6 +250,12 @@ public class LayoutProcessor extends AbstractProcessor {
         }
         if (marginLeft != null || marginTop != null || marginRight != null || marginBottom != null) {
             layoutParams.setMargins(marginLeft, marginTop, marginRight, marginBottom);
+        }
+        if (node.getAttributes().getNamedItem("android:layout_margin") != null) {
+            margin = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_margin").getNodeValue()).getValue();
+        }
+        if(margin != null){
+            layoutParams.setMargins(margin, margin, margin, margin);
         }
         if (node.getAttributes().getNamedItem("android:layout_weight") != null) {
             Object weight = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_weight").getNodeValue()).getValue();
