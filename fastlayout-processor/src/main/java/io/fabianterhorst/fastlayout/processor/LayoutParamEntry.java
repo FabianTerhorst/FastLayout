@@ -10,11 +10,14 @@ public class LayoutParamEntry {
 
     private boolean number;
 
+    private boolean setter;
+
     public LayoutParamEntry(Object value, boolean paramValue, boolean rule) {
         this.value = value;
         this.paramValue = paramValue;
         this.rule = rule;
         this.number = false;
+        this.setter = false;
     }
 
     public LayoutParamEntry(Object value, boolean paramValue, boolean rule, boolean number) {
@@ -22,6 +25,15 @@ public class LayoutParamEntry {
         this.paramValue = paramValue;
         this.rule = rule;
         this.number = number;
+        this.setter = false;
+    }
+
+    public LayoutParamEntry(Object value, boolean paramValue, boolean rule, boolean number, boolean setter) {
+        this.value = value;
+        this.paramValue = paramValue;
+        this.rule = rule;
+        this.number = number;
+        this.setter = setter;
     }
 
     public void setValue(String value) {
@@ -40,6 +52,10 @@ public class LayoutParamEntry {
         this.number = number;
     }
 
+    public void setSetter(boolean setter) {
+        this.setter = setter;
+    }
+
     public Object getValue() {
         return value;
     }
@@ -54,5 +70,9 @@ public class LayoutParamEntry {
 
     public boolean isNumber() {
         return number;
+    }
+
+    public boolean isSetter() {
+        return setter;
     }
 }

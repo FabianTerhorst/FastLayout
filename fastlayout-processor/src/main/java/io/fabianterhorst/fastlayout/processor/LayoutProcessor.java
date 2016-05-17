@@ -161,18 +161,6 @@ public class LayoutProcessor extends AbstractProcessor {
         return true;
     }
 
-    private String getLayoutParamsForViewGroup(String viewGroup) {
-        if (viewGroup.contains("Layout")) {
-            return viewGroup + ".LayoutParams";
-        }
-        switch (viewGroup) {
-            case "TextView":
-                return "ViewGroup.LayoutParams";
-            default:
-                return viewGroup + ".LayoutParams";
-        }
-    }
-
     private String normalizeLayoutId(String layoutId) {
         return layoutId.replace("@+id/", "").replace("@id/", "");
     }
@@ -187,7 +175,7 @@ public class LayoutProcessor extends AbstractProcessor {
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node child = nodeList.item(i);
             if (child.getAttributes() != null && child.getAttributes().getLength() > 0) {
-                LayoutEntity layout = createLayoutFromChild(child);
+                LayoutEntity layout = createLayoutFromChild(child, node.getNodeName());
                 if (node.getNodeName().equals("RelativeLayout")) {
                     layout.setRelative(true);
                 }
@@ -201,13 +189,18 @@ public class LayoutProcessor extends AbstractProcessor {
         return layouts;
     }
 
-    private LayoutEntity createLayoutFromChild(Node node) {
+    private LayoutEntity createLayoutFromChild(Node node){
+        return createLayoutFromChild(node, node.getNodeName());
+    }
+
+    private LayoutEntity createLayoutFromChild(Node node, String root) {
         LayoutEntity layout = new LayoutEntity();
         layout.setId(getIdByNode(node));
         layout.setName(node.getNodeName());
         layout.setHasChildren(node.hasChildNodes());
+        layout.setRootLayout(root);
         LayoutParam layoutParams = new LayoutParam();
-        layoutParams.setName(getLayoutParamsForViewGroup(node.getNodeName()));
+        layoutParams.setName(root + ".LayoutParams");
         layoutParams.setWidth(node.getAttributes().getNamedItem("android:layout_width").getNodeValue().toUpperCase());
         layoutParams.setHeight(node.getAttributes().getNamedItem("android:layout_height").getNodeValue().toUpperCase());
         Object paddingLeft = null;
@@ -264,9 +257,9 @@ public class LayoutProcessor extends AbstractProcessor {
                     String[] split = newName.split("_");
                     newName = "";
                     for (String refactor : split) {
-                        String start = refactor.substring(0, 1).toUpperCase();
-                        String end = refactor.substring(1, refactor.length());
-                        newName += start + end;
+                        //String start = refactor.substring(0, 1).toUpperCase();
+                        //String end = refactor.substring(1, refactor.length());
+                        newName += StringUtils.capitalize(refactor);//start + end;
                     }
 
                     LayoutAttribute layoutAttribute = getLayoutAttribute(attributeValue, newName, node);
@@ -274,10 +267,12 @@ public class LayoutProcessor extends AbstractProcessor {
                     Object value = layoutAttribute.getValue();
 
                     String relativeName = getRelativeLayoutParam(newName.replace("Layout", ""));
-                    if (relativeName != null && relativeName.contains("_")) {
+                    if (relativeName != null && relativeName.contains("_") && attributeName.startsWith("android:layout_")) {
                         if (!value.equals("false")) {
                             layout.addLayoutParam(relativeName, getLayoutId(value), true, true);
                         }
+                    } else if(attributeName.equals("android:layout_gravity")) {
+                        layout.addLayoutParam(newName.replace("Layout", "").toLowerCase(), value, true, false, !string, true);
                     } else {
                         layout.addLayoutParam(newName, value, false, false, !string);
                     }
@@ -324,11 +319,13 @@ public class LayoutProcessor extends AbstractProcessor {
             return new LayoutAttribute("(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, " + attribute.replace("dp", "") + ", getResources().getDisplayMetrics())", false);
         } else if (attribute.startsWith("?attr/") && attributeName != null && attributeName.equals("Background")) {
             return new LayoutAttribute("LayoutUtils.getAttrDrawable(getContext(), R.attr." + attribute.replace("?attr/", "") + ")", false);
-        }else if (attribute.startsWith("?attr/")) {
+        } else if (attribute.startsWith("?attr/")) {
             return new LayoutAttribute("LayoutUtils.getAttrInt(getContext(), R.attr." + attribute.replace("?attr/", "") + ")", false);
         } else if (attributeName != null && attributeName.equals("Orientation")) {
             return new LayoutAttribute(node.getNodeName() + "." + attribute.toUpperCase(), false);
-        } else if(attribute.equals("false") || attribute.equals("true")) {
+        } else if (attributeName != null && (attributeName.equals("Gravity") || attributeName.equals("LayoutGravity"))) {
+            return new LayoutAttribute("Gravity." + attribute.toUpperCase(), false);
+        } else if (attribute.equals("false") || attribute.equals("true")) {
             return new LayoutAttribute(attribute, false);
         } else {
             try {
