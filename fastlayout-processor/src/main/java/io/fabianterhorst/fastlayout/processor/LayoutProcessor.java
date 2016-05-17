@@ -191,7 +191,7 @@ public class LayoutProcessor extends AbstractProcessor {
         return layouts;
     }
 
-    private LayoutEntity createLayoutFromChild(Node node){
+    private LayoutEntity createLayoutFromChild(Node node) {
         return createLayoutFromChild(node, node.getNodeName());
     }
 
@@ -254,7 +254,7 @@ public class LayoutProcessor extends AbstractProcessor {
         if (node.getAttributes().getNamedItem("android:layout_margin") != null) {
             margin = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_margin").getNodeValue()).getValue();
         }
-        if(margin != null){
+        if (margin != null) {
             layoutParams.setMargins(margin, margin, margin, margin);
         }
         if (node.getAttributes().getNamedItem("android:layout_weight") != null) {
@@ -285,7 +285,7 @@ public class LayoutProcessor extends AbstractProcessor {
                         if (!value.equals("false")) {
                             layout.addLayoutParam(relativeName, getLayoutId(value), true, true);
                         }
-                    } else if(attributeName.equals("android:layout_gravity")) {
+                    } else if (attributeName.equals("android:layout_gravity")) {
                         layout.addLayoutParam(newName.replace("Layout", "").toLowerCase(), value, true, false, !string, true);
                     } else {
                         layout.addLayoutParam(newName, value, false, false, !string);
@@ -314,6 +314,8 @@ public class LayoutProcessor extends AbstractProcessor {
         String id = String.valueOf(value);
         if (id.contains("@id/")) {
             return id.replace("@id/", "R.id.");
+        } else if (id.contains("@+id/")) {
+            return id.replace("@+id/", "R.id.");
         }
         return value;
     }
@@ -339,7 +341,7 @@ public class LayoutProcessor extends AbstractProcessor {
             return new LayoutAttribute("Gravity." + attribute.toUpperCase(), false);
         } else if (attribute.equals("false") || attribute.equals("true")) {
             return new LayoutAttribute(attribute, false);
-        } else if (attribute.endsWith("sp") && isNumber(attribute.replace("sp", ""))) {
+        } else if (attribute.endsWith("sp") && isNumber(attribute.replace("sp", "")) && attributeName != null && attributeName.equals("TextSize")) {
             return new LayoutAttribute("TypedValue.COMPLEX_UNIT_SP, " + attribute.replace("sp", ""), false);
         } else {
             try {
