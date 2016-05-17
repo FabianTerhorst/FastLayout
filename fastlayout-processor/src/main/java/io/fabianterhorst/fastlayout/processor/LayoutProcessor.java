@@ -273,9 +273,7 @@ public class LayoutProcessor extends AbstractProcessor {
                     String[] split = newName.split("_");
                     newName = "";
                     for (String refactor : split) {
-                        //String start = refactor.substring(0, 1).toUpperCase();
-                        //String end = refactor.substring(1, refactor.length());
-                        newName += StringUtils.capitalize(refactor);//start + end;
+                        newName += StringUtils.capitalize(refactor);
                     }
 
                     LayoutAttribute layoutAttribute = getLayoutAttribute(attributeValue, newName, node);
@@ -298,9 +296,7 @@ public class LayoutProcessor extends AbstractProcessor {
                 String[] split = newName.split("_");
                 newName = "";
                 for (String refactor : split) {
-                    String start = refactor.substring(0, 1).toUpperCase();
-                    String end = refactor.substring(1, refactor.length());
-                    newName += start + end;
+                    newName += StringUtils.capitalize(refactor);
                 }
 
                 LayoutAttribute layoutAttribute = getLayoutAttribute(attributeValue, newName, node);
@@ -343,6 +339,8 @@ public class LayoutProcessor extends AbstractProcessor {
             return new LayoutAttribute("Gravity." + attribute.toUpperCase(), false);
         } else if (attribute.equals("false") || attribute.equals("true")) {
             return new LayoutAttribute(attribute, false);
+        } else if (attribute.endsWith("sp") && isNumber(attribute.replace("sp", ""))) {
+            return new LayoutAttribute("TypedValue.COMPLEX_UNIT_SP, " + attribute.replace("sp", ""), false);
         } else {
             try {
                 return new LayoutAttribute(Integer.parseInt(attribute), false);
