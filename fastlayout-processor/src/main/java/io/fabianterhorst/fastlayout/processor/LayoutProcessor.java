@@ -359,6 +359,8 @@ public class LayoutProcessor extends AbstractProcessor {
             return new LayoutAttribute(attribute, false);
         } else if (attribute.endsWith("sp") && isNumber(attribute.replace("sp", "")) && attributeName != null && attributeName.equals("TextSize")) {
             return new LayoutAttribute("TypedValue.COMPLEX_UNIT_SP, " + attribute.replace("sp", ""), false);
+        } else if (attribute.endsWith("sp") && isNumber(attribute.replace("sp", ""))) {
+            return new LayoutAttribute("(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, " + attribute.replace("sp", "") + ", Resources.getSystem().getDisplayMetrics())", false);
         } else {
             try {
                 return new LayoutAttribute(Integer.parseInt(attribute), false);
