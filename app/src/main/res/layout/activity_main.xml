@@ -25,6 +25,7 @@
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:clickable="true"
+        android:weightSum="1"
         android:background="?attr/selectableItemBackground"
         android:layout_alignEnd="@id/linearLayout1"
         android:layout_height="wrap_content">
@@ -32,8 +33,27 @@
         <TextView
             android:id="@+id/textView2"
             android:text="Hello Linear Layout"
+            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
     </LinearLayout>
+    <FrameLayout
+        android:id="@+id/frameLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </FrameLayout>
 </RelativeLayout>
