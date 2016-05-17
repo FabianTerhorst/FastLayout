@@ -40,7 +40,7 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
     }
 
     private void init() {
-        <#if rootLayout.layoutParams.weight?? && rootLayout.layoutParams.name = "ViewGroup.LayoutParams">TableLayout.LayoutParams<#else>${rootLayout.layoutParams.name}</#if> ${rootLayout.id}LayoutParams = <#if rootLayout.layoutParams.weight?? && rootLayout.layoutParams.name = "ViewGroup.LayoutParams">new TableLayout.LayoutParams<#else>new ${rootLayout.layoutParams.name}</#if>(${rootLayout.layoutParams.width}, ${rootLayout.layoutParams.height}<#if rootLayout.layoutParams.weight??>, ${rootLayout.layoutParams.weight}</#if>);
+        ${rootLayout.layoutParams.name} ${rootLayout.id}LayoutParams = new ${rootLayout.layoutParams.name}(${rootLayout.layoutParams.width}, ${rootLayout.layoutParams.height}<#if rootLayout.layoutParams.weight??>, ${rootLayout.layoutParams.weight}</#if>);
         <#if rootLayout.layoutParams.margins??>
         ${rootLayout.id}LayoutParams.setMargins(${rootLayout.layoutParams.margins[0]}, ${rootLayout.layoutParams.margins[1]}, ${rootLayout.layoutParams.margins[2]}, ${rootLayout.layoutParams.margins[3]});
         </#if>
@@ -54,7 +54,7 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
         <#assign parent = "this">
         <#list rootLayout.children as child>
         ${child.id} = new ${child.name}(getContext());
-        <#if child.layoutParams.weight?? && child.layoutParams.name = "ViewGroup.LayoutParams">TableLayout.LayoutParams<#elseif child.relative>RelativeLayout.LayoutParams<#else>${child.layoutParams.name}</#if> ${child.id}LayoutParams = <#if child.layoutParams.weight?? && child.layoutParams.name = "ViewGroup.LayoutParams">new TableLayout.LayoutParams<#elseif child.relative>new RelativeLayout.LayoutParams<#else>new ${child.layoutParams.name}</#if>(${child.layoutParams.width}, ${child.layoutParams.height}<#if child.layoutParams.weight??>, ${child.layoutParams.weight}</#if>);
+        ${child.layoutParams.name} ${child.id}LayoutParams = new ${child.layoutParams.name}(${child.layoutParams.width}, ${child.layoutParams.height}<#if child.layoutParams.weight??>, ${child.layoutParams.weight}</#if>);
         <#if child.layoutParams.margins??>
         ${child.id}LayoutParams.setMargins(${child.layoutParams.margins[0]}, ${child.layoutParams.margins[1]}, ${child.layoutParams.margins[2]}, ${child.layoutParams.margins[3]});
         </#if>
@@ -62,7 +62,7 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
         setPadding(${child.layoutParams.padding[0]}, ${child.layoutParams.padding[1]}, ${child.layoutParams.padding[2]}, ${child.layoutParams.padding[3]});
         </#if>
         <#list child.layoutParamsList?keys as key>
-        <#if child.layoutParamsList[key].paramValue>${child.id}LayoutParams<#else>${child.id}</#if>.<#if child.layoutParamsList[key].rule>addRule(${key}<#if child.layoutParamsList[key].value != "true">,${child.layoutParamsList[key].value}</#if><#else>set${key}(<#if !child.layoutParamsList[key].value?is_number && !child.layoutParamsList[key].number>"</#if>${child.layoutParamsList[key].value}<#if !child.layoutParamsList[key].value?is_number && !child.layoutParamsList[key].number>"</#if></#if>);
+        <#if child.layoutParamsList[key].paramValue>${child.id}LayoutParams<#else>${child.id}</#if>.<#if child.layoutParamsList[key].rule>addRule(${key}<#if child.layoutParamsList[key].value != "true">,${child.layoutParamsList[key].value}</#if>)<#elseif !child.layoutParamsList[key].setter>set${key}(<#if !child.layoutParamsList[key].value?is_number && !child.layoutParamsList[key].number>"</#if>${child.layoutParamsList[key].value}<#if !child.layoutParamsList[key].value?is_number && !child.layoutParamsList[key].number>"</#if>)<#else>${key} = <#if !child.layoutParamsList[key].value?is_number && !child.layoutParamsList[key].number>"</#if>${child.layoutParamsList[key].value}<#if !child.layoutParamsList[key].value?is_number && !child.layoutParamsList[key].number>"</#if></#if>;
         </#list>
         ${child.id}.setLayoutParams(${child.id}LayoutParams);
         <#if child.hasChildren>

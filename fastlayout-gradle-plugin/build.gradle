@@ -11,7 +11,7 @@ buildscript {
 apply plugin: 'groovy'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.artifactory'
+//apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'com.jfrog.bintray'
 
 def siteUrl = 'https://github.com/FabianTerhorst/FastLayout'
@@ -165,6 +165,21 @@ bintray {
 //            }
         }
     }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+/*task javadocJar(type: Jar, dependsOn: Javadoc) {
+    classifier = 'javadoc'
+    from Javadoc.destinationDir
+}*/
+
+artifacts {
+    //archives javadocJar
+    archives sourcesJar
 }
 
 /*artifactory {
