@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.fabianterhorst.fastlayout.converters.LayoutAttribute;
+
 public class LayoutEntity {
 
     private String id;
@@ -19,6 +21,8 @@ public class LayoutEntity {
 
     private Map<Object, LayoutParamEntry> layoutParamsList;
 
+    private List<LayoutAttribute> attributes;
+
     private boolean relative;
 
     private String rootLayout;
@@ -27,6 +31,7 @@ public class LayoutEntity {
         children = new ArrayList<>();
         //Todo : ArrayMap ? !
         layoutParamsList = new HashMap<>();
+        attributes = new ArrayList<>();
         hasChildren = false;
         relative = false;
     }
@@ -45,6 +50,14 @@ public class LayoutEntity {
 
     public void setRootLayout(String rootLayout) {
         this.rootLayout = rootLayout;
+    }
+
+    public void addAttribute(LayoutAttribute attribute) {
+        this.attributes.add(attribute);
+    }
+
+    public void addAllAttributes(List<LayoutAttribute> attributes) {
+        this.attributes.addAll(attributes);
     }
 
     public void addLayoutParam(Object name, Object value, boolean paramValue, boolean rule) {
@@ -105,5 +118,9 @@ public class LayoutEntity {
 
     public boolean isRelative() {
         return relative;
+    }
+
+    public List<LayoutAttribute> getAttributes() {
+        return attributes;
     }
 }

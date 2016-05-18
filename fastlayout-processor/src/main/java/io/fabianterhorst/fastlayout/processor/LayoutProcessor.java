@@ -41,28 +41,19 @@ import freemarker.template.Template;
 import freemarker.template.Version;
 import io.fabianterhorst.fastlayout.annotations.Layout;
 import io.fabianterhorst.fastlayout.annotations.Layouts;
+import io.fabianterhorst.fastlayout.converters.DefaultAttributesConverter;
+import io.fabianterhorst.fastlayout.converters.LayoutAttribute;
+import io.fabianterhorst.fastlayout.converters.LayoutConverter;
+import io.fabianterhorst.fastlayout.converters.LayoutConverters;
+import io.fabianterhorst.fastlayout.converters.MarginConverter;
+import io.fabianterhorst.fastlayout.converters.PaddingConverter;
+import io.fabianterhorst.fastlayout.converters.RelativeLayoutConverter;
+import io.fabianterhorst.fastlayout.converters.SizeConverter;
 
 @SupportedAnnotationTypes("io.fabianterhorst.fastlayout.annotations.Layouts")
 public class LayoutProcessor extends AbstractProcessor {
 
-    private static final ArrayList<String> nativeSupportedAttributes = new ArrayList<String>() {{
-        add("layout_height");
-        add("layout_width");
-        add("id");
-        add("padding");
-        add("paddingStart");
-        add("paddingEnd");
-        add("paddingLeft");
-        add("paddingTop");
-        add("paddingRight");
-        add("paddingBottom");
-        add("layout_margin");
-        add("layout_marginLeft");
-        add("layout_marginTop");
-        add("layout_marginRight");
-        add("layout_marginBottom");
-        add("layout_weight");
-    }};
+    private final LayoutConverters converters = new LayoutConverters();
 
     private static final String SUFFIX_PREF_WRAPPER = "Layout";
 
@@ -205,183 +196,34 @@ public class LayoutProcessor extends AbstractProcessor {
         layout.setRootLayout(root);
         LayoutParam layoutParams = new LayoutParam();
         layoutParams.setName(root + ".LayoutParams");
-        layoutParams.setWidth(node.getAttributes().getNamedItem("android:layout_width").getNodeValue().toUpperCase());
-        layoutParams.setHeight(node.getAttributes().getNamedItem("android:layout_height").getNodeValue().toUpperCase());
-        Object paddingLeft = null;
-        Object paddingTop = null;
-        Object paddingRight = null;
-        Object paddingBottom = null;
-        Object paddingStart = null;
-        Object paddingEnd = null;
-        Object padding = null;
-        if (node.getAttributes().getNamedItem("android:paddingLeft") != null) {
-            paddingLeft = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingLeft").getNodeValue()).getValue();
-        }
-        if (node.getAttributes().getNamedItem("android:paddingTop") != null) {
-            paddingTop = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingTop").getNodeValue()).getValue();
-        }
-        if (node.getAttributes().getNamedItem("android:paddingRight") != null) {
-            paddingRight = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingRight").getNodeValue()).getValue();
-        }
-        if (node.getAttributes().getNamedItem("android:paddingBottom") != null) {
-            paddingBottom = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingBottom").getNodeValue()).getValue();
-        }
-        if (node.getAttributes().getNamedItem("android:paddingStart") != null) {
-            paddingStart = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingStart").getNodeValue()).getValue();
-        }
-        if (node.getAttributes().getNamedItem("android:paddingEnd") != null) {
-            paddingEnd = getLayoutAttribute(node.getAttributes().getNamedItem("android:paddingEnd").getNodeValue()).getValue();
-        }
-        if (paddingLeft != null || paddingTop != null || paddingRight != null || paddingBottom != null) {
-            layoutParams.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-        }
-        if (paddingStart != null || paddingEnd != null) {
-            layoutParams.setPaddingRelative(paddingStart, paddingTop, paddingEnd, paddingBottom);
-        }
-        if (node.getAttributes().getNamedItem("android:padding") != null) {
-            padding = getLayoutAttribute(node.getAttributes().getNamedItem("android:padding").getNodeValue()).getValue();
-        }
-        if (padding != null) {
-            layoutParams.setPadding(padding, padding, padding, padding);
-            layoutParams.setPaddingRelative(padding, padding, padding, padding);
-        }
-        Object marginLeft = null;
-        Object marginTop = null;
-        Object marginRight = null;
-        Object marginBottom = null;
-        Object margin = null;
-        if (node.getAttributes().getNamedItem("android:layout_marginLeft") != null) {
-            marginLeft = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginLeft").getNodeValue()).getValue();
-        }
-        if (node.getAttributes().getNamedItem("android:layout_marginTop") != null) {
-            marginTop = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginTop").getNodeValue()).getValue();
-        }
-        if (node.getAttributes().getNamedItem("android:layout_marginRight") != null) {
-            marginRight = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginRight").getNodeValue()).getValue();
-        }
-        if (node.getAttributes().getNamedItem("android:layout_marginBottom") != null) {
-            marginBottom = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_marginBottom").getNodeValue()).getValue();
-        }
-        if (marginLeft != null || marginTop != null || marginRight != null || marginBottom != null) {
-            layoutParams.setMargins(marginLeft, marginTop, marginRight, marginBottom);
-        }
-        if (node.getAttributes().getNamedItem("android:layout_margin") != null) {
-            margin = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_margin").getNodeValue()).getValue();
-        }
-        if (margin != null) {
-            layoutParams.setMargins(margin, margin, margin, margin);
-        }
-        if (node.getAttributes().getNamedItem("android:layout_weight") != null) {
-            Object weight = getLayoutAttribute(node.getAttributes().getNamedItem("android:layout_weight").getNodeValue()).getValue();
-            layoutParams.setWeight(weight);
-        }
         layout.setLayoutParams(layoutParams);
         NamedNodeMap attributes = node.getAttributes();
+        converters.setAll(new ArrayList<LayoutConverter>() {{
+            add(new DefaultAttributesConverter());
+            add(new MarginConverter());
+            add(new PaddingConverter());
+            add(new SizeConverter());
+            add(new RelativeLayoutConverter());
+            /*last*/
+            add(new LayoutConverter());
+        }});
         for (int i = 0; i < attributes.getLength(); i++) {
             Node attribute = attributes.item(i);
             String attributeName = attribute.getNodeName();
             String attributeValue = attribute.getNodeValue();
-            if (attributeName.contains("android:")) {
-                String newName = attributeName.replace("android:", "");
-                if (!nativeSupportedAttributes.contains(newName)) {
-                    String[] split = newName.split("_");
-                    newName = "";
-                    for (String refactor : split) {
-                        newName += StringUtils.capitalize(refactor);
-                    }
-
-                    LayoutAttribute layoutAttribute = getLayoutAttribute(attributeValue, newName, node);
-                    boolean string = layoutAttribute.isString();
-                    Object value = layoutAttribute.getValue();
-
-                    String relativeName = getRelativeLayoutParam(newName.replace("Layout", ""));
-                    if (relativeName != null && relativeName.contains("_") && attributeName.startsWith("android:layout_") && !attributeName.startsWith("android:layout_margin")) {
-                        if (!value.equals("false")) {
-                            layout.addLayoutParam(relativeName, getLayoutId(value), true, true);
-                        }
-                    } else if (attributeName.equals("android:layout_gravity")) {
-                        layout.addLayoutParam(newName.replace("Layout", "").toLowerCase(), value, true, false, !string, true);
-                    } else if (attributeName.equals("android:layout_marginEnd") || attributeName.equals("android:layout_marginStart")) {
-                        layout.addLayoutParam(newName.replace("Layout", ""), value, true, false, !string);
-                    } else {
-                        layout.addLayoutParam(newName, value, false, false, !string);
-                    }
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, attributeName + ":" + attributeValue);
+            if (!attributeName.startsWith("tools:") && !attributeName.startsWith("xmlns:")) {
+                LayoutAttribute layoutAttr = converters.convert(attributeValue, attributeName);
+                if (layoutAttr.getType() != LayoutAttribute.Type.ASSIGNED) {
+                    layout.addAttribute(layoutAttr);
                 }
-            } else if (attributeName.contains("app:")) {
-                String newName = attributeName.replace("android:", "");
-                String[] split = newName.split("_");
-                newName = "";
-                for (String refactor : split) {
-                    newName += StringUtils.capitalize(refactor);
-                }
-
-                LayoutAttribute layoutAttribute = getLayoutAttribute(attributeValue, newName, node);
-                boolean string = layoutAttribute.isString();
-                Object value = layoutAttribute.getValue();
-
-                layout.addLayoutParam(newName, value, false, false, !string);
-
             }
+        }
+        List<LayoutAttribute> finishedAttributes = converters.finish();
+        if(finishedAttributes.size() > 0) {
+            layout.addAllAttributes(finishedAttributes);
         }
         return layout;
-    }
-
-    private Object getLayoutId(Object value) {
-        String id = String.valueOf(value);
-        if (id.contains("@id/")) {
-            return id.replace("@id/", "R.id.");
-        } else if (id.contains("@+id/")) {
-            return id.replace("@+id/", "R.id.");
-        }
-        return value;
-    }
-
-    private LayoutAttribute getLayoutAttribute(String attribute) {
-        return getLayoutAttribute(attribute, null, null);
-    }
-
-    private LayoutAttribute getLayoutAttribute(String attribute, String attributeName, Node node) {
-        if (attribute.startsWith("@dimen/")) {
-            return new LayoutAttribute("(int) getContext().getResources().getDimension(R.dimen." + attribute.replace("@dimen/", "") + ")", false);
-        } else if (attribute.startsWith("@string/")) {
-            return new LayoutAttribute("getContext().getString(R.string." + attribute.replace("@string/", "") + ")", false);
-        } else if (attribute.endsWith("dp") && StringUtils.isNumeric(attribute.replace("dp", ""))) {
-            return new LayoutAttribute("(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, " + attribute.replace("dp", "") + ", getResources().getDisplayMetrics())", false);
-        } else if (attribute.startsWith("?attr/") && attributeName != null && attributeName.equals("Background")) {
-            return new LayoutAttribute("LayoutUtils.getAttrDrawable(getContext(), R.attr." + attribute.replace("?attr/", "") + ")", false);
-        } else if (attribute.startsWith("?attr/")) {
-            return new LayoutAttribute("LayoutUtils.getAttrInt(getContext(), R.attr." + attribute.replace("?attr/", "") + ")", false);
-        } else if (attributeName != null && attributeName.equals("Orientation")) {
-            return new LayoutAttribute(node.getNodeName() + "." + attribute.toUpperCase(), false);
-        } else if (attributeName != null && (attributeName.equals("Gravity") || attributeName.equals("LayoutGravity"))) {
-            return new LayoutAttribute("Gravity." + attribute.toUpperCase(), false);
-        } else if (attribute.equals("false") || attribute.equals("true")) {
-            return new LayoutAttribute(attribute, false);
-        } else if (attribute.endsWith("sp") && isNumber(attribute.replace("sp", "")) && attributeName != null && attributeName.equals("TextSize")) {
-            return new LayoutAttribute("TypedValue.COMPLEX_UNIT_SP, " + attribute.replace("sp", ""), false);
-        } else if (attribute.endsWith("sp") && isNumber(attribute.replace("sp", ""))) {
-            return new LayoutAttribute("(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, " + attribute.replace("sp", "") + ", Resources.getSystem().getDisplayMetrics())", false);
-        } else {
-            try {
-                return new LayoutAttribute(Integer.parseInt(attribute), false);
-            } catch (NumberFormatException ignore) {
-
-            }
-        }
-        return new LayoutAttribute(attribute, true);
-    }
-
-    /**
-     * convert for example AlignParentBottom to RelativeLayout.ALIGN_PARENT_BOTTOM
-     *
-     * @param name attribute name
-     * @return relative layout attribute
-     */
-    private String getRelativeLayoutParam(String name) {
-        if (name.startsWith("To")) {
-            name = name.replace("To", "");
-        }
-        return "RelativeLayout." + stringToConstant(name).toUpperCase();
     }
 
     /**
@@ -515,15 +357,14 @@ public class LayoutProcessor extends AbstractProcessor {
         }
     }
 
-    @SuppressWarnings("Ignore")
-    private boolean isNumber(Object text) {
+    /*private boolean isNumber(Object text) {
         try {
             Integer.parseInt(String.valueOf(text));
             return true;
         } catch (NumberFormatException ignore) {
             return false;
         }
-    }
+    }*/
 
     private LayoutObject createLayoutObject(File layoutsFile, String layoutName, PackageElement packageElement, javax.lang.model.element.Element element, String fieldName) throws Exception {
         return createLayoutObject(readFile(findLayout(layoutsFile, layoutName)), packageElement, element, fieldName);

@@ -92,6 +92,7 @@ bintray {
 
 dependencies {
     compile project(':fastlayout-annotations')
+    compile project(':fastlayout-converters')
     compile 'org.freemarker:freemarker:2.3.22'
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.commons:commons-lang3:3.4'
