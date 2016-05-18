@@ -357,15 +357,6 @@ public class LayoutProcessor extends AbstractProcessor {
         }
     }
 
-    /*private boolean isNumber(Object text) {
-        try {
-            Integer.parseInt(String.valueOf(text));
-            return true;
-        } catch (NumberFormatException ignore) {
-            return false;
-        }
-    }*/
-
     private LayoutObject createLayoutObject(File layoutsFile, String layoutName, PackageElement packageElement, javax.lang.model.element.Element element, String fieldName) throws Exception {
         return createLayoutObject(readFile(findLayout(layoutsFile, layoutName)), packageElement, element, fieldName);
     }
