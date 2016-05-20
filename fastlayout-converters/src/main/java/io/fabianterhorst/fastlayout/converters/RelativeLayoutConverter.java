@@ -8,7 +8,7 @@ import io.fabianterhorst.fastlayout.annotations.Converter;
 /**
  * Created by fabianterhorst on 18.05.16.
  */
-@Converter
+@Converter("RelativeLayout")
 public class RelativeLayoutConverter extends LayoutConverter {
 
     private List<String> relativeParameters = new ArrayList<String>() {{

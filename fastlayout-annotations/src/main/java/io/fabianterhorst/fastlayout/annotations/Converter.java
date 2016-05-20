@@ -13,5 +13,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Inherited
 public @interface Converter {
-    Class value() default Class.class;
+    String value() default "";
 }

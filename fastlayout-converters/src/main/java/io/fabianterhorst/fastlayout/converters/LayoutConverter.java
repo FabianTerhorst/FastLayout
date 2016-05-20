@@ -2,9 +2,12 @@ package io.fabianterhorst.fastlayout.converters;
 
 import java.util.List;
 
+import io.fabianterhorst.fastlayout.annotations.Converter;
+
 /**
  * Created by fabianterhorst on 18.05.16.
  */
+@Converter
 public class LayoutConverter {
 
     public LayoutAttribute convert(Object attributeValue, String attributeName) {

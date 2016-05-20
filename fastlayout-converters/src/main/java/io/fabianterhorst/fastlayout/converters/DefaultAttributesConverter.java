@@ -1,8 +1,11 @@
 package io.fabianterhorst.fastlayout.converters;
 
+import io.fabianterhorst.fastlayout.annotations.Converter;
+
 /**
  * Created by fabianterhorst on 18.05.16.
  */
+@Converter
 public class DefaultAttributesConverter extends LayoutConverter {
 
     @Override
