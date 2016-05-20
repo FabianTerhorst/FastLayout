@@ -12,26 +12,30 @@ public class DefaultAttributesConverter extends LayoutConverter {
     public LayoutAttribute onConvertLayoutAttributeValue(Object attributeValue, String attributeName) {
         switch (attributeName) {
             case "android:orientation":
-                return super.onConvertLayoutAttribute("LinearLayout." + String.valueOf(attributeValue).toUpperCase(), attributeName, false);
+                return super.onConvertLayoutAttribute(String.valueOf(attributeValue), "LinearLayout." + String.valueOf(attributeValue).toUpperCase(), attributeName, false);
             case "android:gravity":
-                return super.onConvertLayoutAttribute("Gravity." + String.valueOf(attributeValue).toUpperCase(), attributeName, false);
+                return super.onConvertLayoutAttribute(String.valueOf(attributeValue), "Gravity." + String.valueOf(attributeValue).toUpperCase(), attributeName, false);
             case "android:layout_gravity":
-                return onConvertLayoutAttribute("Gravity." + String.valueOf(attributeValue).toUpperCase(), attributeName, false);
-            case "android:background":
-                String value = String.valueOf(attributeValue);
-                if (value.startsWith("?attr/")) {
-                    return super.onConvertLayoutAttribute("LayoutUtils.getAttrDrawable(getContext(), R.attr." + value.replace("?attr/", "") + ")", attributeName, false);
-                }
+                return onConvertLayoutAttribute(String.valueOf(attributeValue), "Gravity." + String.valueOf(attributeValue).toUpperCase(), attributeName, false);
         }
-        return null;
+        return super.onConvertLayoutAttributeValue(attributeValue, attributeName);
     }
 
     @Override
-    public LayoutAttribute onConvertLayoutAttribute(Object attributeValue, String attributeName, boolean isString) {
+    public LayoutAttribute onConvertLayoutAttribute(String attributeStartValue, Object attributeValue, String attributeName, boolean isString) {
         switch (attributeName) {
             case "android:layout_gravity":
                 return new LayoutAttribute(LayoutAttribute.Type.PARAM, attribute(attributeName.replace("android:layout_", ""), attributeValue));
+            case "android:background":
+                if (String.valueOf(attributeStartValue).startsWith("R.")) {
+                    return new LayoutAttribute(setter("BackgroundResource", attributeStartValue, false));
+                }
+                break;
         }
-        return super.onConvertLayoutAttribute(attributeValue, attributeName, isString);
+        //Todo : list with all
+        if(attributeName.startsWith("android:nextFocus")) {
+            return new LayoutAttribute(setter(attributeToName(attributeName) + "Id", attributeStartValue, false));
+        }
+        return null;
     }
 }

@@ -9,7 +9,7 @@ import io.fabianterhorst.fastlayout.annotations.Converter;
 public class SizeConverter extends LayoutConverter {
 
     @Override
-    public LayoutAttribute onConvertLayoutAttribute(Object attributeValue, String attributeName, boolean isString) {
+    public LayoutAttribute onConvertLayoutAttribute(String attributeStartValue, Object attributeValue, String attributeName, boolean isString) {
         switch (attributeName) {
             case "android:layout_width":
                 if(isString) {

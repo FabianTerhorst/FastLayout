@@ -14,7 +14,7 @@ public class MarginConverter extends LayoutConverter {
     private Object margin[] = new Object[]{null, null, null, null};//left,top,right,bottom
 
     @Override
-    public LayoutAttribute onConvertLayoutAttribute(Object attributeValue, String attributeName, boolean isString) {
+    public LayoutAttribute onConvertLayoutAttribute(String attributeStartValue, Object attributeValue, String attributeName, boolean isString) {
         switch (attributeName) {
             case "android:layout_marginLeft":
                 margin = new Object[]{attributeValue, margin[1], margin[2], margin[3]};

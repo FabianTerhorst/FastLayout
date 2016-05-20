@@ -46,8 +46,18 @@
             android:id="@+id/textView2"
             android:text="Hello Linear Layout"
             android:layout_weight="1"
+            android:background="@mipmap/ic_launcher"
             android:layout_width="wrap_content"
+            android:drawableTop="@mipmap/ic_launcher"
+            android:drawableTintMode="screen"
+            android:textColor="@color/accent"
+            android:drawableStart="@mipmap/ic_launcher"
+            android:elevation="10dp"
+            android:nextFocusLeft="@id/linearLayout1"
+            android:layout_marginStart="10dp"
+            android:drawablePadding="10dp"
             android:layout_height="wrap_content"/>
+        <!--android:drawableTint="@color/accent"-->
 
     </LinearLayout>
     <FrameLayout
@@ -56,6 +66,7 @@
         android:layout_width="match_parent"
         android:layout_marginEnd="10dp"
         android:paddingEnd="10dp"
+        android:addStatesFromChildren="false"
         android:paddingStart="10dp"
         android:layout_toEndOf="@id/linearLayout1"
         android:layout_height="wrap_content">
@@ -63,6 +74,7 @@
         <TextView
             android:id="@+id/textView3"
             android:gravity="center"
+            android:fitsSystemWindows="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 

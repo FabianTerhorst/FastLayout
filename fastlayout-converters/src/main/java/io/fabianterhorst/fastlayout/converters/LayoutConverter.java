@@ -20,36 +20,40 @@ public class LayoutConverter {
 
     public LayoutAttribute onConvertLayoutAttributeValue(Object attributeValue, String attributeName) {
         String attribute = String.valueOf(attributeValue);
-        LayoutAttribute layoutAttribute = new LayoutAttribute(attributeValue);
-        if (attribute.startsWith("@+id/") || attribute.startsWith("@id/")) {
-            return onConvertLayoutAttribute("R.id" + attribute.replace("@+id/", ".").replace("@id/", "."), attributeName, false);
-        } else if (attribute.startsWith("@dimen/")) {
-            return onConvertLayoutAttribute("(int) getContext().getResources().getDimension(R.dimen." + attribute.replace("@dimen/", "") + ")", attributeName, false);
-        } else if (attribute.startsWith("@string/")) {
-            return onConvertLayoutAttribute("getContext().getString(R.string." + attribute.replace("@string/", "") + ")", attributeName, false);
+        boolean isString = true;
+
+        if ((attribute.startsWith("@") || attribute.startsWith("?")) && attribute.contains("/")) {
+            String[] attributeSplit = attribute.split("/");
+            String type = attributeSplit[0].replace("@+", "").replace("@", "").replace("?", "");
+            attribute = "R." + type + "." + attributeSplit[1];
+            isString = false;
+        }
+
+        if (attribute.startsWith("R.dimen.")) {
+            return onConvertLayoutAttribute(attribute, "(int) getContext().getResources().getDimension(" + attribute + ")", attributeName, false);
+        } else if (attribute.startsWith("R.string.")) {
+            return onConvertLayoutAttribute(attribute, "getContext().getString(" + attribute + ")", attributeName, false);
+        } else if (attribute.startsWith("R.color.")) {
+            return onConvertLayoutAttribute(attribute, "getContext().getColor(" + attribute + ")", attributeName, false);
+        } else if (attribute.startsWith("R.drawable.") || attribute.startsWith("R.mipmap.") || attribute.startsWith("R.attr.")) {
+            return onConvertLayoutAttribute(attribute, "LayoutUtils.getAttrDrawable(getContext(), " + attribute + ")", attributeName, false);
         } else if (attribute.endsWith("dp") && isNumber(attribute.replace("dp", ""))) {
-            return onConvertLayoutAttribute("(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, " + attribute.replace("dp", "") + ", getResources().getDisplayMetrics())", attributeName, false);
-        } /*else if (attribute.startsWith("?attr/") && attributeName != null && attributeName.equals("Background")) {
-            layoutAttribute = new LayoutAttribute("LayoutUtils.getAttrDrawable(getContext(), R.attr." + attribute.replace("?attr/", "") + ")", false);
-        } else if (attribute.startsWith("?attr/")) {
-            layoutAttribute = new LayoutAttribute("LayoutUtils.getAttrInt(getContext(), R.attr." + attribute.replace("?attr/", "") + ")", false);
-        } */ else if (attribute.equals("false") || attribute.equals("true")) {
+            return onConvertLayoutAttribute(attribute, "(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, " + attribute.replace("dp", "") + ", getResources().getDisplayMetrics())", attributeName, false);
+        } else if (attribute.equals("false") || attribute.equals("true")) {
             return onConvertLayoutAttribute(attribute, attributeName, false);
         } else if (attribute.endsWith("sp") && isNumber(attribute.replace("sp", ""))) {
-            return onConvertLayoutAttribute("(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, " + attribute.replace("sp", "") + ", Resources.getSystem().getDisplayMetrics())", attributeName, false);
+            return onConvertLayoutAttribute(attribute, "(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, " + attribute.replace("sp", "") + ", getResources().getDisplayMetrics())", attributeName, false);
         } else if (isNumber(attribute)) {
             return onConvertLayoutAttribute(attributeValue, attributeName, false);
         }
-        return onConvertLayoutAttribute(layoutAttribute.getValue(), attributeName, true);
+        return onConvertLayoutAttribute(attribute, attributeName, isString);
     }
 
     public LayoutAttribute onConvertLayoutAttribute(Object attributeValue, String attributeName, boolean isString) {
-        /*attributeName = attributeName.split(":")[1];
-        String[] split = attributeName.split("_");
-        attributeName = "";
-        for (String refactor : split) {
-            attributeName += capitalize(refactor);
-        }*/
+        return onConvertLayoutAttribute(String.valueOf(attributeValue), attributeValue, attributeName, isString);
+    }
+
+    public LayoutAttribute onConvertLayoutAttribute(String attributeStartValue, Object attributeValue, String attributeName, boolean isString) {
         attributeName = attributeToName(attributeName);
         return new LayoutAttribute(setter(attributeName, attributeValue, isString));
     }
