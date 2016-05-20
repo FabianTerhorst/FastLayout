@@ -51,6 +51,7 @@
             android:drawableTop="@mipmap/ic_launcher"
             android:drawableTintMode="screen"
             android:textColor="@color/accent"
+            android:drawableStart="@mipmap/ic_launcher"
             android:drawablePadding="10dp"
             android:layout_height="wrap_content"/>
         <!--android:drawableTint="@color/accent"-->

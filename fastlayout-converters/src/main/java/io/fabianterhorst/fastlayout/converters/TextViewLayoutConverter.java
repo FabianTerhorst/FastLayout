@@ -10,6 +10,8 @@ public class TextViewLayoutConverter extends LayoutConverter {
 
     private Object drawable[] = new Object[]{null, null, null, null};//left,top,right,bottom
 
+    private Object drawableRelative[] = new Object[]{null, null};//left,top,right,bottom
+
     @Override
     public LayoutAttribute onConvertLayoutAttribute(String attributeStartValue, Object attributeValue, String attributeName, boolean isString) {
         switch (attributeName) {
@@ -30,6 +32,12 @@ public class TextViewLayoutConverter extends LayoutConverter {
                 return new LayoutAttribute();
             case "android:drawableBottom":
                 drawable = new Object[]{drawable[0], drawable[1], drawable[2], attributeValue};
+                return new LayoutAttribute();
+            case "android:paddingStart":
+                drawableRelative = new Object[]{attributeValue, drawable[1], drawable[2], drawableRelative[1] != null ? drawableRelative[1] : drawable[3]};
+                return new LayoutAttribute();
+            case "android:paddingEnd":
+                drawableRelative = new Object[]{drawableRelative[0] != null ? drawableRelative[0] : drawable[0], drawable[1], attributeValue, drawable[3]};
                 return new LayoutAttribute();
 
         }
