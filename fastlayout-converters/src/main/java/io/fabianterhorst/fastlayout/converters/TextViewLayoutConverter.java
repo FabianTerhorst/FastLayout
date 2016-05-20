@@ -39,7 +39,6 @@ public class TextViewLayoutConverter extends LayoutConverter {
             case "android:paddingEnd":
                 drawableRelative = new Object[]{drawableRelative[0] != null ? drawableRelative[0] : drawable[0], drawable[1], attributeValue, drawable[3]};
                 return new LayoutAttribute();
-
         }
         return null;
     }
