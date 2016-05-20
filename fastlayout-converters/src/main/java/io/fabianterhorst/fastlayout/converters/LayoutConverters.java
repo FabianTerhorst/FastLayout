@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class LayoutConverters {
 
-    List<LayoutConverter> converters;
+    private List<LayoutConverter> converters;
 
     public LayoutConverters() {
     }
