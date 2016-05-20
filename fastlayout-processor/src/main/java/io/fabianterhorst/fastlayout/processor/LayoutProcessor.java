@@ -66,6 +66,8 @@ public class LayoutProcessor extends AbstractProcessor {
 
     private AtomicLong mAtomicLong = new AtomicLong(1);
 
+    private List<Object> userConverters;
+
     @Override
     public SourceVersion getSupportedSourceVersion() {
         return SourceVersion.latestSupported();
@@ -84,19 +86,37 @@ public class LayoutProcessor extends AbstractProcessor {
         File layoutsFile = null;
         String packageName = null;
         List<LayoutObject> layouts = new ArrayList<>();
+        userConverters = new ArrayList<>();
         String rOutput = null;
         try {
             if (annotations.size() > 0) {
                 layoutsFile = findLayouts();
             }
+
             for (TypeElement te : annotations) {
                 for (javax.lang.model.element.Element element : roundEnv.getElementsAnnotatedWith(te)) {
                     TypeElement classElement = (TypeElement) element;
                     PackageElement packageElement = (PackageElement) classElement.getEnclosingElement();
                     packageName = packageElement.getQualifiedName().toString();
                     Converter converterAnnotation = element.getAnnotation(Converter.class);
+                    if (converterAnnotation != null) {
+                        try {
+                            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "converter " + classElement.getSimpleName() + " found");
+                            userConverters.add(classElement.getClass().newInstance());
+                        }catch(InstantiationException ex) {
+                            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, ex.getMessage());
+                        }
+                    }
+                }
+            }
+
+            for (TypeElement te : annotations) {
+                for (javax.lang.model.element.Element element : roundEnv.getElementsAnnotatedWith(te)) {
+                    TypeElement classElement = (TypeElement) element;
+                    PackageElement packageElement = (PackageElement) classElement.getEnclosingElement();
+                    packageName = packageElement.getQualifiedName().toString();
                     Layouts layoutsAnnotation = element.getAnnotation(Layouts.class);
-                    if(layoutsAnnotation != null) {
+                    if (layoutsAnnotation != null) {
 
                         for (String layoutName : layoutsAnnotation.layouts()) {
                             LayoutObject layoutObject = createLayoutObject(layoutsFile, layoutName, packageElement, element, constantToObjectName(layoutName));
@@ -148,8 +168,6 @@ public class LayoutProcessor extends AbstractProcessor {
                                 }
                             }
                         }
-                    } else if(converterAnnotation != null){
-                        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "converter found");
                     }
                 }
             }
@@ -172,7 +190,7 @@ public class LayoutProcessor extends AbstractProcessor {
 
     private String getIdByNode(Node node) {
         Node idNote = node.getAttributes().getNamedItem("android:id");
-        if(idNote != null) {
+        if (idNote != null) {
             return normalizeLayoutId(idNote.getNodeValue());
         }
         return null;
@@ -202,7 +220,7 @@ public class LayoutProcessor extends AbstractProcessor {
     private LayoutEntity createLayoutFromChild(Node node, String root) {
         final LayoutEntity layout = new LayoutEntity();
         String id = getIdByNode(node);
-        if(id == null){
+        if (id == null) {
             id = node.getNodeName().replace(".", "") + mAtomicLong.get();
         }
         layout.setId(id);
@@ -213,11 +231,19 @@ public class LayoutProcessor extends AbstractProcessor {
         NamedNodeMap attributes = node.getAttributes();
 
         ArrayList<LayoutConverter> layoutConverters = new ArrayList<>();
+        for (Object converter : userConverters) {
+            try {
+                layoutConverters.add((LayoutConverter) converter);
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "converter " + converter.getClass().getSimpleName() + " applied");
+            } catch (Exception ex) {
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "converter " + converter.getClass().getSimpleName() + " not working");
+            }
+        }
         layoutConverters.add(new DefaultAttributesConverter());
         layoutConverters.add(new MarginConverter());
         layoutConverters.add(new PaddingConverter());
         layoutConverters.add(new SizeConverter());
-        if(root.equals("RelativeLayout")) {
+        if (root.equals("RelativeLayout")) {
             layoutConverters.add(new RelativeLayoutConverter());
         }
         /*last*/
@@ -236,7 +262,7 @@ public class LayoutProcessor extends AbstractProcessor {
             }
         }
         List<LayoutAttribute> finishedAttributes = converters.finish();
-        if(finishedAttributes.size() > 0) {
+        if (finishedAttributes.size() > 0) {
             layout.addAllAttributes(finishedAttributes);
         }
         return layout;
