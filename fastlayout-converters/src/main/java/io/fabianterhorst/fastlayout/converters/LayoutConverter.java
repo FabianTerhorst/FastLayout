@@ -42,7 +42,7 @@ public class LayoutConverter {
         } else if (attribute.equals("false") || attribute.equals("true")) {
             return onConvertLayoutAttribute(attribute, attributeName, false);
         } else if (attribute.endsWith("sp") && isNumber(attribute.replace("sp", ""))) {
-            return onConvertLayoutAttribute(attribute, "(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, " + attribute.replace("sp", "") + ", Resources.getSystem().getDisplayMetrics())", attributeName, false);
+            return onConvertLayoutAttribute(attribute, "(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, " + attribute.replace("sp", "") + ", getResources().getDisplayMetrics())", attributeName, false);
         } else if (isNumber(attribute)) {
             return onConvertLayoutAttribute(attributeValue, attributeName, false);
         }
