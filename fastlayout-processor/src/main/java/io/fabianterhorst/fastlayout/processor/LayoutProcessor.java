@@ -52,6 +52,7 @@ import io.fabianterhorst.fastlayout.converters.MarginConverter;
 import io.fabianterhorst.fastlayout.converters.PaddingConverter;
 import io.fabianterhorst.fastlayout.converters.RelativeLayoutConverter;
 import io.fabianterhorst.fastlayout.converters.SizeConverter;
+import io.fabianterhorst.fastlayout.converters.TextViewLayoutConverter;
 
 @SupportedAnnotationTypes({"io.fabianterhorst.fastlayout.annotations.Layouts", "io.fabianterhorst.fastlayout.annotations.Converter"})
 public class LayoutProcessor extends AbstractProcessor {
@@ -245,6 +246,9 @@ public class LayoutProcessor extends AbstractProcessor {
         layoutConverters.add(new SizeConverter());
         if (root.equals("RelativeLayout")) {
             layoutConverters.add(new RelativeLayoutConverter());
+        }
+        if (node.getNodeName().equals("TextView")) {
+            layoutConverters.add(new TextViewLayoutConverter());
         }
         /*last*/
         layoutConverters.add(new LayoutConverter());
