@@ -10,7 +10,7 @@ public class TextViewLayoutConverter extends LayoutConverter {
 
     private Object drawable[] = new Object[]{null, null, null, null};//left,top,right,bottom
 
-    private Object drawableRelative[] = new Object[]{null, null};//left,top,right,bottom
+    private Object drawableRelative[] = new Object[]{null, null};//start,end
 
     @Override
     public LayoutAttribute onConvertLayoutAttribute(String attributeStartValue, Object attributeValue, String attributeName, boolean isString) {
@@ -36,7 +36,7 @@ public class TextViewLayoutConverter extends LayoutConverter {
             case "android:drawableStart":
                 drawableRelative = new Object[]{attributeValue, drawable[1], drawable[2], drawableRelative[1] != null ? drawableRelative[1] : drawable[3]};
                 return new LayoutAttribute();
-            case "android:paddingEnd":
+            case "android:drawableEnd":
                 drawableRelative = new Object[]{drawableRelative[0] != null ? drawableRelative[0] : drawable[0], drawable[1], attributeValue, drawable[3]};
                 return new LayoutAttribute();
         }
@@ -48,6 +48,9 @@ public class TextViewLayoutConverter extends LayoutConverter {
         List<LayoutAttribute> finished = new ArrayList<>();
         if (drawable[0] != null || drawable[1] != null || drawable[2] != null || drawable[3] != null) {
             finished.add(new LayoutAttribute("setCompoundDrawables(" + drawable[0] + "," + drawable[1] + "," + drawable[2] + "," + drawable[3] + ")"));
+        }
+        if (drawableRelative[0] != null || drawableRelative[1] != null) {
+            finished.add(new LayoutAttribute("setCompoundDrawablesRelative(" + drawableRelative[0] + "," + drawable[1] + "," + drawable[2] + "," + drawableRelative[3] + ")"));
         }
         return finished;
     }
