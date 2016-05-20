@@ -1,1 +1,1 @@
-include ':app', ':fastlayout-processor', ':fastlayout-annotations', ':fastlayout', ':fastlayout-gradle-plugin'
+include ':app', ':fastlayout-processor', ':fastlayout-annotations', ':fastlayout', ':fastlayout-gradle-plugin', ':fastlayout-converters'
