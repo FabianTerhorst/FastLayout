@@ -30,7 +30,7 @@ public class DefaultAttributesConverter extends LayoutConverter {
     public LayoutAttribute onConvertLayoutAttribute(Object attributeValue, String attributeName, boolean isString) {
         switch (attributeName) {
             case "android:layout_gravity":
-                return new LayoutAttribute(LayoutAttribute.Type.PARAM, attribute(attributeName.replace("android:layout_", ""), attributeValue), false);
+                return new LayoutAttribute(LayoutAttribute.Type.PARAM, attribute(attributeName.replace("android:layout_", ""), attributeValue));
         }
         return super.onConvertLayoutAttribute(attributeValue, attributeName, isString);
     }

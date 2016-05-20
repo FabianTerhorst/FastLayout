@@ -41,6 +41,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.Version;
+import io.fabianterhorst.fastlayout.annotations.Converter;
 import io.fabianterhorst.fastlayout.annotations.Layout;
 import io.fabianterhorst.fastlayout.annotations.Layouts;
 import io.fabianterhorst.fastlayout.converters.DefaultAttributesConverter;
@@ -52,7 +53,7 @@ import io.fabianterhorst.fastlayout.converters.PaddingConverter;
 import io.fabianterhorst.fastlayout.converters.RelativeLayoutConverter;
 import io.fabianterhorst.fastlayout.converters.SizeConverter;
 
-@SupportedAnnotationTypes("io.fabianterhorst.fastlayout.annotations.Layouts")
+@SupportedAnnotationTypes({"io.fabianterhorst.fastlayout.annotations.Layouts", "io.fabianterhorst.fastlayout.annotations.Converter"})
 public class LayoutProcessor extends AbstractProcessor {
 
     private final LayoutConverters converters = new LayoutConverters();
@@ -93,57 +94,62 @@ public class LayoutProcessor extends AbstractProcessor {
                     TypeElement classElement = (TypeElement) element;
                     PackageElement packageElement = (PackageElement) classElement.getEnclosingElement();
                     packageName = packageElement.getQualifiedName().toString();
+                    Converter converterAnnotation = element.getAnnotation(Converter.class);
                     Layouts layoutsAnnotation = element.getAnnotation(Layouts.class);
+                    if(layoutsAnnotation != null) {
 
-                    for (String layoutName : layoutsAnnotation.layouts()) {
-                        LayoutObject layoutObject = createLayoutObject(layoutsFile, layoutName, packageElement, element, constantToObjectName(layoutName));
-                        if (layoutObject == null) {
-                            return true;
-                        }
-                        layouts.add(layoutObject);
-                    }
-
-                    for (int layoutId : layoutsAnnotation.ids()) {
-                        if (rOutput == null) {
-                            File r = findR(packageName);
-                            rOutput = readFile(r);
-                        }
-                        String layoutName = getFieldNameFromLayoutId(rOutput, layoutId);
-                        LayoutObject layoutObject = createLayoutObject(layoutsFile, layoutName, packageElement, element, constantToObjectName(layoutName));
-                        if (layoutObject == null) {
-                            return true;
-                        }
-                        layouts.add(layoutObject);
-                    }
-
-                    for (VariableElement variableElement : ElementFilter.fieldsIn(classElement.getEnclosedElements())) {
-                        TypeMirror fieldType = variableElement.asType();//ILayout
-                        String fieldName = variableElement.getSimpleName().toString();
-                        String layoutName = fieldName;
-                        Layout layoutAnnotation = variableElement.getAnnotation(Layout.class);
-                        if (layoutAnnotation != null) {
-                            layoutName = layoutAnnotation.name();
+                        for (String layoutName : layoutsAnnotation.layouts()) {
+                            LayoutObject layoutObject = createLayoutObject(layoutsFile, layoutName, packageElement, element, constantToObjectName(layoutName));
+                            if (layoutObject == null) {
+                                return true;
+                            }
+                            layouts.add(layoutObject);
                         }
 
-                        LayoutObject layoutObject = createLayoutObject(layoutsFile, layoutName, packageElement, element, constantToObjectName(fieldName));
-                        if (layoutObject == null) {
-                            return true;
+                        for (int layoutId : layoutsAnnotation.ids()) {
+                            if (rOutput == null) {
+                                File r = findR(packageName);
+                                rOutput = readFile(r);
+                            }
+                            String layoutName = getFieldNameFromLayoutId(rOutput, layoutId);
+                            LayoutObject layoutObject = createLayoutObject(layoutsFile, layoutName, packageElement, element, constantToObjectName(layoutName));
+                            if (layoutObject == null) {
+                                return true;
+                            }
+                            layouts.add(layoutObject);
                         }
-                        layouts.add(layoutObject);
-                    }
 
-                    if (layoutsAnnotation.all() && layoutsFile != null) {
-                        File[] files = layoutsFile.listFiles();
-                        if (files != null) {
-                            for (File file : files) {
-                                String layoutName = file.getName().replace(".xml", "");
-                                LayoutObject layoutObject = createLayoutObject(readFile(file), packageElement, element, constantToObjectName(layoutName));
-                                if (layoutObject == null) {
-                                    return true;
+                        for (VariableElement variableElement : ElementFilter.fieldsIn(classElement.getEnclosedElements())) {
+                            TypeMirror fieldType = variableElement.asType();//ILayout
+                            String fieldName = variableElement.getSimpleName().toString();
+                            String layoutName = fieldName;
+                            Layout layoutAnnotation = variableElement.getAnnotation(Layout.class);
+                            if (layoutAnnotation != null) {
+                                layoutName = layoutAnnotation.name();
+                            }
+
+                            LayoutObject layoutObject = createLayoutObject(layoutsFile, layoutName, packageElement, element, constantToObjectName(fieldName));
+                            if (layoutObject == null) {
+                                return true;
+                            }
+                            layouts.add(layoutObject);
+                        }
+
+                        if (layoutsAnnotation.all() && layoutsFile != null) {
+                            File[] files = layoutsFile.listFiles();
+                            if (files != null) {
+                                for (File file : files) {
+                                    String layoutName = file.getName().replace(".xml", "");
+                                    LayoutObject layoutObject = createLayoutObject(readFile(file), packageElement, element, constantToObjectName(layoutName));
+                                    if (layoutObject == null) {
+                                        return true;
+                                    }
+                                    layouts.add(layoutObject);
                                 }
-                                layouts.add(layoutObject);
                             }
                         }
+                    } else if(converterAnnotation != null){
+                        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "converter found");
                     }
                 }
             }

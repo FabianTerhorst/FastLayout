@@ -38,7 +38,7 @@ public class RelativeLayoutConverter extends LayoutConverter {
     @Override
     public LayoutAttribute onConvertLayoutAttribute(Object attributeValue, String attributeName, boolean isString) {
         if(relativeParameters.contains(attributeName)) {
-            return new LayoutAttribute(LayoutAttribute.Type.PARAM, "addRule(" + "RelativeLayout." + stringToConstant(attributeToName(attributeName.replace("_to", "_").replace("layout_", ""))).toUpperCase() + (!attributeValue.equals("true") && !attributeValue.equals("false") ? ", " + attributeValue : ", " + "RelativeLayout." + String.valueOf(attributeValue).toUpperCase()) + ")", false);
+            return new LayoutAttribute(LayoutAttribute.Type.PARAM, "addRule(" + "RelativeLayout." + stringToConstant(attributeToName(attributeName.replace("_to", "_").replace("layout_", ""))).toUpperCase() + (!attributeValue.equals("true") && !attributeValue.equals("false") ? ", " + attributeValue : ", " + "RelativeLayout." + String.valueOf(attributeValue).toUpperCase()) + ")");
         }
         return null;
     }

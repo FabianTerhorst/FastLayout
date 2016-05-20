@@ -7,8 +7,6 @@ public class LayoutAttribute {
 
     private Object value;
 
-    private boolean string;
-
     private Type type;
 
     public enum Type {
@@ -19,15 +17,13 @@ public class LayoutAttribute {
         this.type = Type.ASSIGNED;
     }
 
-    public LayoutAttribute(Type type, Object value, boolean string) {
+    public LayoutAttribute(Type type, Object value) {
         this.value = value;
-        this.string = string;
         this.type = type;
     }
 
-    public LayoutAttribute(Object value, boolean string) {
+    public LayoutAttribute(Object value) {
         this.value = value;
-        this.string = string;
         this.type = Type.LAYOUT;
     }
 
@@ -39,16 +35,8 @@ public class LayoutAttribute {
         this.value = value;
     }
 
-    public void setString(boolean string) {
-        this.string = string;
-    }
-
     public Object getValue() {
         return value;
-    }
-
-    public boolean isString() {
-        return string;
     }
 
     public Type getType() {

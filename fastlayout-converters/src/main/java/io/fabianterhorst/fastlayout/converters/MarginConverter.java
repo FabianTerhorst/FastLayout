@@ -32,9 +32,9 @@ public class MarginConverter extends LayoutConverter {
                 margin = new Object[]{attributeValue, attributeValue, attributeValue, attributeValue};
                 return new LayoutAttribute();
             case "android:layout_marginEnd":
-                return new LayoutAttribute(LayoutAttribute.Type.PARAM, setter(attributeToName(attributeName).replace("Layout", ""), attributeValue, false), false);
+                return new LayoutAttribute(LayoutAttribute.Type.PARAM, setter(attributeToName(attributeName).replace("Layout", ""), attributeValue, false));
             case "android:layout_marginStart":
-                return new LayoutAttribute(LayoutAttribute.Type.PARAM, setter(attributeToName(attributeName).replace("Layout", ""), attributeValue, false), false);
+                return new LayoutAttribute(LayoutAttribute.Type.PARAM, setter(attributeToName(attributeName).replace("Layout", ""), attributeValue, false));
         }
         return null;
     }
@@ -49,7 +49,7 @@ public class MarginConverter extends LayoutConverter {
                     margin[i] = 0;
                 }
             }
-            finished.add(new LayoutAttribute(LayoutAttribute.Type.PARAM, "setMargins(" + margin[0] + "," + margin[1] + "," + margin[2] + "," + margin[3] + ")", false));
+            finished.add(new LayoutAttribute(LayoutAttribute.Type.PARAM, "setMargins(" + margin[0] + "," + margin[1] + "," + margin[2] + "," + margin[3] + ")"));
         }
         return finished;
     }

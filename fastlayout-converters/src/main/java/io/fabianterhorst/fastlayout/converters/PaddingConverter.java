@@ -54,7 +54,7 @@ public class PaddingConverter extends LayoutConverter {
                     padding[i] = 0;
                 }
             }
-            finished.add(new LayoutAttribute(LayoutAttribute.Type.LAYOUT, "setPadding(" + padding[0] + "," + padding[1] + "," + padding[2] + "," + padding[3] + ")", false));
+            finished.add(new LayoutAttribute(LayoutAttribute.Type.LAYOUT, "setPadding(" + padding[0] + "," + padding[1] + "," + padding[2] + "," + padding[3] + ")"));
         }
         if (paddingRelative[0] != null || paddingRelative[1] != null) {
             for (int i = 0; i < padding.length; i++) {
@@ -69,7 +69,7 @@ public class PaddingConverter extends LayoutConverter {
                     paddingRelative[i] = 0;
                 }
             }
-            finished.add(new LayoutAttribute(LayoutAttribute.Type.LAYOUT, "setPaddingRelative(" + paddingRelative[0] + "," + padding[1] + "," + padding[2] + "," + paddingRelative[1] + ")", false));
+            finished.add(new LayoutAttribute(LayoutAttribute.Type.LAYOUT, "setPaddingRelative(" + paddingRelative[0] + "," + padding[1] + "," + padding[2] + "," + paddingRelative[1] + ")"));
         }
         return finished;
     }

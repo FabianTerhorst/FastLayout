@@ -20,27 +20,27 @@ public class LayoutConverter {
 
     public LayoutAttribute onConvertLayoutAttributeValue(Object attributeValue, String attributeName) {
         String attribute = String.valueOf(attributeValue);
-        LayoutAttribute layoutAttribute = new LayoutAttribute(attributeValue, true);
+        LayoutAttribute layoutAttribute = new LayoutAttribute(attributeValue);
         if (attribute.startsWith("@+id/") || attribute.startsWith("@id/")) {
-            layoutAttribute = new LayoutAttribute("R.id" + attribute.replace("@+id/", ".").replace("@id/", "."), false);
+            return onConvertLayoutAttribute("R.id" + attribute.replace("@+id/", ".").replace("@id/", "."), attributeName, false);
         } else if (attribute.startsWith("@dimen/")) {
-            layoutAttribute = new LayoutAttribute("(int) getContext().getResources().getDimension(R.dimen." + attribute.replace("@dimen/", "") + ")", false);
+            return onConvertLayoutAttribute("(int) getContext().getResources().getDimension(R.dimen." + attribute.replace("@dimen/", "") + ")", attributeName, false);
         } else if (attribute.startsWith("@string/")) {
-            layoutAttribute = new LayoutAttribute("getContext().getString(R.string." + attribute.replace("@string/", "") + ")", false);
+            return onConvertLayoutAttribute("getContext().getString(R.string." + attribute.replace("@string/", "") + ")", attributeName, false);
         } else if (attribute.endsWith("dp") && isNumber(attribute.replace("dp", ""))) {
-            layoutAttribute = new LayoutAttribute("(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, " + attribute.replace("dp", "") + ", getResources().getDisplayMetrics())", false);
+            return onConvertLayoutAttribute("(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, " + attribute.replace("dp", "") + ", getResources().getDisplayMetrics())", attributeName, false);
         } /*else if (attribute.startsWith("?attr/") && attributeName != null && attributeName.equals("Background")) {
             layoutAttribute = new LayoutAttribute("LayoutUtils.getAttrDrawable(getContext(), R.attr." + attribute.replace("?attr/", "") + ")", false);
         } else if (attribute.startsWith("?attr/")) {
             layoutAttribute = new LayoutAttribute("LayoutUtils.getAttrInt(getContext(), R.attr." + attribute.replace("?attr/", "") + ")", false);
         } */ else if (attribute.equals("false") || attribute.equals("true")) {
-            layoutAttribute = new LayoutAttribute(attribute, false);
+            return onConvertLayoutAttribute(attribute, attributeName, false);
         } else if (attribute.endsWith("sp") && isNumber(attribute.replace("sp", ""))) {
-            layoutAttribute = new LayoutAttribute("(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, " + attribute.replace("sp", "") + ", Resources.getSystem().getDisplayMetrics())", false);
+            return onConvertLayoutAttribute("(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, " + attribute.replace("sp", "") + ", Resources.getSystem().getDisplayMetrics())", attributeName, false);
         } else if (isNumber(attribute)) {
-            layoutAttribute = new LayoutAttribute(attributeValue, false);
+            return onConvertLayoutAttribute(attributeValue, attributeName, false);
         }
-        return onConvertLayoutAttribute(layoutAttribute.getValue(), attributeName, layoutAttribute.isString());
+        return onConvertLayoutAttribute(layoutAttribute.getValue(), attributeName, true);
     }
 
     public LayoutAttribute onConvertLayoutAttribute(Object attributeValue, String attributeName, boolean isString) {
@@ -51,7 +51,7 @@ public class LayoutConverter {
             attributeName += capitalize(refactor);
         }*/
         attributeName = attributeToName(attributeName);
-        return new LayoutAttribute(setter(attributeName, attributeValue, isString), isString);
+        return new LayoutAttribute(setter(attributeName, attributeValue, isString));
     }
 
     public String attributeToName(String attribute) {
