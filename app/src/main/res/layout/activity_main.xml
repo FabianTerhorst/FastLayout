@@ -46,8 +46,14 @@
             android:id="@+id/textView2"
             android:text="Hello Linear Layout"
             android:layout_weight="1"
+            android:background="@mipmap/ic_launcher"
             android:layout_width="wrap_content"
+            android:drawableTop="@mipmap/ic_launcher"
+            android:drawableTintMode="screen"
+            android:textColor="@color/accent"
+            android:drawablePadding="10dp"
             android:layout_height="wrap_content"/>
+        <!--android:drawableTint="@color/accent"-->
 
     </LinearLayout>
     <FrameLayout
