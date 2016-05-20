@@ -30,6 +30,11 @@ public class DefaultAttributesConverter extends LayoutConverter {
                 if (String.valueOf(attributeStartValue).startsWith("R.")) {
                     return new LayoutAttribute(setter("BackgroundResource", attributeStartValue, false));
                 }
+                break;
+        }
+        //Todo : list with all
+        if(attributeName.startsWith("android:nextFocus")) {
+            return new LayoutAttribute(setter(attributeToName(attributeName) + "Id", attributeStartValue, false));
         }
         return null;
     }
