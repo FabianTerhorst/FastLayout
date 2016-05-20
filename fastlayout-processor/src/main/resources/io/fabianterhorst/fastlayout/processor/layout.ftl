@@ -41,23 +41,17 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
     }
 
     private void init() {
-        ${rootLayout.layoutParams.name} ${rootLayout.id}LayoutParams = new ${rootLayout.layoutParams.name}(<#list rootLayout.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_1">${attribute.value},</#if></#list><#list rootLayout.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_2">${attribute.value}</#if></#list><#list rootLayout.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_3">,${attribute.value}</#if></#list>);
+        ${rootLayout.layoutParamsName} ${rootLayout.id}LayoutParams = new ${rootLayout.layoutParamsName}(<#list rootLayout.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_1">${attribute.value},</#if></#list><#list rootLayout.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_2">${attribute.value}</#if></#list><#list rootLayout.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_3">,${attribute.value}</#if></#list>);
         <#list rootLayout.attributes as attribute>
         <#if attribute.type == "PARAM" || attribute.type == "LAYOUT">
         <#if attribute.type == "PARAM">${rootLayout.id}LayoutParams.<#elseif attribute.type == "LAYOUT"></#if>${attribute.value};
         </#if>
         </#list>
-        <#list rootLayout.layoutParamsList?keys as key>
-        set${key}(<#if !rootLayout.layoutParamsList[key].value?is_number && !rootLayout.layoutParamsList[key].number>"</#if>${rootLayout.layoutParamsList[key].value}<#if !rootLayout.layoutParamsList[key].value?is_number && !rootLayout.layoutParamsList[key].number>"</#if>);
-        </#list>
         this.setLayoutParams(${rootLayout.id}LayoutParams);
         <#assign parent = "this">
         <#list rootLayout.children as child>
         ${child.id} = new ${child.name}(getContext());
-        ${child.layoutParams.name} ${child.id}LayoutParams = new ${child.layoutParams.name}(<#list child.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_1">${attribute.value},</#if></#list><#list child.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_2">${attribute.value}</#if></#list><#list child.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_3">,${attribute.value}</#if></#list>);
-        <#list child.layoutParamsList?keys as key>
-        <#if child.layoutParamsList[key].paramValue>${child.id}LayoutParams<#else>${child.id}</#if>.<#if child.layoutParamsList[key].rule>addRule(${key}<#if child.layoutParamsList[key].value != "true">,${child.layoutParamsList[key].value}</#if>)<#elseif !child.layoutParamsList[key].setter>set${key}(<#if !child.layoutParamsList[key].value?is_number && !child.layoutParamsList[key].number>"</#if>${child.layoutParamsList[key].value}<#if !child.layoutParamsList[key].value?is_number && !child.layoutParamsList[key].number>"</#if>)<#else>${key} = <#if !child.layoutParamsList[key].value?is_number && !child.layoutParamsList[key].number>"</#if>${child.layoutParamsList[key].value}<#if !child.layoutParamsList[key].value?is_number && !child.layoutParamsList[key].number>"</#if></#if>;
-        </#list>
+        ${child.layoutParamsName} ${child.id}LayoutParams = new ${child.layoutParamsName}(<#list child.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_1">${attribute.value},</#if></#list><#list child.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_2">${attribute.value}</#if></#list><#list child.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_3">,${attribute.value}</#if></#list>);
         <#list child.attributes as attribute>
         <#if attribute.type == "PARAM" || attribute.type == "LAYOUT">
         <#if attribute.type == "PARAM">${child.id}LayoutParams<#elseif attribute.type == "LAYOUT">${child.id}</#if>.${attribute.value};

@@ -171,9 +171,6 @@ public class LayoutProcessor extends AbstractProcessor {
             Node child = nodeList.item(i);
             if (child.getAttributes() != null && child.getAttributes().getLength() > 0) {
                 LayoutEntity layout = createLayoutFromChild(child, node.getNodeName());
-                if (node.getNodeName().equals("RelativeLayout")) {
-                    layout.setRelative(true);
-                }
                 mChilds.add(layout);
                 layouts.add(layout);
                 if (child.hasChildNodes()) {
@@ -189,24 +186,25 @@ public class LayoutProcessor extends AbstractProcessor {
     }
 
     private LayoutEntity createLayoutFromChild(Node node, String root) {
-        LayoutEntity layout = new LayoutEntity();
+        final LayoutEntity layout = new LayoutEntity();
         layout.setId(getIdByNode(node));
         layout.setName(node.getNodeName());
         layout.setHasChildren(node.hasChildNodes());
         layout.setRootLayout(root);
-        LayoutParam layoutParams = new LayoutParam();
-        layoutParams.setName(root + ".LayoutParams");
-        layout.setLayoutParams(layoutParams);
+        layout.setLayoutParamsName(root + ".LayoutParams");
         NamedNodeMap attributes = node.getAttributes();
-        converters.setAll(new ArrayList<LayoutConverter>() {{
-            add(new DefaultAttributesConverter());
-            add(new MarginConverter());
-            add(new PaddingConverter());
-            add(new SizeConverter());
-            add(new RelativeLayoutConverter());
-            /*last*/
-            add(new LayoutConverter());
-        }});
+
+        ArrayList<LayoutConverter> layoutConverters = new ArrayList<>();
+        layoutConverters.add(new DefaultAttributesConverter());
+        layoutConverters.add(new MarginConverter());
+        layoutConverters.add(new PaddingConverter());
+        layoutConverters.add(new SizeConverter());
+        if(root.equals("RelativeLayout")) {
+            layoutConverters.add(new RelativeLayoutConverter());
+        }
+        /*last*/
+        layoutConverters.add(new LayoutConverter());
+        converters.setAll(layoutConverters);
         for (int i = 0; i < attributes.getLength(); i++) {
             Node attribute = attributes.item(i);
             String attributeName = attribute.getNodeName();
@@ -277,6 +275,7 @@ public class LayoutProcessor extends AbstractProcessor {
         Filer filer = processingEnv.getFiler();
 
         JavaFileObject dummySourceFile = filer.createSourceFile("dummy" + System.currentTimeMillis());
+
         String dummySourceFilePath = dummySourceFile.toUri().toString();
 
         if (dummySourceFilePath.startsWith("file:")) {

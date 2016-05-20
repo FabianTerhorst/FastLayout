@@ -15,25 +15,18 @@ public class LayoutEntity {
 
     private List<LayoutEntity> children;
 
-    private LayoutParam layoutParams;
+    private String layoutParamsName;
 
     private boolean hasChildren;
 
-    private Map<Object, LayoutParamEntry> layoutParamsList;
-
     private List<LayoutAttribute> attributes;
-
-    private boolean relative;
 
     private String rootLayout;
 
     public LayoutEntity() {
         children = new ArrayList<>();
-        //Todo : ArrayMap ? !
-        layoutParamsList = new HashMap<>();
         attributes = new ArrayList<>();
         hasChildren = false;
-        relative = false;
     }
 
     public void setId(String id) {
@@ -60,20 +53,8 @@ public class LayoutEntity {
         this.attributes.addAll(attributes);
     }
 
-    public void addLayoutParam(Object name, Object value, boolean paramValue, boolean rule) {
-        layoutParamsList.put(name, new LayoutParamEntry(value, paramValue, rule));
-    }
-
-    public void addLayoutParam(Object name, Object value, boolean paramValue, boolean rule, boolean number) {
-        layoutParamsList.put(name, new LayoutParamEntry(value, paramValue, rule, number));
-    }
-
-    public void addLayoutParam(Object name, Object value, boolean paramValue, boolean rule, boolean number, boolean setter) {
-        layoutParamsList.put(name, new LayoutParamEntry(value, paramValue, rule, number, setter));
-    }
-
-    public void setLayoutParams(LayoutParam layoutParams) {
-        this.layoutParams = layoutParams;
+    public void setLayoutParamsName(String layoutParamsName) {
+        this.layoutParamsName = layoutParamsName;
     }
 
     public void addChild(LayoutEntity child) {
@@ -92,12 +73,8 @@ public class LayoutEntity {
         return name;
     }
 
-    public LayoutParam getLayoutParams() {
-        return layoutParams;
-    }
-
-    public Map<Object, LayoutParamEntry> getLayoutParamsList() {
-        return layoutParamsList;
+    public String getLayoutParamsName() {
+        return layoutParamsName;
     }
 
     public List<LayoutEntity> getChildren() {
@@ -110,14 +87,6 @@ public class LayoutEntity {
 
     public boolean isHasChildren() {
         return hasChildren;
-    }
-
-    public void setRelative(boolean relative) {
-        this.relative = relative;
-    }
-
-    public boolean isRelative() {
-        return relative;
     }
 
     public List<LayoutAttribute> getAttributes() {
