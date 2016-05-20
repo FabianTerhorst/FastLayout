@@ -3,20 +3,25 @@ apply plugin: 'com.neenbedankt.android-apt'
 //apply plugin: 'fastlayout'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 'android-N'
+    buildToolsVersion "24-rc4"
 
     defaultConfig {
         applicationId "io.fabianterhorst.fastlayout.sample"
-        minSdkVersion 23
-        targetSdkVersion 23
+        minSdkVersion 21
+        targetSdkVersion 'N'
         versionCode 1
         versionName "1.0"
+
+        /*jackOptions {
+            enabled true
+        }*/
     }
+
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
@@ -26,8 +31,15 @@ dependencies {
     compile project(':fastlayout')
     compile project(':fastlayout-annotations')
     apt project(':fastlayout-processor')
+    compile project(':fastlayout-converters')
+    //annotationProcessor project(':fastlayout-processor')
+    //debugAnnotationProcessor project(':fastlayout-processor')
+    //compile 'io.fabianterhorst:fastlayout:0.0.1-alpha17'
+    //compile 'io.fabianterhorst:fastlayout-annotations:0.0.1-alpha17'
+    //annotationProcessor project(':fastlayout-processor')
     compile('com.mikepenz:fastadapter:1.5.0@aar') {
         transitive = true
     }
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha1'
     compile 'com.mikepenz:materialize:0.8.8@aar'
 }
