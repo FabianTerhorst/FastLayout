@@ -31,6 +31,8 @@ public class DefaultAttributesConverter extends LayoutConverter {
                     return new LayoutAttribute(setter("BackgroundResource", attributeStartValue, false));
                 }
                 break;
+            case "android:textSize":
+                return new LayoutAttribute(setter("TextSize", "TypedValue.COMPLEX_UNIT_SP," + attributeStartValue.replace("sp", ""), false));
         }
         //Todo : list with all
         if(attributeName.startsWith("android:nextFocus")) {
