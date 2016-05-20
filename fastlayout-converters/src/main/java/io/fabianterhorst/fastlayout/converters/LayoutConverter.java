@@ -33,6 +33,8 @@ public class LayoutConverter {
             return onConvertLayoutAttribute(attribute, "(int) getContext().getResources().getDimension(" + attribute + ")", attributeName, false);
         } else if (attribute.startsWith("R.string.")) {
             return onConvertLayoutAttribute(attribute, "getContext().getString(" + attribute + ")", attributeName, false);
+        } else if (attribute.startsWith("R.color.")) {
+            return onConvertLayoutAttribute(attribute, "getContext().getColor(" + attribute + ")", attributeName, false);
         } else if (attribute.startsWith("R.drawable.") || attribute.startsWith("R.mipmap.") || attribute.startsWith("R.attr.")) {
             return onConvertLayoutAttribute(attribute, "LayoutUtils.getAttrDrawable(getContext(), " + attribute + ")", attributeName, false);
         } else if (attribute.endsWith("dp") && isNumber(attribute.replace("dp", ""))) {
