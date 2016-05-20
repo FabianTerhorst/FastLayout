@@ -12,9 +12,17 @@ public class SizeConverter extends LayoutConverter {
     public LayoutAttribute onConvertLayoutAttribute(Object attributeValue, String attributeName, boolean isString) {
         switch (attributeName) {
             case "android:layout_width":
-                return new LayoutAttribute(LayoutAttribute.Type.PARAM_CONSTRUCTOR_1, String.valueOf(attributeValue).toUpperCase(), false);
+                if(isString) {
+                    return new LayoutAttribute(LayoutAttribute.Type.PARAM_CONSTRUCTOR_1, String.valueOf(attributeValue).toUpperCase(), false);
+                } else {
+                    return new LayoutAttribute(LayoutAttribute.Type.PARAM_CONSTRUCTOR_1,attributeValue, false);
+                }
             case "android:layout_height":
-                return new LayoutAttribute(LayoutAttribute.Type.PARAM_CONSTRUCTOR_2, String.valueOf(attributeValue).toUpperCase(), false);
+                if(isString) {
+                    return new LayoutAttribute(LayoutAttribute.Type.PARAM_CONSTRUCTOR_2, String.valueOf(attributeValue).toUpperCase(), false);
+                } else {
+                    return new LayoutAttribute(LayoutAttribute.Type.PARAM_CONSTRUCTOR_2,attributeValue, false);
+                }
             case "android:layout_weight":
                 return new LayoutAttribute(LayoutAttribute.Type.PARAM_CONSTRUCTOR_3, attributeValue, false);
         }
