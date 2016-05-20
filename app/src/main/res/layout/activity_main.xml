@@ -29,6 +29,7 @@
         android:layout_margin="5dp"
         android:clickable="true"
         android:weightSum="1"
+        android:orientation="horizontal"
         android:background="?attr/selectableItemBackground"
         android:layout_alignEnd="@id/linearLayout1"
         android:layout_height="wrap_content">
