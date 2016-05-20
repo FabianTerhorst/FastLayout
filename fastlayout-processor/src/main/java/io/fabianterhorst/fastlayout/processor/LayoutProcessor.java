@@ -1,5 +1,6 @@
 package io.fabianterhorst.fastlayout.processor;
 
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
@@ -60,6 +62,8 @@ public class LayoutProcessor extends AbstractProcessor {
     private Configuration mFreemarkerConfiguration;
 
     private List<LayoutEntity> mChilds;
+
+    private AtomicLong mAtomicLong = new AtomicLong(1);
 
     @Override
     public SourceVersion getSupportedSourceVersion() {
@@ -161,7 +165,11 @@ public class LayoutProcessor extends AbstractProcessor {
     }
 
     private String getIdByNode(Node node) {
-        return normalizeLayoutId(node.getAttributes().getNamedItem("android:id").getNodeValue());
+        Node idNote = node.getAttributes().getNamedItem("android:id");
+        if(idNote != null) {
+            return normalizeLayoutId(idNote.getNodeValue());
+        }
+        return null;
     }
 
     private List<LayoutEntity> createChildList(Node node) {
@@ -187,7 +195,11 @@ public class LayoutProcessor extends AbstractProcessor {
 
     private LayoutEntity createLayoutFromChild(Node node, String root) {
         final LayoutEntity layout = new LayoutEntity();
-        layout.setId(getIdByNode(node));
+        String id = getIdByNode(node);
+        if(id == null){
+            id = node.getNodeName().replace(".", "") + mAtomicLong.get();
+        }
+        layout.setId(id);
         layout.setName(node.getNodeName());
         layout.setHasChildren(node.hasChildNodes());
         layout.setRootLayout(root);
