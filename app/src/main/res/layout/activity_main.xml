@@ -52,6 +52,9 @@
             android:drawableTintMode="screen"
             android:textColor="@color/accent"
             android:drawableStart="@mipmap/ic_launcher"
+            android:elevation="10dp"
+            android:nextFocusLeft="@id/linearLayout1"
+            android:layout_marginStart="10dp"
             android:drawablePadding="10dp"
             android:layout_height="wrap_content"/>
         <!--android:drawableTint="@color/accent"-->
