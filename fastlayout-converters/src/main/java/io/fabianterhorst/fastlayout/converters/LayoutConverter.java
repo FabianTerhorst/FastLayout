@@ -25,7 +25,11 @@ public class LayoutConverter {
         if ((attribute.startsWith("@") || attribute.startsWith("?")) && attribute.contains("/")) {
             String[] attributeSplit = attribute.split("/");
             String type = attributeSplit[0].replace("@+", "").replace("@", "").replace("?", "");
-            attribute = "R." + type + "." + attributeSplit[1];
+            if(type.contains(":")) {
+                attribute = type.replace(":", ".R.") + "." + attributeSplit[1];
+            } else {
+                attribute = "R." + type + "." + attributeSplit[1];
+            }
             isString = false;
         }
 
