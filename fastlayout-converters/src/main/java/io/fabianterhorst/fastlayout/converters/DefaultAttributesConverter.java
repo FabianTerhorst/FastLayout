@@ -15,6 +15,15 @@ public class DefaultAttributesConverter extends LayoutConverter {
                 return super.onConvertLayoutAttribute(String.valueOf(attributeValue), "Gravity." + String.valueOf(attributeValue).toUpperCase(), attributeName, false);
             case "android:layout_gravity":
                 return onConvertLayoutAttribute(String.valueOf(attributeValue), "Gravity." + String.valueOf(attributeValue).toUpperCase(), attributeName, false);
+            case "android:backgroundTintMode":
+                return super.onConvertLayoutAttribute(String.valueOf(attributeValue), "android.graphics.PorterDuff.Mode." + String.valueOf(attributeValue).toUpperCase(), attributeName, false);
+            case "android:accessibilityLiveRegion":
+                return super.onConvertLayoutAttribute(String.valueOf(attributeValue), "View.ACCESSIBILITY_LIVE_REGION_" + String.valueOf(attributeValue).toUpperCase(), attributeName, false);
+            case "android:drawingCacheQuality":
+                return super.onConvertLayoutAttribute(String.valueOf(attributeValue), "View.DRAWING_CACHE_QUALITY_" + String.valueOf(attributeValue).toUpperCase(), attributeName, false);
+            //Todo : viewgroup attribute
+            case "android:descendantFocusability":
+                return super.onConvertLayoutAttribute(String.valueOf(attributeValue), "ViewGroup.FOCUS_" + stringToConstant(String.valueOf(attributeValue)).toUpperCase(), attributeName, false);
         }
         return super.onConvertLayoutAttributeValue(attributeValue, attributeName);
     }
