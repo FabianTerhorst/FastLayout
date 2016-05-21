@@ -11,8 +11,6 @@ public class DefaultAttributesConverter extends LayoutConverter {
     @Override
     public LayoutAttribute onConvertLayoutAttributeValue(Object attributeValue, String attributeName) {
         switch (attributeName) {
-            case "android:orientation":
-                return super.onConvertLayoutAttribute(String.valueOf(attributeValue), "LinearLayout." + String.valueOf(attributeValue).toUpperCase(), attributeName, false);
             case "android:gravity":
                 return super.onConvertLayoutAttribute(String.valueOf(attributeValue), "Gravity." + String.valueOf(attributeValue).toUpperCase(), attributeName, false);
             case "android:layout_gravity":
