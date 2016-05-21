@@ -12,6 +12,7 @@ import io.fabianterhorst.fastlayout.annotations.Converter;
 public class RelativeLayoutConverter extends LayoutConverter {
 
     private List<String> relativeParameters = new ArrayList<String>() {{
+        add("android:layout_above");
         add("android:layout_alignBaseline");
         add("android:layout_alignParentBottom");
         add("android:layout_alignEnd");
@@ -41,27 +42,5 @@ public class RelativeLayoutConverter extends LayoutConverter {
             return new LayoutAttribute(LayoutAttribute.Type.PARAM, "addRule(" + "RelativeLayout." + stringToConstant(attributeToName(attributeName.replace("_to", "_").replace("layout_", ""))).toUpperCase() + (!attributeValue.equals("true") && !attributeValue.equals("false") ? ", " + attributeValue : ", " + "RelativeLayout." + String.valueOf(attributeValue).toUpperCase()) + ")");
         }
         return null;
-    }
-
-    /**
-     * convert a string to a constant schema
-     *
-     * @param string string
-     * @return constant schema string
-     */
-    private String stringToConstant(String string) {
-        int length = string.length();
-        for (int i = 0; i < length; i++) {
-            char character = string.charAt(i);
-            if (character != "_".charAt(0) && Character.isUpperCase(character) && i != 0) {
-                String firstPart = string.substring(0, i);
-                String secondPart = string.substring(i, length);
-                String newFirstPart = firstPart + "_";
-                string = newFirstPart + secondPart;
-                i = newFirstPart.length();
-                length++;
-            }
-        }
-        return string;
     }
 }

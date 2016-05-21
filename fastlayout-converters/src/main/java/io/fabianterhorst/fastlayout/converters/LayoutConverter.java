@@ -67,6 +67,28 @@ public class LayoutConverter {
         return new LayoutAttribute(setter(attributeName, attributeValue, isString));
     }
 
+    /**
+     * convert a string to a constant schema
+     *
+     * @param string string
+     * @return constant schema string
+     */
+    public String stringToConstant(String string) {
+        int length = string.length();
+        for (int i = 0; i < length; i++) {
+            char character = string.charAt(i);
+            if (character != "_".charAt(0) && Character.isUpperCase(character) && i != 0) {
+                String firstPart = string.substring(0, i);
+                String secondPart = string.substring(i, length);
+                String newFirstPart = firstPart + "_";
+                string = newFirstPart + secondPart;
+                i = newFirstPart.length();
+                length++;
+            }
+        }
+        return string;
+    }
+
     public String attributeToName(String attribute) {
         attribute = attribute.split(":")[1];
         String[] split = attribute.split("_");
