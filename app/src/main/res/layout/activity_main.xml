@@ -37,6 +37,7 @@
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_margin="5dp"
+        style="@style/MyTextView.MyTextStyle2"
         android:clickable="true"
         android:weightSum="1"
         android:orientation="horizontal"

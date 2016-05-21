@@ -37,6 +37,11 @@ public class LayoutConverter {
             return onConvertLayoutAttribute(attribute, "getContext().getColor(" + attribute + ")", attributeName, false);
         } else if (attribute.startsWith("R.drawable.") || attribute.startsWith("R.mipmap.") || attribute.startsWith("R.attr.")) {
             return onConvertLayoutAttribute(attribute, "LayoutUtils.getAttrDrawable(getContext(), " + attribute + ")", attributeName, false);
+        } else if (attribute.startsWith("R.style.")) {
+            String attributeStyle = attribute.replace("R.style.", "");
+            String style = attributeStyle.replace(".", "_");
+            String styleAttribute = "R.style." + style;
+            return onConvertLayoutAttribute(attribute, styleAttribute, attributeName, false);
         } else if (attribute.endsWith("dp") && isNumber(attribute.replace("dp", ""))) {
             return onConvertLayoutAttribute(attribute, "(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, " + attribute.replace("dp", "") + ", getResources().getDisplayMetrics())", attributeName, false);
         } else if (attribute.equals("false") || attribute.equals("true")) {
