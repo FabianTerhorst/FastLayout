@@ -262,7 +262,7 @@ public class LayoutProcessor extends AbstractProcessor {
             String attributeValue = attribute.getNodeValue();
             processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, attributeName + ":" + attributeValue);
             if (!attributeName.startsWith("tools:") && !attributeName.startsWith("xmlns:")) {
-                LayoutAttribute layoutAttr = converters.convert(attributeValue, attributeName);
+                LayoutAttribute layoutAttr = converters.convert(attributeValue, attributeName, layout.getAttributes());
                 if (layoutAttr.getType() != LayoutAttribute.Type.ASSIGNED) {
                     layout.addAttribute(layoutAttr);
                 }
