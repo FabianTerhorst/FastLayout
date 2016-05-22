@@ -25,7 +25,7 @@ public class LayoutConverter {
         if ((attribute.startsWith("@") || attribute.startsWith("?")) && attribute.contains("/")) {
             String[] attributeSplit = attribute.split("/");
             String type = attributeSplit[0].replace("@+", "").replace("@", "").replace("?", "");
-            if(type.contains(":")) {
+            if (type.contains(":")) {
                 attribute = type.replace(":", ".R.") + "." + attributeSplit[1];
             } else {
                 attribute = "R." + type + "." + attributeSplit[1];
@@ -39,7 +39,9 @@ public class LayoutConverter {
             return onConvertLayoutAttribute(attribute, "getContext().getString(" + attribute + ")", attributeName, false);
         } else if (attribute.startsWith("R.color.")) {
             return onConvertLayoutAttribute(attribute, "getContext().getColor(" + attribute + ")", attributeName, false);
-        } else if (attribute.startsWith("R.drawable.") || attribute.startsWith("R.mipmap.") || attribute.startsWith("R.attr.")) {
+        } else if (attribute.startsWith("R.drawable.") || attribute.startsWith("R.mipmap.")) {
+            return onConvertLayoutAttribute(attribute, "getContext().getResources().getDrawable(" + attribute + ")", attributeName, false);
+        } else if (attribute.startsWith("R.attr.")) {
             return onConvertLayoutAttribute(attribute, "LayoutUtils.getAttrDrawable(getContext(), " + attribute + ")", attributeName, false);
         } else if (attribute.startsWith("R.style.")) {
             String attributeStyle = attribute.replace("R.style.", "");
