@@ -43,6 +43,13 @@ public class DefaultAttributesConverter extends LayoutConverter {
                 break;
             case "android:textSize":
                 return new LayoutAttribute(setter("TextSize", "TypedValue.COMPLEX_UNIT_SP," + attributeStartValue.replace("sp", ""), false));
+            //Todo : viewgroup
+            case "android:animateLayoutChanges":
+                if(Boolean.valueOf(String.valueOf(attributeValue))) {
+                    return new LayoutAttribute(setter("LayoutTransition", "new android.animation.LayoutTransition()", false));
+                } else {
+                    return new LayoutAttribute(setter("LayoutTransition", "LayoutUtils.getDisabledLayoutTransition()", false));
+                }
         }
         //Todo : list with all
         if(attributeName.startsWith("android:nextFocus")) {
