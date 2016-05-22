@@ -37,16 +37,21 @@ public class LayoutConverters {
                 || type == LayoutAttribute.Type.PARAM_CONSTRUCTOR_1
                 || type == LayoutAttribute.Type.PARAM_CONSTRUCTOR_2
                 || type == LayoutAttribute.Type.PARAM_CONSTRUCTOR_3) {
-            for (LayoutAttribute attribute : attributes) {
-                if (attribute.getType() == type) {
-                    return true;
-                }
+            checkAttributesForType(type, attributes);
+        }
+        return false;
+    }
+
+    private boolean checkAttributesForType(LayoutAttribute.Type type, List<LayoutAttribute> attributes) {
+        for (LayoutAttribute attribute : attributes) {
+            if (attribute.getType() == type) {
+                return true;
             }
         }
         return false;
     }
 
-    public List<LayoutAttribute> finish() {
+    public List<LayoutAttribute> finish(List<LayoutAttribute> attributes) {
         List<LayoutAttribute> finished = new ArrayList<>();
         for (LayoutConverter layoutConverter : converters) {
             List<LayoutAttribute> currentlyFinished = layoutConverter.finish();
@@ -54,7 +59,12 @@ public class LayoutConverters {
                 finished.addAll(currentlyFinished);
             }
         }
-        //Todo : set all constructors
+        if (!checkAttributesForType(LayoutAttribute.Type.LAYOUT_CONSTRUCTOR_2, attributes)) {
+            finished.add(new LayoutAttribute(LayoutAttribute.Type.LAYOUT_CONSTRUCTOR_2, "null"));
+        }
+        if (!checkAttributesForType(LayoutAttribute.Type.LAYOUT_CONSTRUCTOR_3, attributes)) {
+            finished.add(new LayoutAttribute(LayoutAttribute.Type.LAYOUT_CONSTRUCTOR_3, "0"));
+        }
         return finished;
     }
 }

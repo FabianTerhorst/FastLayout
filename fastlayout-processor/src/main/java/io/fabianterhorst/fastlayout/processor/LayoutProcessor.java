@@ -268,7 +268,7 @@ public class LayoutProcessor extends AbstractProcessor {
                 }
             }
         }
-        List<LayoutAttribute> finishedAttributes = converters.finish();
+        List<LayoutAttribute> finishedAttributes = converters.finish(layout.getAttributes());
         if (finishedAttributes.size() > 0) {
             layout.addAllAttributes(finishedAttributes);
         }

@@ -21,7 +21,7 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
 
     </#list>
     public ${keyWrapperClassName}(Context context) {
-        super(context<#list rootLayout.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_3">, null, ${attribute.value}</#if></#list>);
+        super(context<#list rootLayout.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_2">, ${attribute.value}</#if></#list><#list rootLayout.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_3">, ${attribute.value}</#if></#list>);
         init();
     }
 
