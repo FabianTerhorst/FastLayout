@@ -37,13 +37,6 @@ This is needed to filter the layouts you want to compile
 //this is needed when you want to use the class fields
 //@Layouts
 public class AppLayouts {
-
-	//The fieldName here will only be used to specify the layout object name
-    //@Layout("activity_main")
-    //ILayout ActivityMain;
-
-    //when you use @Layouts you don´t need to add the @Layout annotation, the fieldName will be used
-    //ILayout activity_main;
 }
 ```
 ###Now use the layout inside your Activity for example
