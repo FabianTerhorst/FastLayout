@@ -66,7 +66,7 @@ public class LayoutProcessor extends AbstractProcessor {
 
     private List<LayoutEntity> mChilds;
 
-    private AtomicLong mAtomicLong = new AtomicLong(1);
+    private AtomicLong mAtomicLong = new AtomicLong(9000000000000000000L);
 
     private List<Object> userConverters;
 
