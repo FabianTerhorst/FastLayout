@@ -15,7 +15,7 @@ public class MyLayoutConverter extends LayoutConverter {
     }
 
     @Override
-    public LayoutAttribute onConvertLayoutAttribute(Object attributeValue, String attributeName, boolean isString) {
+    public LayoutAttribute onConvertLayoutAttribute(String attributeValue, String attributeName, boolean isString) {
         /*switch (attributeName) {
             case "android:layout_marginLeft":
                 return new LayoutAttribute(LayoutAttribute.Type.PARAM, setter("", "", false), attributeValue, false);

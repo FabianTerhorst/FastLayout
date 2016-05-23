@@ -13,12 +13,12 @@ public class TextViewLayoutConverter extends LayoutConverter {
     private Object drawableRelative[] = new Object[]{null, null};//start,end
 
     @Override
-    public LayoutAttribute onConvertLayoutAttribute(String attributeStartValue, Object attributeValue, String attributeName, boolean isString) {
+    public LayoutAttribute onConvertLayoutAttribute(String attributeStartValue, String attributeValue, String attributeName, boolean isString) {
         switch (attributeName) {
             case "android:drawablePadding":
                return new LayoutAttribute(setter("CompoundDrawablePadding", attributeValue, false));
             case "android:drawableTintMode":
-                return new LayoutAttribute(setter("CompoundDrawableTintMode", "android.graphics.PorterDuff.Mode." + String.valueOf(attributeValue).toUpperCase(), false));
+                return new LayoutAttribute(setter("CompoundDrawableTintMode", "android.graphics.PorterDuff.Mode." + attributeValue.toUpperCase(), false));
             case "android:drawableTint":
                 return new LayoutAttribute(setter("CompoundDrawableTintList", attributeValue, false));
             case "android:drawableLeft":

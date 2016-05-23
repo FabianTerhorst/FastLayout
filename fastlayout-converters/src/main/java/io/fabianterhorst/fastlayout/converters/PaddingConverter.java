@@ -16,7 +16,7 @@ public class PaddingConverter extends LayoutConverter {
     private Object paddingRelative[] = new Object[]{null, null};//start,end
 
     @Override
-    public LayoutAttribute onConvertLayoutAttribute(String attributeStartValue, Object attributeValue, String attributeName, boolean isString) {
+    public LayoutAttribute onConvertLayoutAttribute(String attributeStartValue, String attributeValue, String attributeName, boolean isString) {
         switch (attributeName) {
             case "android:paddingLeft":
                 padding = new Object[]{attributeValue, padding[1], padding[2], padding[3]};

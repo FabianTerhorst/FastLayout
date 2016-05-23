@@ -9,17 +9,17 @@ import io.fabianterhorst.fastlayout.annotations.Converter;
 public class SizeConverter extends LayoutConverter {
 
     @Override
-    public LayoutAttribute onConvertLayoutAttribute(String attributeStartValue, Object attributeValue, String attributeName, boolean isString) {
+    public LayoutAttribute onConvertLayoutAttribute(String attributeStartValue, String attributeValue, String attributeName, boolean isString) {
         switch (attributeName) {
             case "android:layout_width":
                 if(isString) {
-                    return new LayoutAttribute(LayoutAttribute.Type.PARAM_CONSTRUCTOR_1, String.valueOf(attributeValue).toUpperCase());
+                    return new LayoutAttribute(LayoutAttribute.Type.PARAM_CONSTRUCTOR_1, attributeValue.toUpperCase());
                 } else {
                     return new LayoutAttribute(LayoutAttribute.Type.PARAM_CONSTRUCTOR_1,attributeValue);
                 }
             case "android:layout_height":
                 if(isString) {
-                    return new LayoutAttribute(LayoutAttribute.Type.PARAM_CONSTRUCTOR_2, String.valueOf(attributeValue).toUpperCase());
+                    return new LayoutAttribute(LayoutAttribute.Type.PARAM_CONSTRUCTOR_2, attributeValue.toUpperCase());
                 } else {
                     return new LayoutAttribute(LayoutAttribute.Type.PARAM_CONSTRUCTOR_2,attributeValue);
                 }

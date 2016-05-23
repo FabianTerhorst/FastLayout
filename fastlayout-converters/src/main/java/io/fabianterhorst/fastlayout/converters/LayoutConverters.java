@@ -17,7 +17,7 @@ public class LayoutConverters {
         this.converters = converters;
     }
 
-    public LayoutAttribute convert(Object attributeValue, String attributeName, List<LayoutAttribute> attributes) {
+    public LayoutAttribute convert(String attributeValue, String attributeName, List<LayoutAttribute> attributes) {
         LayoutAttribute layoutAttribute = null;
         for (LayoutConverter layoutConverter : converters) {
             if (layoutAttribute == null) {

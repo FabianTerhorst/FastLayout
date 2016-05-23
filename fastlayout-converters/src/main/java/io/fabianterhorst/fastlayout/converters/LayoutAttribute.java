@@ -5,7 +5,7 @@ package io.fabianterhorst.fastlayout.converters;
  */
 public class LayoutAttribute {
 
-    private Object value;
+    private String value;
 
     private Type type;
 
@@ -17,12 +17,12 @@ public class LayoutAttribute {
         this.type = Type.ASSIGNED;
     }
 
-    public LayoutAttribute(Type type, Object value) {
+    public LayoutAttribute(Type type, String value) {
         this.value = value;
         this.type = type;
     }
 
-    public LayoutAttribute(Object value) {
+    public LayoutAttribute(String value) {
         this.value = value;
         this.type = Type.LAYOUT;
     }
@@ -31,11 +31,11 @@ public class LayoutAttribute {
         this.type = type;
     }
 
-    public void setValue(Object value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
-    public Object getValue() {
+    public String getValue() {
         return value;
     }
 

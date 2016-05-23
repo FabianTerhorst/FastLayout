@@ -10,7 +10,7 @@ import io.fabianterhorst.fastlayout.annotations.Converter;
 @Converter
 public class LayoutConverter {
 
-    public LayoutAttribute convert(Object attributeValue, String attributeName) {
+    public LayoutAttribute convert(String attributeValue, String attributeName) {
         return onConvertLayoutAttributeValue(attributeValue, attributeName);
     }
 
@@ -18,7 +18,7 @@ public class LayoutConverter {
         return onFinish();
     }
 
-    public LayoutAttribute onConvertLayoutAttributeValue(Object attributeValue, String attributeName) {
+    public LayoutAttribute onConvertLayoutAttributeValue(String attributeValue, String attributeName) {
         String attribute = String.valueOf(attributeValue);
         boolean isString = true;
 
@@ -60,11 +60,11 @@ public class LayoutConverter {
         return onConvertLayoutAttribute(attribute, attributeName, isString);
     }
 
-    public LayoutAttribute onConvertLayoutAttribute(Object attributeValue, String attributeName, boolean isString) {
-        return onConvertLayoutAttribute(String.valueOf(attributeValue), attributeValue, attributeName, isString);
+    public LayoutAttribute onConvertLayoutAttribute(String attributeValue, String attributeName, boolean isString) {
+        return onConvertLayoutAttribute(attributeValue, attributeValue, attributeName, isString);
     }
 
-    public LayoutAttribute onConvertLayoutAttribute(String attributeStartValue, Object attributeValue, String attributeName, boolean isString) {
+    public LayoutAttribute onConvertLayoutAttribute(String attributeStartValue, String attributeValue, String attributeName, boolean isString) {
         attributeName = attributeToName(attributeName);
         return new LayoutAttribute(setter(attributeName, attributeValue, isString));
     }
@@ -105,7 +105,7 @@ public class LayoutConverter {
         return null;
     }
 
-    public String setter(String name, Object value, boolean isString) {
+    public String setter(String name, String value, boolean isString) {
         return "set" + name + (isString ? "(\"" : "(") + value + (isString ? "\")" : ")");
     }
 

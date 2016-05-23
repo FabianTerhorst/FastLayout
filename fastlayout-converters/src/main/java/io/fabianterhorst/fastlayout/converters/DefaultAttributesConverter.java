@@ -9,31 +9,31 @@ import io.fabianterhorst.fastlayout.annotations.Converter;
 public class DefaultAttributesConverter extends LayoutConverter {
 
     @Override
-    public LayoutAttribute onConvertLayoutAttributeValue(Object attributeValue, String attributeName) {
+    public LayoutAttribute onConvertLayoutAttributeValue(String attributeValue, String attributeName) {
         switch (attributeName) {
             case "android:gravity":
             case "android:foregroundGravity":
-                return super.onConvertLayoutAttribute(String.valueOf(attributeValue), "Gravity." + String.valueOf(attributeValue).toUpperCase(), attributeName, false);
+                return super.onConvertLayoutAttribute(attributeValue, "Gravity." + attributeValue.toUpperCase(), attributeName, false);
             case "android:layout_gravity":
-                return onConvertLayoutAttribute(String.valueOf(attributeValue), "Gravity." + String.valueOf(attributeValue).toUpperCase(), attributeName, false);
+                return onConvertLayoutAttribute(attributeValue, "Gravity." + attributeValue.toUpperCase(), attributeName, false);
             case "android:backgroundTintMode":
             case "android:foregroundTintMode":
-                return super.onConvertLayoutAttribute(String.valueOf(attributeValue), "android.graphics.PorterDuff.Mode." + String.valueOf(attributeValue).toUpperCase(), attributeName, false);
+                return super.onConvertLayoutAttribute(attributeValue, "android.graphics.PorterDuff.Mode." + attributeValue.toUpperCase(), attributeName, false);
             case "android:accessibilityLiveRegion":
-                return super.onConvertLayoutAttribute(String.valueOf(attributeValue), "View.ACCESSIBILITY_LIVE_REGION_" + String.valueOf(attributeValue).toUpperCase(), attributeName, false);
+                return super.onConvertLayoutAttribute(attributeValue, "View.ACCESSIBILITY_LIVE_REGION_" + attributeValue.toUpperCase(), attributeName, false);
             case "android:drawingCacheQuality":
-                return super.onConvertLayoutAttribute(String.valueOf(attributeValue), "View.DRAWING_CACHE_QUALITY_" + String.valueOf(attributeValue).toUpperCase(), attributeName, false);
+                return super.onConvertLayoutAttribute(attributeValue, "View.DRAWING_CACHE_QUALITY_" + attributeValue.toUpperCase(), attributeName, false);
             //Todo : viewgroup attribute
             case "android:descendantFocusability":
-                return super.onConvertLayoutAttribute(String.valueOf(attributeValue), "ViewGroup.FOCUS_" + stringToConstant(String.valueOf(attributeValue)).toUpperCase(), attributeName, false);
+                return super.onConvertLayoutAttribute(attributeValue, "ViewGroup.FOCUS_" + stringToConstant(attributeValue).toUpperCase(), attributeName, false);
             case "android:importantForAccessibility":
-                return super.onConvertLayoutAttribute(String.valueOf(attributeValue), "View.IMPORTANT_FOR_ACCESSIBILITY_" + stringToConstant(String.valueOf(attributeValue)).toUpperCase(), attributeName, false);
+                return super.onConvertLayoutAttribute(attributeValue, "View.IMPORTANT_FOR_ACCESSIBILITY_" + stringToConstant(attributeValue).toUpperCase(), attributeName, false);
         }
         return super.onConvertLayoutAttributeValue(attributeValue, attributeName);
     }
 
     @Override
-    public LayoutAttribute onConvertLayoutAttribute(String attributeStartValue, Object attributeValue, String attributeName, boolean isString) {
+    public LayoutAttribute onConvertLayoutAttribute(String attributeStartValue, String attributeValue, String attributeName, boolean isString) {
         switch (attributeName) {
             case "style":
             case "android:theme":
@@ -53,7 +53,7 @@ public class DefaultAttributesConverter extends LayoutConverter {
                 }
                 //Todo : viewgroup attribute
             case "android:animateLayoutChanges":
-                if (Boolean.valueOf(String.valueOf(attributeValue))) {
+                if (Boolean.valueOf(attributeValue)) {
                     return new LayoutAttribute(setter("LayoutTransition", "new android.animation.LayoutTransition()", false));
                 } else {
                     return new LayoutAttribute(setter("LayoutTransition", "LayoutUtils.getDisabledLayoutTransition()", false));

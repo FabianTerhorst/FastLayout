@@ -9,14 +9,14 @@ import io.fabianterhorst.fastlayout.annotations.Converter;
 public class LinearLayoutConverter extends LayoutConverter {
 
     @Override
-    public LayoutAttribute onConvertLayoutAttribute(String attributeStartValue, Object attributeValue, String attributeName, boolean isString) {
+    public LayoutAttribute onConvertLayoutAttribute(String attributeStartValue, String attributeValue, String attributeName, boolean isString) {
         switch (attributeName) {
             case "android:orientation":
-                return super.onConvertLayoutAttribute(String.valueOf(attributeValue), "LinearLayout." + String.valueOf(attributeValue).toUpperCase(), attributeName, false);
+                return super.onConvertLayoutAttribute(attributeValue, "LinearLayout." + attributeValue.toUpperCase(), attributeName, false);
             case "android:divider":
                 return new LayoutAttribute(setter("DividerDrawable", attributeValue, false));
             case "android:showDividers":
-                return new LayoutAttribute(setter("ShowDividers", "LinearLayout.SHOW_DIVIDER_" + String.valueOf(attributeValue).toUpperCase(), false));
+                return new LayoutAttribute(setter("ShowDividers", "LinearLayout.SHOW_DIVIDER_" + attributeValue.toUpperCase(), false));
         }
         return null;
     }
