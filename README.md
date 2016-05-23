@@ -53,4 +53,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(layout);
     }
 }
+
+###Limitations
+##Specify a id for every view, otherwise the id is generated and can change.
 ```
