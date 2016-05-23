@@ -46,8 +46,12 @@ public class DefaultAttributesConverter extends LayoutConverter {
                 }
                 break;
             case "android:textSize":
-                return new LayoutAttribute(setter("TextSize", "TypedValue.COMPLEX_UNIT_SP," + attributeStartValue.replace("sp", ""), false));
-            //Todo : viewgroup
+                if (attributeStartValue.endsWith("sp")) {
+                    return new LayoutAttribute(setter("TextSize", "TypedValue.COMPLEX_UNIT_SP," + attributeStartValue.replace("sp", ""), false));
+                } else if (attributeStartValue.endsWith("dip") || attributeStartValue.endsWith("dp")) {
+                    return new LayoutAttribute(setter("TextSize", "TypedValue.COMPLEX_UNIT_DIP," + attributeStartValue.replace("dip", "").replace("dp", ""), false));
+                }
+                //Todo : viewgroup attribute
             case "android:animateLayoutChanges":
                 if (Boolean.valueOf(String.valueOf(attributeValue))) {
                     return new LayoutAttribute(setter("LayoutTransition", "new android.animation.LayoutTransition()", false));
