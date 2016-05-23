@@ -105,7 +105,7 @@ public class LayoutProcessor extends AbstractProcessor {
                         try {
                             processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "converter " + classElement.getSimpleName() + " found");
                             userConverters.add(classElement.getClass().newInstance());
-                        }catch(InstantiationException ex) {
+                        } catch (InstantiationException ex) {
                             processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, ex.getMessage());
                         }
                     }
@@ -230,6 +230,7 @@ public class LayoutProcessor extends AbstractProcessor {
         layout.setHasChildren(node.hasChildNodes());
         layout.setRootLayout(root);
         layout.setLayoutParamsName(root + ".LayoutParams");
+
         NamedNodeMap attributes = node.getAttributes();
 
         ArrayList<LayoutConverter> layoutConverters = new ArrayList<>();

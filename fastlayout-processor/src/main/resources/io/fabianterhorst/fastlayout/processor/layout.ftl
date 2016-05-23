@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import android.view.*;
 import android.widget.*;
 import android.util.TypedValue;
-import android.content.res.Resources;
 
 import io.fabianterhorst.fastlayout.ILayout;
 import io.fabianterhorst.fastlayout.LayoutUtils;
