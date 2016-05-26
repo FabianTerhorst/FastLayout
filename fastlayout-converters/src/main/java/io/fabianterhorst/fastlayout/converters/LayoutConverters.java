@@ -59,6 +59,9 @@ public class LayoutConverters {
                 finished.addAll(currentlyFinished);
             }
         }
+        if (!checkAttributesForType(LayoutAttribute.Type.LAYOUT_CONSTRUCTOR_1, attributes)) {
+            finished.add(new LayoutAttribute(LayoutAttribute.Type.LAYOUT_CONSTRUCTOR_1, "getContext()"));
+        }
         if (checkAttributesForType(LayoutAttribute.Type.LAYOUT_CONSTRUCTOR_3, attributes) && !checkAttributesForType(LayoutAttribute.Type.LAYOUT_CONSTRUCTOR_2, attributes)) {
             finished.add(new LayoutAttribute(LayoutAttribute.Type.LAYOUT_CONSTRUCTOR_2, "(AttributeSet) null"));
         }

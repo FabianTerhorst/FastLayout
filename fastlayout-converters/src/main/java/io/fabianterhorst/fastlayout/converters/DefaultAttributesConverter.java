@@ -36,8 +36,9 @@ public class DefaultAttributesConverter extends LayoutConverter {
     public LayoutAttribute onConvertLayoutAttribute(String attributeStartValue, String attributeValue, String attributeName, boolean isString) {
         switch (attributeName) {
             case "style":
-            case "android:theme":
                 return new LayoutAttribute(LayoutAttribute.Type.LAYOUT_CONSTRUCTOR_3, attributeValue);
+            case "android:theme":
+                return new LayoutAttribute(LayoutAttribute.Type.LAYOUT_CONSTRUCTOR_1, "new android.view.ContextThemeWrapper(" + "getContext(), " + attributeValue + ")");
             case "android:layout_gravity":
                 return new LayoutAttribute(LayoutAttribute.Type.PARAM, attribute(attributeName.replace("android:layout_", ""), attributeValue));
             case "android:background":

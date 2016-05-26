@@ -20,22 +20,22 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
 
     </#list>
     public ${keyWrapperClassName}(Context context) {
-        super(context<#list rootLayout.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_2">, ${attribute.value}</#if></#list><#list rootLayout.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_3">, ${attribute.value}</#if></#list>);
+        super(<#list rootLayout.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_1">${attribute.value?replace("getContext()", "context")}</#if></#list><#list rootLayout.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_2">, ${attribute.value}</#if></#list><#list rootLayout.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_3">, ${attribute.value}</#if></#list>);
         init();
     }
 
     public ${keyWrapperClassName}(Context context, AttributeSet attrs) {
-        super(context, attrs<#list rootLayout.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_3">, ${attribute.value}</#if></#list>);
+        super(<#list rootLayout.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_1">${attribute.value?replace("getContext()", "context")}</#if></#list>, attrs<#list rootLayout.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_3">, ${attribute.value}</#if></#list>);
         init();
     }
 
     public ${keyWrapperClassName}(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs<#list rootLayout.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_3">, ${attribute.value}</#if></#list>);
+        super(<#list rootLayout.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_1">${attribute.value?replace("getContext()", "context")}</#if></#list>, attrs<#list rootLayout.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_3">, ${attribute.value}</#if></#list>);
         init();
     }
 
     public ${keyWrapperClassName}(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs<#list rootLayout.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_3">, ${attribute.value}</#if></#list>, defStyleRes);
+        super(<#list rootLayout.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_1">${attribute.value?replace("getContext()", "context")}</#if></#list>, attrs<#list rootLayout.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_3">, ${attribute.value}</#if></#list>, defStyleRes);
         init();
     }
 
@@ -49,7 +49,7 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
         this.setLayoutParams(${rootLayout.id}LayoutParams);
         <#assign parent = "this">
         <#list rootLayout.children as child>
-        ${child.id} = new ${child.name}(getContext()<#list child.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_3">, null, ${attribute.value}</#if></#list>);
+        ${child.id} = new ${child.name}(<#list child.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_1">${attribute.value}</#if></#list><#list child.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_3">, null, ${attribute.value}</#if></#list>);
         ${child.layoutParamsName} ${child.id}LayoutParams = new ${child.layoutParamsName}(<#list child.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_1">${attribute.value},</#if></#list><#list child.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_2">${attribute.value}</#if></#list><#list child.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_3">,${attribute.value}</#if></#list>);
         <#list child.attributes as attribute>
         <#if attribute.type == "PARAM" || attribute.type == "LAYOUT">
