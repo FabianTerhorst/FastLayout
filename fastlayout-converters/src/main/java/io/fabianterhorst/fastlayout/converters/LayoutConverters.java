@@ -33,7 +33,9 @@ public class LayoutConverters {
     }
 
     private boolean checkIfConstructorTypeIsAlreadyDefined(LayoutAttribute.Type type, List<LayoutAttribute> attributes) {
-        if (type == LayoutAttribute.Type.LAYOUT_CONSTRUCTOR_3
+        if (type == LayoutAttribute.Type.LAYOUT_CONSTRUCTOR_1
+                || type == LayoutAttribute.Type.LAYOUT_CONSTRUCTOR_2
+                || type == LayoutAttribute.Type.LAYOUT_CONSTRUCTOR_3
                 || type == LayoutAttribute.Type.PARAM_CONSTRUCTOR_1
                 || type == LayoutAttribute.Type.PARAM_CONSTRUCTOR_2
                 || type == LayoutAttribute.Type.PARAM_CONSTRUCTOR_3) {
