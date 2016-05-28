@@ -128,11 +128,14 @@ public class LayoutProcessor extends AbstractProcessor {
                             layouts.add(layoutObject);
                         }
 
-                        for (int layoutId : layoutsAnnotation.ids()) {
+                        if(layoutsAnnotation.ids().length > 0 || (layoutsAnnotation.all() && layoutsAnnotation.exclude().length > 0)){
                             if (rOutput == null) {
                                 File r = findR(packageName);
                                 rOutput = readFile(r);
                             }
+                        }
+
+                        for (int layoutId : layoutsAnnotation.ids()) {
                             String layoutName = getFieldNameFromLayoutId(rOutput, layoutId);
                             LayoutObject layoutObject = createLayoutObject(layoutsFile, layoutName, packageElement, element, constantToObjectName(layoutName));
                             if (layoutObject == null) {
@@ -162,11 +165,13 @@ public class LayoutProcessor extends AbstractProcessor {
                             if (files != null) {
                                 for (File file : files) {
                                     String layoutName = file.getName().replace(".xml", "");
-                                    LayoutObject layoutObject = createLayoutObject(readFile(file), packageElement, element, constantToObjectName(layoutName));
-                                    if (layoutObject == null) {
-                                        return true;
+                                    if(layoutsAnnotation.exclude().length == 0 || !checkExclude(rOutput, layoutName, layoutsAnnotation.exclude())) {
+                                        LayoutObject layoutObject = createLayoutObject(readFile(file), packageElement, element, constantToObjectName(layoutName));
+                                        if (layoutObject == null) {
+                                            return true;
+                                        }
+                                        layouts.add(layoutObject);
                                     }
-                                    layouts.add(layoutObject);
                                 }
                             }
                         }
@@ -184,6 +189,15 @@ public class LayoutProcessor extends AbstractProcessor {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, exception.getMessage());
         }
         return true;
+    }
+
+    private boolean checkExclude(String rOutput, String name, int[] exclude) {
+        for(int id : exclude){
+            if(getFieldNameFromLayoutId(rOutput, id).equals(name)){
+                return true;
+            }
+        }
+        return false;
     }
 
     private String normalizeLayoutId(String layoutId) {

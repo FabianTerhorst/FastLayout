@@ -13,4 +13,5 @@ public @interface Layouts {
     int[] ids() default {};
     String[] layouts() default {};
     boolean all() default false;
+    int[] exclude() default {};
 }
