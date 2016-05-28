@@ -20,7 +20,7 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
 
     </#list>
     public ${keyWrapperClassName}(Context context) {
-        super(<#list rootLayout.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_1">${attribute.value?replace("getContext()", "context")}</#if></#list><#list rootLayout.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_2">, ${attribute.value}</#if></#list><#list rootLayout.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_3">, ${attribute.value}</#if></#list>);
+        super(<#list rootLayout.attributes as attribute><#if attribute.isLayoutConstructor()>${attribute.value?replace("getContext()", "context")}<#if !attribute.last>,</#if></#if></#list>);
         init();
     }
 
@@ -40,7 +40,7 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
     }
 
     private void init() {
-        ${rootLayout.layoutParamsName} ${rootLayout.id}LayoutParams = new ${rootLayout.layoutParamsName}(<#list rootLayout.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_1">${attribute.value},</#if></#list><#list rootLayout.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_2">${attribute.value}</#if></#list><#list rootLayout.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_3">,${attribute.value}</#if></#list>);
+        ${rootLayout.layoutParamsName} ${rootLayout.id}LayoutParams = new ${rootLayout.layoutParamsName}(<#list rootLayout.attributes as attribute><#if attribute.isParamsConstructor()>${attribute.value}<#if !attribute.last>,</#if></#if></#list>);
         <#list rootLayout.attributes as attribute>
         <#if attribute.type == "PARAM" || attribute.type == "LAYOUT">
         <#if attribute.type == "PARAM">${rootLayout.id}LayoutParams.<#elseif attribute.type == "LAYOUT"></#if>${attribute.value};
@@ -49,8 +49,8 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
         this.setLayoutParams(${rootLayout.id}LayoutParams);
         <#assign parent = "this">
         <#list rootLayout.children as child>
-        ${child.id} = new ${child.name}(<#list child.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_1">${attribute.value}</#if></#list><#list child.attributes as attribute><#if attribute.type == "LAYOUT_CONSTRUCTOR_3">, null, ${attribute.value}</#if></#list>);
-        ${child.layoutParamsName} ${child.id}LayoutParams = new ${child.layoutParamsName}(<#list child.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_1">${attribute.value},</#if></#list><#list child.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_2">${attribute.value}</#if></#list><#list child.attributes as attribute><#if attribute.type == "PARAM_CONSTRUCTOR_3">,${attribute.value}</#if></#list>);
+        ${child.id} = new ${child.name}(<#list child.attributes as attribute><#if attribute.isLayoutConstructor()>${attribute.value}<#if !attribute.last>,</#if></#if></#list>);
+        ${child.layoutParamsName} ${child.id}LayoutParams = new ${child.layoutParamsName}(<#list child.attributes as attribute><#if attribute.isParamsConstructor()>${attribute.value}<#if !attribute.last>,</#if></#if></#list>);
         <#list child.attributes as attribute>
         <#if attribute.type == "PARAM" || attribute.type == "LAYOUT">
         <#if attribute.type == "PARAM">${child.id}LayoutParams<#elseif attribute.type == "LAYOUT">${child.id}</#if>.${attribute.value};

@@ -17,6 +17,8 @@ import java.io.StringReader;
 import java.io.Writer;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -277,6 +279,32 @@ public class LayoutProcessor extends AbstractProcessor {
         if (finishedAttributes.size() > 0) {
             layout.addAllAttributes(finishedAttributes);
         }
+
+        List<LayoutAttribute> layoutAttributes = layout.getAttributes();
+        
+        Collections.sort(layoutAttributes, new Comparator<LayoutAttribute>() {
+            @Override
+            public int compare(LayoutAttribute o1, LayoutAttribute o2) {
+                return Integer.compare(o1.getType().getIndex(), o2.getType().getIndex());
+            }
+        });
+
+        for (int i = (layoutAttributes.size() - 1); i >= 0; i--) {
+            LayoutAttribute attribute = layoutAttributes.get(i);
+            if (attribute.isLayoutConstructor()) {
+                attribute.setLast(true);
+                break;
+            }
+        }
+
+        for (int i = (layoutAttributes.size() - 1); i >= 0; i--) {
+            LayoutAttribute attribute = layoutAttributes.get(i);
+            if (attribute.isParamsConstructor()) {
+                attribute.setLast(true);
+                break;
+            }
+        }
+
         return layout;
     }
 
