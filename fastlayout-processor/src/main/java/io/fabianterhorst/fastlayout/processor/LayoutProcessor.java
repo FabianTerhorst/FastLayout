@@ -283,7 +283,6 @@ public class LayoutProcessor extends AbstractProcessor {
     private List<LayoutConverter> getLayoutConvertersForRootClasses(List<Class> convertibleClasses) {
         List<LayoutConverter> converters = new ArrayList<>();
         for (Class layoutClass : convertibleClasses) {
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, layoutClass.getName());
             switch (layoutClass.getName()) {
                 case "android.widget.RelativeLayout":
                     converters.add(new RelativeLayoutConverter());
@@ -296,7 +295,6 @@ public class LayoutProcessor extends AbstractProcessor {
     private List<LayoutConverter> getLayoutConvertersForClasses(List<Class> convertibleClasses) {
         List<LayoutConverter> converters = new ArrayList<>();
         for (Class layoutClass : convertibleClasses) {
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, layoutClass.getName());
             switch (layoutClass.getName()) {
                 case "android.view.View":
                     converters.add(new DefaultAttributesConverter());
