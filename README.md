@@ -30,7 +30,7 @@ apply plugin: 'fastlayout'
 This is needed to filter the layouts you want to compile
 ```java
 //this is compiling all layouts in layout folder
-@Layouts(all = true)
+@Layouts(all = true, exclude = {R.layout.sample_item})
 //there you can specify the layouts
 //@Layouts(layouts = {"activity_main", "fragment_one"})
 //@Layouts(ids = {R.layout.activity_main, R.layout.fragment_one})
