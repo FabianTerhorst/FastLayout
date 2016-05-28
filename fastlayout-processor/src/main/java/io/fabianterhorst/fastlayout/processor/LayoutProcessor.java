@@ -281,7 +281,7 @@ public class LayoutProcessor extends AbstractProcessor {
         }
 
         List<LayoutAttribute> layoutAttributes = layout.getAttributes();
-        
+
         Collections.sort(layoutAttributes, new Comparator<LayoutAttribute>() {
             @Override
             public int compare(LayoutAttribute o1, LayoutAttribute o2) {
