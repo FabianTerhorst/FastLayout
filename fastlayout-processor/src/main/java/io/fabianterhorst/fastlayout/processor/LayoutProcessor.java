@@ -299,7 +299,6 @@ public class LayoutProcessor extends AbstractProcessor {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, layoutClass.getName());
             switch (layoutClass.getName()) {
                 case "android.view.View":
-                    processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "view found");
                     converters.add(new DefaultAttributesConverter());
                     converters.add(new MarginConverter());
                     converters.add(new PaddingConverter());
