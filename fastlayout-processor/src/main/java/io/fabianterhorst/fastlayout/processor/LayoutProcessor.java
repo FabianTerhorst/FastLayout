@@ -128,7 +128,7 @@ public class LayoutProcessor extends AbstractProcessor {
                             layouts.add(layoutObject);
                         }
 
-                        if(layoutsAnnotation.ids().length > 0 || (layoutsAnnotation.all() && layoutsAnnotation.exclude().length > 0)){
+                        if (layoutsAnnotation.ids().length > 0 || (layoutsAnnotation.all() && layoutsAnnotation.exclude().length > 0)) {
                             if (rOutput == null) {
                                 File r = findR(packageName);
                                 rOutput = readFile(r);
@@ -165,7 +165,7 @@ public class LayoutProcessor extends AbstractProcessor {
                             if (files != null) {
                                 for (File file : files) {
                                     String layoutName = file.getName().replace(".xml", "");
-                                    if(layoutsAnnotation.exclude().length == 0 || !checkExclude(rOutput, layoutName, layoutsAnnotation.exclude())) {
+                                    if (layoutsAnnotation.exclude().length == 0 || !checkExclude(rOutput, layoutName, layoutsAnnotation.exclude())) {
                                         LayoutObject layoutObject = createLayoutObject(readFile(file), packageElement, element, constantToObjectName(layoutName));
                                         if (layoutObject == null) {
                                             return true;
@@ -192,8 +192,8 @@ public class LayoutProcessor extends AbstractProcessor {
     }
 
     private boolean checkExclude(String rOutput, String name, int[] exclude) {
-        for(int id : exclude){
-            if(getFieldNameFromLayoutId(rOutput, id).equals(name)){
+        for (int id : exclude) {
+            if (getFieldNameFromLayoutId(rOutput, id).equals(name)) {
                 return true;
             }
         }
@@ -256,18 +256,9 @@ public class LayoutProcessor extends AbstractProcessor {
                 processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "converter " + converter.getClass().getSimpleName() + " not working");
             }
         }
-        layoutConverters.add(new DefaultAttributesConverter());
-        layoutConverters.add(new MarginConverter());
-        layoutConverters.add(new PaddingConverter());
-        layoutConverters.add(new SizeConverter());
-        if (root.equals("RelativeLayout")) {
-            layoutConverters.add(new RelativeLayoutConverter());
-        }
-        if (node.getNodeName().equals("TextView")) {
-            layoutConverters.add(new TextViewLayoutConverter());
-        } else if (node.getNodeName().equals("LinearLayout")) {
-            layoutConverters.add(new LinearLayoutConverter());
-        }
+
+        layoutConverters.addAll(getLayoutConvertersForClasses(getConvertibleClasses(layout.getName())));
+        layoutConverters.addAll(getLayoutConvertersForRootClasses(getConvertibleClasses(root)));
         /*last*/
         layoutConverters.add(new LayoutConverter());
         converters.setAll(layoutConverters);
@@ -275,7 +266,6 @@ public class LayoutProcessor extends AbstractProcessor {
             Node attribute = attributes.item(i);
             String attributeName = attribute.getNodeName();
             String attributeValue = attribute.getNodeValue();
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, attributeName + ":" + attributeValue);
             if (!attributeName.startsWith("tools:") && !attributeName.startsWith("xmlns:")) {
                 LayoutAttribute layoutAttr = converters.convert(attributeValue, attributeName, layout.getAttributes());
                 if (layoutAttr.getType() != LayoutAttribute.Type.ASSIGNED) {
@@ -288,6 +278,67 @@ public class LayoutProcessor extends AbstractProcessor {
             layout.addAllAttributes(finishedAttributes);
         }
         return layout;
+    }
+
+    private List<LayoutConverter> getLayoutConvertersForRootClasses(List<Class> convertibleClasses) {
+        List<LayoutConverter> converters = new ArrayList<>();
+        for (Class layoutClass : convertibleClasses) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, layoutClass.getName());
+            switch (layoutClass.getName()) {
+                case "android.widget.RelativeLayout":
+                    converters.add(new RelativeLayoutConverter());
+                    break;
+            }
+        }
+        return converters;
+    }
+
+    private List<LayoutConverter> getLayoutConvertersForClasses(List<Class> convertibleClasses) {
+        List<LayoutConverter> converters = new ArrayList<>();
+        for (Class layoutClass : convertibleClasses) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, layoutClass.getName());
+            switch (layoutClass.getName()) {
+                case "android.view.View":
+                    processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "view found");
+                    converters.add(new DefaultAttributesConverter());
+                    converters.add(new MarginConverter());
+                    converters.add(new PaddingConverter());
+                    converters.add(new SizeConverter());
+                    break;
+                case "android.widget.TextView":
+                    converters.add(new TextViewLayoutConverter());
+                    break;
+                case "android.widget.LinearLayout":
+                    converters.add(new LinearLayoutConverter());
+                    break;
+            }
+        }
+        return converters;
+    }
+
+    private List<Class> getConvertibleClasses(String layoutClassName) {
+        ArrayList<Class> convertibleClasses = new ArrayList<>();
+        try {
+            if (!layoutClassName.contains(".")) {
+                layoutClassName = "android." + (layoutClassName.equals("View") ? "view" : "widget") + "." + layoutClassName;
+            }
+            Class layoutClass = Class.forName(layoutClassName);
+            convertibleClasses.add(layoutClass);
+            convertibleClasses.addAll(getSuperClassesFromClass(layoutClass));
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return convertibleClasses;
+    }
+
+    private List<Class> getSuperClassesFromClass(Class layoutClass) throws ClassNotFoundException {
+        List<Class> superClasses = new ArrayList<>();
+        Class superClass = layoutClass.getSuperclass();
+        while (superClass != null && !superClass.getName().equals("java.lang.Object")) {
+            superClasses.add(superClass);
+            superClass = superClass.getSuperclass();
+        }
+        return superClasses;
     }
 
     /**
