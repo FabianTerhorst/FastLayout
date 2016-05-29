@@ -72,6 +72,8 @@ public class LayoutProcessor extends AbstractProcessor {
 
     private List<Object> userConverters;
 
+    private File projectRoot;
+
     @Override
     public SourceVersion getSupportedSourceVersion() {
         return SourceVersion.latestSupported();
@@ -88,6 +90,7 @@ public class LayoutProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         File layoutsFile = null;
+        List<File> layoutFolders = new ArrayList<>();
         String packageName = null;
         List<LayoutObject> layouts = new ArrayList<>();
         userConverters = new ArrayList<>();
@@ -95,6 +98,11 @@ public class LayoutProcessor extends AbstractProcessor {
         try {
             if (annotations.size() > 0) {
                 layoutsFile = findLayouts();
+                layoutFolders = findLayoutFolders();
+
+                for (File file : layoutFolders) {
+                    processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, file.getName());
+                }
             }
 
             for (TypeElement te : annotations) {
@@ -139,11 +147,15 @@ public class LayoutProcessor extends AbstractProcessor {
 
                         for (int layoutId : layoutsAnnotation.ids()) {
                             String layoutName = getFieldNameFromLayoutId(rOutput, layoutId);
-                            LayoutObject layoutObject = createLayoutObject(layoutsFile, layoutName, packageElement, element, constantToObjectName(layoutName));
-                            if (layoutObject == null) {
-                                return true;
+                            for (File layoutFolder : layoutFolders) {
+                                if(existLayoutInFolder(layoutFolder, layoutName)) {
+                                    LayoutObject layoutObject = createLayoutObject(layoutFolder, layoutName, packageElement, element, constantToObjectName(layoutName));
+                                    if (layoutObject == null) {
+                                        return true;
+                                    }
+                                    layouts.add(layoutObject);
+                                }
                             }
-                            layouts.add(layoutObject);
                         }
 
                         for (VariableElement variableElement : ElementFilter.fieldsIn(classElement.getEnclosedElements())) {
@@ -168,7 +180,7 @@ public class LayoutProcessor extends AbstractProcessor {
                                 for (File file : files) {
                                     String layoutName = file.getName().replace(".xml", "");
                                     if (layoutsAnnotation.exclude().length == 0 || !checkExclude(rOutput, layoutName, layoutsAnnotation.exclude())) {
-                                        LayoutObject layoutObject = createLayoutObject(readFile(file), packageElement, element, constantToObjectName(layoutName));
+                                        LayoutObject layoutObject = createLayoutObject(readFile(file), packageElement, element, constantToObjectName(layoutName), layoutsFile);
                                         if (layoutObject == null) {
                                             return true;
                                         }
@@ -414,67 +426,71 @@ public class LayoutProcessor extends AbstractProcessor {
     }
 
     private File getProjectRoot() throws Exception {
-        Filer filer = processingEnv.getFiler();
+        if(projectRoot == null) {
+            Filer filer = processingEnv.getFiler();
 
-        JavaFileObject dummySourceFile = filer.createSourceFile("dummy" + System.currentTimeMillis());
+            JavaFileObject dummySourceFile = filer.createSourceFile("dummy" + System.currentTimeMillis());
 
-        String dummySourceFilePath = dummySourceFile.toUri().toString();
+            String dummySourceFilePath = dummySourceFile.toUri().toString();
 
-        if (dummySourceFilePath.startsWith("file:")) {
-            if (!dummySourceFilePath.startsWith("file://")) {
-                dummySourceFilePath = "file://" + dummySourceFilePath.substring("file:".length());
+            if (dummySourceFilePath.startsWith("file:")) {
+                if (!dummySourceFilePath.startsWith("file://")) {
+                    dummySourceFilePath = "file://" + dummySourceFilePath.substring("file:".length());
+                }
+            } else {
+                dummySourceFilePath = "file://" + dummySourceFilePath;
             }
-        } else {
-            dummySourceFilePath = "file://" + dummySourceFilePath;
+
+            URI cleanURI = new URI(dummySourceFilePath);
+
+            File dummyFile = new File(cleanURI);
+
+            projectRoot = dummyFile.getParentFile();
         }
 
-        URI cleanURI = new URI(dummySourceFilePath);
+        return projectRoot;
+    }
 
-        File dummyFile = new File(cleanURI);
+    private File findFolder(String path) throws Exception {
+        File projectRoot = getProjectRoot();
 
-        return dummyFile.getParentFile();
+        File sourceFile = new File(projectRoot.getAbsolutePath() + path);
+
+        while (true) {
+            if (sourceFile.exists()) {
+                return sourceFile;
+            } else {
+                if (projectRoot.getParentFile() != null) {
+                    projectRoot = projectRoot.getParentFile();
+                    sourceFile = new File(projectRoot.getAbsolutePath() + path);
+                } else {
+                    break;
+                }
+            }
+        }
+        return new File(projectRoot.getAbsolutePath() + path);
     }
 
     private File findLayouts() throws Exception {
-        File projectRoot = getProjectRoot();
-
-        File sourceFile = new File(projectRoot.getAbsolutePath() + "/src/main/res/layout");
-
-        while (true) {
-            if (sourceFile.exists()) {
-                return sourceFile;
-            } else {
-                if (projectRoot.getParentFile() != null) {
-                    projectRoot = projectRoot.getParentFile();
-                    sourceFile = new File(projectRoot.getAbsolutePath() + "/src/main/res/layout");
-                } else {
-                    break;
-                }
-            }
-        }
-        return new File(projectRoot.getAbsolutePath() + "/src/main/res/layout");
+        return findFolder("/src/main/res/layout");
     }
 
     private File findR(String packageName) throws Exception {
-        File projectRoot = getProjectRoot();
+        return findFolder("/r/debug/" + packageName.replace(".", "/") + "/R.java");
+    }
 
-        String packagePath = packageName.replace(".", "/");
-
-        File sourceFile = new File(projectRoot.getAbsolutePath() + "/r/debug/" + packagePath + "/R.java");
-
-        while (true) {
-            if (sourceFile.exists()) {
-                return sourceFile;
-            } else {
-                if (projectRoot.getParentFile() != null) {
-                    projectRoot = projectRoot.getParentFile();
-                    sourceFile = new File(projectRoot.getAbsolutePath() + "/r/debug/" + packagePath + "/R.java");
-                } else {
-                    break;
+    private List<File> findLayoutFolders() throws Exception {
+        List<File> layoutFolders = new ArrayList<>();
+        File resourceFolder = findFolder("/src/main/res/");
+        File[] files = resourceFolder.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.getName().startsWith("layout")) {
+                    layoutFolders.add(file);
                 }
             }
         }
-        return new File(projectRoot.getAbsolutePath() + "/src/main/res/layout");
+        return layoutFolders;
     }
 
     private String getFieldNameFromLayoutId(String rOutput, int layoutId) {
@@ -491,6 +507,18 @@ public class LayoutProcessor extends AbstractProcessor {
         return new File(layouts, layoutName + ".xml");
     }
 
+    private boolean existLayoutInFolder(File folder, String layoutName) {
+        File[] folders = folder.listFiles();
+        if(folders != null){
+            for(File layout : folders){
+                if(layout.getName().replace(".xml", "").equals(layoutName)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @SuppressWarnings("NewApi")
     private String readFile(File file) throws IOException {
         try (FileInputStream inputStream = new FileInputStream(file)) {
@@ -499,10 +527,10 @@ public class LayoutProcessor extends AbstractProcessor {
     }
 
     private LayoutObject createLayoutObject(File layoutsFile, String layoutName, PackageElement packageElement, javax.lang.model.element.Element element, String fieldName) throws Exception {
-        return createLayoutObject(readFile(findLayout(layoutsFile, layoutName)), packageElement, element, fieldName);
+        return createLayoutObject(readFile(findLayout(layoutsFile, layoutName)), packageElement, element, fieldName, layoutsFile);
     }
 
-    private LayoutObject createLayoutObject(String layout, PackageElement packageElement, javax.lang.model.element.Element element, String fieldName) throws Exception {
+    private LayoutObject createLayoutObject(String layout, PackageElement packageElement, javax.lang.model.element.Element element, String fieldName, File layoutsFile) throws Exception {
         mChilds = new ArrayList<>();
         LayoutEntity rootLayout = new LayoutEntity();
         try {
@@ -521,13 +549,13 @@ public class LayoutProcessor extends AbstractProcessor {
 
         JavaFileObject javaFileObject;
         try {
-            String layoutObjectName = packageElement.getQualifiedName().toString() + "." + fieldName + SUFFIX_PREF_WRAPPER;
+            String layoutObjectName = packageElement.getQualifiedName().toString() + "." + fieldName + SUFFIX_PREF_WRAPPER + (layoutsFile.getName().contains("-") ? "_" + StringUtils.capitalize(layoutsFile.getName().replace("layout-", "")) : "");
             Map<String, Object> args = new HashMap<>();
             //Layout Wrapper
             javaFileObject = processingEnv.getFiler().createSourceFile(layoutObjectName);
             Template template = getFreemarkerConfiguration().getTemplate("layout.ftl");
             args.put("package", packageElement.getQualifiedName());
-            args.put("keyWrapperClassName", fieldName + SUFFIX_PREF_WRAPPER);
+            args.put("keyWrapperClassName", fieldName + SUFFIX_PREF_WRAPPER + (layoutsFile.getName().contains("-") ? "_" + StringUtils.capitalize(layoutsFile.getName().replace("layout-", "")) : ""));
             args.put("rootLayout", rootLayout);
             Writer writer = javaFileObject.openWriter();
             template.process(args, writer);
