@@ -99,10 +99,6 @@ public class LayoutProcessor extends AbstractProcessor {
             if (annotations.size() > 0) {
                 layoutsFile = findLayouts();
                 layoutFolders = findLayoutFolders();
-
-                for (File file : layoutFolders) {
-                    processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, file.getName());
-                }
             }
 
             for (TypeElement te : annotations) {
@@ -549,13 +545,13 @@ public class LayoutProcessor extends AbstractProcessor {
 
         JavaFileObject javaFileObject;
         try {
-            String layoutObjectName = packageElement.getQualifiedName().toString() + "." + fieldName + SUFFIX_PREF_WRAPPER + (layoutsFile.getName().contains("-") ? "_" + StringUtils.capitalize(layoutsFile.getName().replace("layout-", "")) : "");
+            String layoutObjectName = packageElement.getQualifiedName().toString() + "." + fieldName + SUFFIX_PREF_WRAPPER + (layoutsFile.getName().contains("-") ? StringUtils.capitalize(layoutsFile.getName().replace("layout-", "")) : "");
             Map<String, Object> args = new HashMap<>();
             //Layout Wrapper
             javaFileObject = processingEnv.getFiler().createSourceFile(layoutObjectName);
             Template template = getFreemarkerConfiguration().getTemplate("layout.ftl");
             args.put("package", packageElement.getQualifiedName());
-            args.put("keyWrapperClassName", fieldName + SUFFIX_PREF_WRAPPER + (layoutsFile.getName().contains("-") ? "_" + StringUtils.capitalize(layoutsFile.getName().replace("layout-", "")) : ""));
+            args.put("keyWrapperClassName", fieldName + SUFFIX_PREF_WRAPPER + (layoutsFile.getName().contains("-") ? StringUtils.capitalize(layoutsFile.getName().replace("layout-", "")) : ""));
             args.put("rootLayout", rootLayout);
             Writer writer = javaFileObject.openWriter();
             template.process(args, writer);
