@@ -28,6 +28,8 @@ public class DefaultAttributesConverter extends LayoutConverter {
                 return super.onConvertLayoutAttribute(attributeValue, "ViewGroup.FOCUS_" + stringToConstant(attributeValue).toUpperCase(), attributeName, false);
             case "android:importantForAccessibility":
                 return super.onConvertLayoutAttribute(attributeValue, "View.IMPORTANT_FOR_ACCESSIBILITY_" + stringToConstant(attributeValue).toUpperCase(), attributeName, false);
+            case "android:visibility":
+                return super.onConvertLayoutAttribute(attributeValue, "View." + attributeValue.toUpperCase(), attributeName, false);
         }
         return super.onConvertLayoutAttributeValue(attributeValue, attributeName);
     }
@@ -63,7 +65,6 @@ public class DefaultAttributesConverter extends LayoutConverter {
                 return new LayoutAttribute(setter("PivotX", attributeValue, false));
             case "android:transformPivotY":
                 return new LayoutAttribute(setter("PivotY", attributeValue, false));
-
         }
         //Todo : list with all
         if (attributeName.startsWith("android:nextFocus")) {
