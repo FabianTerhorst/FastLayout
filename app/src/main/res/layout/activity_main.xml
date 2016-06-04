@@ -94,7 +94,8 @@
         <View
             android:id="@+id/view2"
             android:layout_width="100dp"
-            android:layout_height="50dp"/>
+            android:layout_height="50dp"
+            android:background="@android:drawable/ic_delete"/>
 
     </FrameLayout>
 </RelativeLayout>

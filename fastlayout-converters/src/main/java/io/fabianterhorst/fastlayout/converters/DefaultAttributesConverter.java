@@ -44,7 +44,7 @@ public class DefaultAttributesConverter extends LayoutConverter {
             case "android:layout_gravity":
                 return new LayoutAttribute(LayoutAttribute.Type.PARAM, attribute(attributeName.replace("android:layout_", ""), attributeValue));
             case "android:background":
-                if (String.valueOf(attributeStartValue).startsWith("R.")) {
+                if (String.valueOf(attributeStartValue).startsWith("R.") || String.valueOf(attributeStartValue).startsWith("android.R.")) {
                     return new LayoutAttribute(setter("BackgroundResource", attributeStartValue, false));
                 }
                 break;
