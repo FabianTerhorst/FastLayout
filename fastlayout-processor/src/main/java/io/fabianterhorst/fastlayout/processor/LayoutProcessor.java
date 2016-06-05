@@ -144,7 +144,7 @@ public class LayoutProcessor extends AbstractProcessor {
                         for (int layoutId : layoutsAnnotation.ids()) {
                             String layoutName = getFieldNameFromLayoutId(rOutput, layoutId);
                             for (File layoutFolder : layoutFolders) {
-                                if(existLayoutInFolder(layoutFolder, layoutName)) {
+                                if (existLayoutInFolder(layoutFolder, layoutName)) {
                                     LayoutObject layoutObject = createLayoutObject(layoutFolder, layoutName, packageElement, element, constantToObjectName(layoutName));
                                     if (layoutObject == null) {
                                         return true;
@@ -355,9 +355,13 @@ public class LayoutProcessor extends AbstractProcessor {
             if (!layoutClassName.contains(".")) {
                 layoutClassName = "android." + (layoutClassName.equals("View") ? "view" : "widget") + "." + layoutClassName;
             }
-            Class layoutClass = Class.forName(layoutClassName);
-            convertibleClasses.add(layoutClass);
-            convertibleClasses.addAll(getSuperClassesFromClass(layoutClass));
+            try {
+                Class layoutClass = Class.forName(layoutClassName);
+                convertibleClasses.add(layoutClass);
+                convertibleClasses.addAll(getSuperClassesFromClass(layoutClass));
+            } catch (Exception ignore) {
+                convertibleClasses.add(Class.forName("android.view.View"));
+            }
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -422,7 +426,7 @@ public class LayoutProcessor extends AbstractProcessor {
     }
 
     private File getProjectRoot() throws Exception {
-        if(projectRoot == null) {
+        if (projectRoot == null) {
             Filer filer = processingEnv.getFiler();
 
             JavaFileObject dummySourceFile = filer.createSourceFile("dummy" + System.currentTimeMillis());
@@ -472,7 +476,11 @@ public class LayoutProcessor extends AbstractProcessor {
     }
 
     private File findR(String packageName) throws Exception {
-        return findFolder("/r/debug/" + packageName.replace(".", "/") + "/R.java");
+        try {
+            return findFolder("/r/debug/" + packageName.replace(".", "/") + "/R.java");
+        } catch (NoSuchFieldException ignore) {
+            return findFolder("/r/dev/debug/" + packageName.replace(".", "/") + "/R.java");
+        }
     }
 
     private List<File> findLayoutFolders() throws Exception {
@@ -505,9 +513,9 @@ public class LayoutProcessor extends AbstractProcessor {
 
     private boolean existLayoutInFolder(File folder, String layoutName) {
         File[] folders = folder.listFiles();
-        if(folders != null){
-            for(File layout : folders){
-                if(layout.getName().replace(".xml", "").equals(layoutName)){
+        if (folders != null) {
+            for (File layout : folders) {
+                if (layout.getName().replace(".xml", "").equals(layoutName)) {
                     return true;
                 }
             }
