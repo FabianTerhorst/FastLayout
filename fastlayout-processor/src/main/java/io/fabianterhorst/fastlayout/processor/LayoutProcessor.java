@@ -480,7 +480,7 @@ public class LayoutProcessor extends AbstractProcessor {
         try {
             File rFile = findFolder("/r/debug/" + packageName.replace(".", "/") + "/R.java");
             if(rFile.isFile()) {
-                return findFolder("/r/debug/" + packageName.replace(".", "/") + "/R.java");
+                return rFile;
             } else {
                 return findFolder("/r/dev/debug/" + packageName.replace(".", "/") + "/R.java");
             }
