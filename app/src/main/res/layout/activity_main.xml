@@ -82,6 +82,7 @@
             android:gravity="center"
             android:fitsSystemWindows="true"
             android:layout_width="match_parent"
+            android:textAppearance="@android:style/TextAppearance.Holo.Large"
             android:layout_height="wrap_content"/>
 
         <TextView
@@ -93,7 +94,8 @@
         <View
             android:id="@+id/view2"
             android:layout_width="100dp"
-            android:layout_height="50dp"/>
+            android:layout_height="50dp"
+            android:background="@android:drawable/ic_delete"/>
 
     </FrameLayout>
 </RelativeLayout>

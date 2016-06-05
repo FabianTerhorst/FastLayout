@@ -48,6 +48,11 @@ public class LayoutConverter {
             String style = attributeStyle.replace(".", "_");
             String styleAttribute = "R.style." + style;
             return onConvertLayoutAttribute(attribute, styleAttribute, attributeName, false);
+        } else if (attribute.startsWith("android.R.style.")) {
+            String attributeStyle = attribute.replace("android.R.style.", "");
+            String style = attributeStyle.replace(".", "_");
+            String styleAttribute = "android.R.style." + style;
+            return onConvertLayoutAttribute(attribute, styleAttribute, attributeName, false);
         } else if ((attribute.endsWith("dp") || attribute.endsWith("dip")) && isNumber(attribute.replace("dip", "").replace("dp", ""))) {
             return onConvertLayoutAttribute(attribute, "(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, " + attribute.replace("dip", "").replace("dp", "") + ", getResources().getDisplayMetrics())", attributeName, false);
         } else if (attribute.equals("false") || attribute.equals("true")) {
