@@ -248,7 +248,7 @@ public class LayoutProcessor extends AbstractProcessor {
         final LayoutEntity layout = new LayoutEntity();
         String id = getIdByNode(node);
         if (id == null) {
-            id = node.getNodeName().replace(".", "") + mAtomicLong.get();
+            id = node.getNodeName().replace(".", "") + mAtomicLong.incrementAndGet();
         }
         layout.setId(id);
         layout.setName(node.getNodeName());
