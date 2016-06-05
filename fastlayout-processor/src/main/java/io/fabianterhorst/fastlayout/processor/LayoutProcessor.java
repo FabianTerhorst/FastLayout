@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.Writer;
 import java.net.URI;
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -478,7 +479,7 @@ public class LayoutProcessor extends AbstractProcessor {
     private File findR(String packageName) throws Exception {
         try {
             return findFolder("/r/debug/" + packageName.replace(".", "/") + "/R.java");
-        } catch (NoSuchFieldException ignore) {
+        } catch (NoSuchFileException ignore) {
             return findFolder("/r/dev/debug/" + packageName.replace(".", "/") + "/R.java");
         }
     }
