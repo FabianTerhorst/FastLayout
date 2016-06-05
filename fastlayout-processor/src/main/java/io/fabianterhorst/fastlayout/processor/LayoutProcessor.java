@@ -360,7 +360,7 @@ public class LayoutProcessor extends AbstractProcessor {
                 Class layoutClass = Class.forName(layoutClassName);
                 convertibleClasses.add(layoutClass);
                 convertibleClasses.addAll(getSuperClassesFromClass(layoutClass));
-            } catch (Exception ignore) {
+            } catch (Error error) {
                 convertibleClasses.add(Class.forName("android.view.View"));
             }
         } catch (Exception exception) {
@@ -477,14 +477,10 @@ public class LayoutProcessor extends AbstractProcessor {
     }
 
     private File findR(String packageName) throws Exception {
-        try {
-            File rFile = findFolder("/r/debug/" + packageName.replace(".", "/") + "/R.java");
-            if(rFile.isFile()) {
-                return rFile;
-            } else {
-                return findFolder("/r/dev/debug/" + packageName.replace(".", "/") + "/R.java");
-            }
-        } catch (Exception ignore) {
+        File rFile = findFolder("/r/debug/" + packageName.replace(".", "/") + "/R.java");
+        if (rFile.isFile()) {
+            return rFile;
+        } else {
             return findFolder("/r/dev/debug/" + packageName.replace(".", "/") + "/R.java");
         }
     }
