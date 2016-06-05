@@ -478,7 +478,12 @@ public class LayoutProcessor extends AbstractProcessor {
 
     private File findR(String packageName) throws Exception {
         try {
-            return findFolder("/r/debug/" + packageName.replace(".", "/") + "/R.java");
+            File rFile = findFolder("/r/debug/" + packageName.replace(".", "/") + "/R.java");
+            if(rFile.isFile()) {
+                return findFolder("/r/debug/" + packageName.replace(".", "/") + "/R.java");
+            } else {
+                return findFolder("/r/dev/debug/" + packageName.replace(".", "/") + "/R.java");
+            }
         } catch (Exception ignore) {
             return findFolder("/r/dev/debug/" + packageName.replace(".", "/") + "/R.java");
         }
