@@ -54,11 +54,11 @@ public class LayoutConverter {
             String styleAttribute = "android.R.style." + style;
             return onConvertLayoutAttribute(attribute, styleAttribute, attributeName, false);
         } else if ((attribute.endsWith("dp") || attribute.endsWith("dip")) && isNumber(attribute.replace("dip", "").replace("dp", ""))) {
-            return onConvertLayoutAttribute(attribute, "(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, " + attribute.replace("dip", "").replace("dp", "") + ", getResources().getDisplayMetrics())", attributeName, false);
+            return onConvertLayoutAttribute(attribute, "(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, " + attribute.replace("dip", "").replace("dp", "") + "f, getResources().getDisplayMetrics())", attributeName, false);
         } else if (attribute.equals("false") || attribute.equals("true")) {
             return onConvertLayoutAttribute(attribute, attributeName, false);
         } else if (attribute.endsWith("sp") && isNumber(attribute.replace("sp", ""))) {
-            return onConvertLayoutAttribute(attribute, "(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, " + attribute.replace("sp", "") + ", getResources().getDisplayMetrics())", attributeName, false);
+            return onConvertLayoutAttribute(attribute, "(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, " + attribute.replace("sp", "") + "f, getResources().getDisplayMetrics())", attributeName, false);
         } else if (isNumber(attribute)) {
             return onConvertLayoutAttribute(attributeValue, attributeName, false);
         }
@@ -120,7 +120,7 @@ public class LayoutConverter {
 
     private boolean isNumber(Object text) {
         try {
-            Integer.parseInt(String.valueOf(text));
+            Double.parseDouble(String.valueOf(text));
             return true;
         } catch (NumberFormatException ignore) {
             return false;
