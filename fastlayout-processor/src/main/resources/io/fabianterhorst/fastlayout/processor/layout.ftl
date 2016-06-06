@@ -56,12 +56,7 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
         <#if attribute.type == "PARAM">${child.id}LayoutParams<#elseif attribute.type == "LAYOUT">${child.id}</#if>.${attribute.value};
         </#if>
         </#list>
-        <#if child.hasChildren>
-        this.addView(${parent}, ${parent}LayoutParams);
-        <#assign parent = child.id>
-        <#else>
-        ${parent}.addView(${child.id}, ${child.id}LayoutParams);
-        </#if>
+        ${child.parent}.addView(${child.id}, ${child.id}LayoutParams);
         </#list>
     }
 

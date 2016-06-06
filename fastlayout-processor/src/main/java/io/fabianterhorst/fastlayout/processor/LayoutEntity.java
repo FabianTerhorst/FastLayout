@@ -21,10 +21,13 @@ public class LayoutEntity {
 
     private String rootLayout;
 
+    private String parent;
+
     public LayoutEntity() {
         children = new ArrayList<>();
         attributes = new ArrayList<>();
         hasChildren = false;
+        parent = "this";
     }
 
     public void setId(String id) {
@@ -41,6 +44,10 @@ public class LayoutEntity {
 
     public void setRootLayout(String rootLayout) {
         this.rootLayout = rootLayout;
+    }
+
+    public void setParent(String parent) {
+        this.parent = parent;
     }
 
     public void addAttribute(LayoutAttribute attribute) {
@@ -81,6 +88,10 @@ public class LayoutEntity {
 
     public String getRootLayout() {
         return rootLayout;
+    }
+
+    public String getParent() {
+        return parent;
     }
 
     public boolean isHasChildren() {

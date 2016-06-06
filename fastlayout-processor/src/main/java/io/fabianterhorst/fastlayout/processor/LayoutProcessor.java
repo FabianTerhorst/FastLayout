@@ -223,17 +223,17 @@ public class LayoutProcessor extends AbstractProcessor {
         return null;
     }
 
-    private List<LayoutEntity> createChildList(Node node) {
+    private List<LayoutEntity> createChildList(Node node, LayoutEntity parent) {
         List<LayoutEntity> layouts = new ArrayList<>();
         NodeList nodeList = node.getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node child = nodeList.item(i);
             if (child.getAttributes() != null && child.getAttributes().getLength() > 0) {
-                LayoutEntity layout = createLayoutFromChild(child, node.getNodeName());
+                LayoutEntity layout = createLayoutFromChild(child, node.getNodeName(), parent);
                 mChilds.add(layout);
                 layouts.add(layout);
                 if (child.hasChildNodes()) {
-                    createChildList(child);
+                    createChildList(child, layout);
                 }
             }
         }
@@ -241,10 +241,12 @@ public class LayoutProcessor extends AbstractProcessor {
     }
 
     private LayoutEntity createLayoutFromChild(Node node) {
-        return createLayoutFromChild(node, node.getNodeName());
+        LayoutEntity layoutEntity = new LayoutEntity();
+        layoutEntity.setId("this");
+        return createLayoutFromChild(node, node.getNodeName(), layoutEntity);
     }
 
-    private LayoutEntity createLayoutFromChild(Node node, String root) {
+    private LayoutEntity createLayoutFromChild(Node node, String root, LayoutEntity parent) {
         final LayoutEntity layout = new LayoutEntity();
         String id = getIdByNode(node);
         if (id == null) {
@@ -254,6 +256,7 @@ public class LayoutProcessor extends AbstractProcessor {
         layout.setName(node.getNodeName());
         layout.setHasChildren(node.hasChildNodes());
         layout.setRootLayout(root);
+        layout.setParent(parent.getId());
         layout.setLayoutParamsName(root + ".LayoutParams");
 
         NamedNodeMap attributes = node.getAttributes();
@@ -547,7 +550,9 @@ public class LayoutProcessor extends AbstractProcessor {
             Element rootLayoutElement = document.getDocumentElement();
             rootLayout = createLayoutFromChild(rootLayoutElement);
             if (rootLayoutElement.hasChildNodes()) {
-                createChildList(rootLayoutElement);
+                LayoutEntity layoutEntity = new LayoutEntity();
+                layoutEntity.setId("this");
+                createChildList(rootLayoutElement, layoutEntity);
                 rootLayout.addChildren(mChilds);
             }
         } catch (Exception ignore) {
