@@ -47,6 +47,7 @@ import freemarker.template.Version;
 import io.fabianterhorst.fastlayout.annotations.Converter;
 import io.fabianterhorst.fastlayout.annotations.Layout;
 import io.fabianterhorst.fastlayout.annotations.Layouts;
+import io.fabianterhorst.fastlayout.converters.CardViewLayoutConverter;
 import io.fabianterhorst.fastlayout.converters.DefaultAttributesConverter;
 import io.fabianterhorst.fastlayout.converters.LayoutAttribute;
 import io.fabianterhorst.fastlayout.converters.LayoutConverter;
@@ -341,6 +342,7 @@ public class LayoutProcessor extends AbstractProcessor {
                     converters.add(new MarginConverter());
                     converters.add(new PaddingConverter());
                     converters.add(new SizeConverter());
+                    converters.add(new CardViewLayoutConverter());
                     break;
                 case "android.widget.TextView":
                     converters.add(new TextViewLayoutConverter());
