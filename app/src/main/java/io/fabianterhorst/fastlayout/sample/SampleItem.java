@@ -1,8 +1,7 @@
 package io.fabianterhorst.fastlayout.sample;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.mikepenz.fastadapter.items.AbstractItem;
@@ -31,10 +30,8 @@ public class SampleItem extends AbstractItem<SampleItem, SampleItem.ViewHolder> 
     }
 
     @Override
-    public View generateView(Context ctx) {
-        RecyclerView.ViewHolder viewHolder = getViewHolder(LayoutCache.getInstance(ctx).getLayout(LayoutCache.Item_Sample_Layout));
-        bindView((SampleItem.ViewHolder) viewHolder);
-        return viewHolder.itemView;
+    public ViewHolder getViewHolder(ViewGroup parent) {
+        return new ViewHolder(new ItemSampleLayout(parent.getContext()));
     }
 
     @Override
@@ -47,9 +44,9 @@ public class SampleItem extends AbstractItem<SampleItem, SampleItem.ViewHolder> 
 
         protected TextView name;
 
-        public ViewHolder(View view) {
+        public ViewHolder(ItemSampleLayout view) {
             super(view);
-            this.name = (TextView) view.findViewById(R.id.name);
+            this.name = view.getName();
         }
     }
 }
