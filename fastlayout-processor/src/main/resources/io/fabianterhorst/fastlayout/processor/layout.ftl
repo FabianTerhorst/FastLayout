@@ -47,6 +47,7 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
         </#if>
         </#list>
         this.setLayoutParams(${rootLayout.id}LayoutParams);
+
         <#assign parent = "this">
         <#list rootLayout.children as child>
         ${child.id} = new ${child.name}(<#list child.attributes as attribute><#if attribute.isLayoutConstructor()>${attribute.value}<#if !attribute.last>,</#if></#if></#list>);
@@ -57,6 +58,7 @@ public class ${keyWrapperClassName} extends ${rootLayout.name} implements ILayou
         </#if>
         </#list>
         ${child.parent}.addView(${child.id}, ${child.id}LayoutParams);
+
         </#list>
     }
 
