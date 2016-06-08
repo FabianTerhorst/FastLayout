@@ -49,7 +49,7 @@ public class MarginConverter extends LayoutConverter {
                     margin[i] = 0;
                 }
             }
-            finished.add(new LayoutAttribute(LayoutAttribute.Type.PARAM, "setMargins(" + margin[0] + "," + margin[1] + "," + margin[2] + "," + margin[3] + ")"));
+            finished.add(new LayoutAttribute(LayoutAttribute.Type.PARAM, setter("Margins", margin[0] + "," + margin[1] + "," + margin[2] + "," + margin[3], false)));
         }
         return finished;
     }

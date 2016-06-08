@@ -60,10 +60,10 @@ public class TextViewLayoutConverter extends LayoutConverter {
     public List<LayoutAttribute> onFinish() {
         List<LayoutAttribute> finished = new ArrayList<>();
         if (drawable[0] != null || drawable[1] != null || drawable[2] != null || drawable[3] != null) {
-            finished.add(new LayoutAttribute("setCompoundDrawables(" + drawable[0] + "," + drawable[1] + "," + drawable[2] + "," + drawable[3] + ")"));
+            finished.add(new LayoutAttribute(setter("CompoundDrawables", drawable[0] + "," + drawable[1] + "," + drawable[2] + "," + drawable[3], false)));
         }
         if (drawableRelative[0] != null || drawableRelative[1] != null) {
-            finished.add(new LayoutAttribute("setCompoundDrawablesRelative(" + drawableRelative[0] + "," + drawable[1] + "," + drawable[2] + "," + drawableRelative[3] + ")"));
+            finished.add(new LayoutAttribute(setter("CompoundDrawablesRelative", drawableRelative[0] + "," + drawable[1] + "," + drawable[2] + "," + drawableRelative[3], false)));
         }
         return finished;
     }
