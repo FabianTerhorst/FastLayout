@@ -19,9 +19,9 @@ class FastLayout implements Plugin<Project> {
             throw new GradleException("'com.android.application' or 'com.android.library' plugin required.")
         }
 
-        if (!isTransformAvailable()) {
+        /*if (!isTransformAvailable()) {
             throw new GradleException('FastLayout gradle plugin only supports android gradle plugin 1.5.0 or later.')
-        }
+        }*/
 
         def isKotlinProject = project.plugins.find {
             it.getClass().name == 'org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper'
