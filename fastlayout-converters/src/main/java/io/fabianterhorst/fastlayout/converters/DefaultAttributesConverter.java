@@ -6,8 +6,9 @@ import io.fabianterhorst.fastlayout.annotations.Converter;
  * Created by fabianterhorst on 18.05.16.
  */
 @Converter
+//Todo : split into ViewLayoutConverter and ViewGroupLayoutConverter
 public class DefaultAttributesConverter extends LayoutConverter {
-
+    //Todo : remove View., because the root layout always extends view
     @Override
     public LayoutAttribute onConvertLayoutAttributeValue(String attributeValue, String attributeName) {
         switch (attributeName) {
@@ -48,12 +49,6 @@ public class DefaultAttributesConverter extends LayoutConverter {
                     return new LayoutAttribute(setter("BackgroundResource", attributeStartValue, false));
                 }
                 break;
-            case "android:textSize":
-                if (attributeStartValue.endsWith("sp")) {
-                    return new LayoutAttribute(setter("TextSize", "TypedValue.COMPLEX_UNIT_SP," + attributeStartValue.replace("sp", ""), false));
-                } else if (attributeStartValue.endsWith("dip") || attributeStartValue.endsWith("dp")) {
-                    return new LayoutAttribute(setter("TextSize", "TypedValue.COMPLEX_UNIT_DIP," + attributeStartValue.replace("dip", "").replace("dp", ""), false));
-                }
                 //Todo : viewgroup attribute
             case "android:animateLayoutChanges":
                 if (Boolean.valueOf(attributeValue)) {
