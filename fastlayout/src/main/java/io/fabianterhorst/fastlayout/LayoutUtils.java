@@ -14,7 +14,7 @@ import java.util.HashMap;
 public class LayoutUtils {
 
     private static final HashMap<Float, Integer> pxForDp = new HashMap<>();
-    private static final HashMap<Float, Integer> pxForSp = new HashMap<>();
+    private static final HashMap<Float, Float> pxForSp = new HashMap<>();
 
     public static int getAttrInt(Context context, int attr) {
         TypedValue typedValue = new TypedValue();
@@ -65,13 +65,13 @@ public class LayoutUtils {
      * @param context Context to get resources and device specific display metrics
      * @return A float value to represent px equivalent to sp depending on device density
      */
-    public static int convertSpToPixel(float sp, Context context) {
+    public static float convertSpToPixel(float sp, Context context) {
         if (pxForSp.containsKey(sp)) {
             return pxForSp.get(sp);
         }
         Resources resources = context.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
-        int px = (int)(sp * metrics.scaledDensity);
+        float px = (sp * metrics.scaledDensity);
         pxForSp.put(sp, px);
         return px;
     }
