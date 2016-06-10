@@ -14,7 +14,7 @@ buildscript {
     }
     dependencies {
         ...
-		classpath 'io.fabianterhorst:fastlayout-gradle-plugin:0.0.2-alpha35'
+		classpath 'io.fabianterhorst:fastlayout-gradle-plugin:0.0.2-alpha36'
 		...
 	}
 }
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         //when you don´t wanna use the cache you can also just initiate the object
         //setContentView(new ActivityMainLayout(this));
         //The cache is reusing the object to improve the performance
-        ActivityMainLayout layout = LayoutCache.getInstance(this).getLayout(LayoutCache.Activity_Main_Layout);
+        ActivityMainLayout layout = LayoutCache.getInstance().getLayout(context, LayoutCache.Activity_Main_Layout);
         setContentView(layout);
     }
 }
