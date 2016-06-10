@@ -59,6 +59,9 @@ public class LayoutConverter {
             return onConvertLayoutAttribute(attribute, attributeName, false);
         } else if (attribute.endsWith("sp") && isNumber(attribute.replace("sp", ""))) {
             return onConvertLayoutAttribute(attribute, "LayoutUtils.convertSpToPixel(" + attribute.replace("sp", "f") + ", getContext())", attributeName, false);
+        } else if (attribute.startsWith("#")) {
+            //Todo : #999 isn´t working or #000
+            return onConvertLayoutAttribute(attribute, "android.graphics.Color.parseColor(\"" + attribute + "\")", attributeName, false);
         } else if (isNumber(attribute)) {
             return onConvertLayoutAttribute(attributeValue, attributeName, false);
         }
