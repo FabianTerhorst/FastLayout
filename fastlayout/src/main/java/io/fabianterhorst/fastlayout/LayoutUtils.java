@@ -69,9 +69,10 @@ public class LayoutUtils {
         if (pxForSp.containsKey(sp)) {
             return pxForSp.get(sp);
         }
-        Resources resources = context.getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        float px = (sp * metrics.scaledDensity);
+        //Resources resources = context.getResources();
+        //DisplayMetrics metrics = resources.getDisplayMetrics();
+        //float px = (sp * metrics.scaledDensity);
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.getResources().getDisplayMetrics());
         pxForSp.put(sp, px);
         return px;
     }

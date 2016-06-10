@@ -45,10 +45,17 @@ public class DefaultAttributesConverter extends LayoutConverter {
             case "android:layout_gravity":
                 return new LayoutAttribute(LayoutAttribute.Type.PARAM, attribute(attributeName.replace("android:layout_", ""), attributeValue));
             case "android:background":
-                if (String.valueOf(attributeStartValue).startsWith("R.") || String.valueOf(attributeStartValue).startsWith("android.R.")) {
+                if (String.valueOf(attributeStartValue).startsWith("R.drawable.") || String.valueOf(attributeStartValue).startsWith("android.R.drawable.")) {
                     return new LayoutAttribute(setter("BackgroundResource", attributeStartValue, false));
                 }
                 break;
+            //Todo : textView attribute
+            case "android:textSize":
+                if (attributeStartValue.endsWith("sp")) {
+                    return new LayoutAttribute(setter("TextSize", "TypedValue.COMPLEX_UNIT_SP," + attributeStartValue.replace("sp", ""), false));
+                } else if (attributeStartValue.endsWith("dip") || attributeStartValue.endsWith("dp")) {
+                    return new LayoutAttribute(setter("TextSize", "TypedValue.COMPLEX_UNIT_DIP," + attributeStartValue.replace("dip", "").replace("dp", ""), false));
+                }
                 //Todo : viewgroup attribute
             case "android:animateLayoutChanges":
                 if (Boolean.valueOf(attributeValue)) {
