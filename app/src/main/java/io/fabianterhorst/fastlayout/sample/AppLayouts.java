@@ -1,5 +1,7 @@
 package io.fabianterhorst.fastlayout.sample;
 
+import android.support.annotation.NonNull;
+
 import io.fabianterhorst.fastlayout.annotations.Layouts;
 
 /**
