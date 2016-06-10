@@ -2,6 +2,7 @@ package ${package};
 
 import android.content.Context;
 import android.support.annotation.StringDef;
+import android.support.annotation.NonNull;
 import android.view.View;
 
 import java.lang.annotation.Retention;
@@ -16,8 +17,6 @@ public class LayoutCache {
 
     private final HashMap<String, ILayout> mLayouts;
 
-    private final Context mContext;
-
     <#list layouts?keys as key>
     public static final String ${key} = "${layouts[key].name}";
 
@@ -27,19 +26,18 @@ public class LayoutCache {
     public @interface LayoutName {
     }
 
-    public LayoutCache(Context context) {
+    public LayoutCache() {
         mLayouts = new HashMap<>();
-        mContext = context;
     }
 
-    public static LayoutCache getInstance(Context context) {
+    public static LayoutCache getInstance() {
         if (mInstance == null) {
-            mInstance = new LayoutCache(context);
+            mInstance = new LayoutCache();
         }
         return mInstance;
     }
 
-    public <T extends View> T getLayout(@LayoutName String name) {
+    public <T extends View> T getLayout(@NonNull Context context, @LayoutName String name) {
         if (mLayouts.containsKey(name)) {
             return (T) mLayouts.get(name).clone();
         }
@@ -47,7 +45,7 @@ public class LayoutCache {
         switch (name) {
         <#list layouts?keys as key>
             case ${key}:
-                layout = new ${layouts[key].name}(mContext);
+                layout = new ${layouts[key].name}(context);
                 break;
         </#list>
         }
