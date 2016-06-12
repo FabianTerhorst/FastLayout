@@ -31,6 +31,10 @@ public class DefaultAttributesConverter extends LayoutConverter {
                 return super.onConvertLayoutAttribute(attributeValue, "View.IMPORTANT_FOR_ACCESSIBILITY_" + stringToConstant(attributeValue).toUpperCase(), attributeName, false);
             case "android:visibility":
                 return super.onConvertLayoutAttribute(attributeValue, "View." + attributeValue.toUpperCase(), attributeName, false);
+            case "android:textAlignment":
+                return super.onConvertLayoutAttribute(attributeValue, "View.TEXT_ALIGNMENT_" + stringToConstant(attributeValue).toUpperCase(), attributeName, false);
+            case "android:textDirection":
+                return super.onConvertLayoutAttribute(attributeValue, "View.TEXT_DIRECTION_" + stringToConstant(attributeValue).toUpperCase(), attributeName, false);
         }
         return super.onConvertLayoutAttributeValue(attributeValue, attributeName);
     }

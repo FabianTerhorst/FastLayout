@@ -52,6 +52,14 @@ public class TextViewLayoutConverter extends LayoutConverter {
                 //setFilters(new InputFilter[] { new InputFilter.LengthFilter(maxlength) });
                 String value = String.format("new android.text.InputFilter[] { new android.text.InputFilter.LengthFilter(%s) }", attributeValue);
                 return new LayoutAttribute(setter("Filters", value, false));
+            case "android:textAllCaps":
+                return new LayoutAttribute(setter("AllCaps", attributeValue, false));
+            case "android:textColorHint":
+                return new LayoutAttribute(setter("HintTextColor", attributeValue, false));
+            case "android:textColorLink":
+                return new LayoutAttribute(setter("LinkTextColor", attributeValue, false));
+            case "android:textColorHighlight":
+                return new LayoutAttribute(setter("HighlightColor", attributeValue, false));
         }
         return null;
     }
