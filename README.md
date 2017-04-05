@@ -1,11 +1,11 @@
 # FastLayout
-###Generates a Java Object for your xml layout to reduce inflate time to zero
+### Generates a Java Object for your xml layout to reduce inflate time to zero
 
 <a href="http://www.methodscount.com/?lib=io.fabianterhorst%3Afastlayout%3A%2B"><img src="https://img.shields.io/badge/Methods and size-12 | 4 KB-e91e63.svg"></img></a>
 
-####This projects methodcount is very low, because everything happens on compile time.
+#### This projects methodcount is very low, because everything happens on compile time.
 
-###Add the dependencies
+### Add the dependencies
 main build.gradle
 ```groovy
 buildscript {
@@ -26,7 +26,7 @@ apply plugin: 'fastlayout'
 ...
 ```
 
-###First create your layout java class
+### First create your layout java class
 This is needed to filter the layouts you want to compile
 ```java
 //this is compiling all layouts in layout folder
@@ -39,7 +39,7 @@ This is needed to filter the layouts you want to compile
 public class AppLayouts {
 }
 ```
-###Now use the layout inside your Activity for example
+### Now use the layout inside your Activity for example
 ```java
 public class MainActivity extends AppCompatActivity {
 
@@ -54,5 +54,5 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 ```
-###Limitations
-##Specify a id for every view, otherwise the id is generated and can change.
+### Limitations
+## Specify a id for every view, otherwise the id is generated and can change.
