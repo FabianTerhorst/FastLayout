@@ -14,4 +14,5 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface Converter {
     String value() default "";
+    Class converter() default Converter.class;
 }

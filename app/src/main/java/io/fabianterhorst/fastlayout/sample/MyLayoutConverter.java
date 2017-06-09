@@ -7,7 +7,7 @@ import io.fabianterhorst.fastlayout.annotations.Converter;
 /**
  * Created by fabianterhorst on 20.05.16.
  */
-@Converter
+@Converter(converter = MyLayoutConverter.class)
 public class MyLayoutConverter extends LayoutConverter {
 
     public MyLayoutConverter() {

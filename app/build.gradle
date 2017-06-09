@@ -32,6 +32,8 @@ dependencies {
     compile project(':fastlayout-annotations')
     apt project(':fastlayout-processor')
     compile project(':fastlayout-converters')
+    compile 'com.android.support:cardview-v7:23.4.0'
+    compile 'com.android.support:recyclerview-v7:23.4.0'
     //annotationProcessor project(':fastlayout-processor')
     //debugAnnotationProcessor project(':fastlayout-processor')
     //compile 'io.fabianterhorst:fastlayout:0.0.1-alpha17'
@@ -42,5 +44,4 @@ dependencies {
     }
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha1'
     compile 'com.mikepenz:materialize:0.8.8@aar'
-    compile 'com.android.support:cardview-v7:23.4.0'
 }
