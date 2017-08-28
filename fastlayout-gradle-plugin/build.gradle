@@ -25,7 +25,8 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 def props = new Properties()
 props.load(new FileInputStream("${rootDir}/fastlayout.properties"))
 props.each { key, val ->
-    project.set(key, val)
+    //project.set(key, val)
+    project.ext.key = val
 }
 
 repositories {
@@ -64,6 +65,8 @@ dependencies {
 //for Ant filter
 import org.apache.tools.ant.filters.ReplaceTokens
 
+import javax.xml.soap.Node
+
 task generateVersionClass(type: Copy) {
     from 'src/main/templates/Version.java'
     into 'build/generated-src/main/java/io/fabianterhorst/fastlayout'
@@ -81,10 +84,6 @@ sourceSets {
 }
 
 compileJava.dependsOn generateVersionClass
-
-task wrapper(type: Wrapper) {
-    gradleVersion = project.gradleVersion
-}
 
 def commonPom = {
     licenses {

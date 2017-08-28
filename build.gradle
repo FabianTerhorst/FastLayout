@@ -6,12 +6,12 @@ buildscript {
         maven {
             url 'https://dl.bintray.com/fabianterhorst/maven'
         }
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.0'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.3'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
+        classpath 'com.android.tools.build:gradle:3.0.0-beta3'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.2'
         //classpath 'io.fabianterhorst:fastlayout-gradle-plugin:0.0.1-alpha11'
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -22,6 +22,8 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        google()
+        maven { url 'http://oss.sonatype.org/content/repositories/snapshots' }
         maven {
             url 'https://dl.bintray.com/fabianterhorst/maven'
         }
@@ -29,7 +31,7 @@ allprojects {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.13'
+    gradleVersion = '4.1'
 }
 
 task clean(type: Delete) {

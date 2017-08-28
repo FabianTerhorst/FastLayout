@@ -1,15 +1,14 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 //apply plugin: 'fastlayout'
 
 android {
-    compileSdkVersion 'android-N'
-    buildToolsVersion "24-rc4"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
 
     defaultConfig {
         applicationId "io.fabianterhorst.fastlayout.sample"
-        minSdkVersion 21
-        targetSdkVersion 'N'
+        minSdkVersion 14
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
 
@@ -27,20 +26,24 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile project(':fastlayout')
-    compile project(':fastlayout-annotations')
-    apt project(':fastlayout-processor')
-    compile project(':fastlayout-converters')
+    implementation 'com.android.support:appcompat-v7:26.0.1'
+    implementation 'com.android.support:cardview-v7:26.0.1'
+    implementation 'com.android.support:recyclerview-v7:26.0.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta1'
+
+    implementation('com.mikepenz:fastadapter:3.0.0.8-SNAPSHOT@aar') {
+        transitive = true
+    }
+    implementation 'com.mikepenz:materialize:1.0.3@aar'
+
+    implementation project(':fastlayout')
+    implementation project(':fastlayout-annotations')
+    annotationProcessor project(':fastlayout-processor')
+    implementation project(':fastlayout-converters')
+
     //annotationProcessor project(':fastlayout-processor')
     //debugAnnotationProcessor project(':fastlayout-processor')
     //compile 'io.fabianterhorst:fastlayout:0.0.1-alpha17'
     //compile 'io.fabianterhorst:fastlayout-annotations:0.0.1-alpha17'
     //annotationProcessor project(':fastlayout-processor')
-    compile('com.mikepenz:fastadapter:1.5.0@aar') {
-        transitive = true
-    }
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha1'
-    compile 'com.mikepenz:materialize:0.8.8@aar'
-    compile 'com.android.support:cardview-v7:23.4.0'
 }

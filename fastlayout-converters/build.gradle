@@ -91,5 +91,5 @@ bintray {
 }
 
 dependencies {
-    compile project(':fastlayout-annotations')
+    implementation project(':fastlayout-annotations')
 }

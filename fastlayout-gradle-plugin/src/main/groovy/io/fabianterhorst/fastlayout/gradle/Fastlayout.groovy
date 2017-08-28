@@ -33,14 +33,14 @@ class FastLayout implements Plugin<Project> {
 
         //project.android.registerTransform(new FastLayoutTransformer(project))
         project.repositories.add(project.getRepositories().jcenter())
-        project.dependencies.add("compile", "io.fabianterhorst:fastlayout:${Version.VERSION}")
-        project.dependencies.add("compile", "io.fabianterhorst:fastlayout-annotations:${Version.VERSION}")
+        project.dependencies.add("implementation", "io.fabianterhorst:fastlayout:${Version.VERSION}")
+        project.dependencies.add("implementation", "io.fabianterhorst:fastlayout-annotations:${Version.VERSION}")
         if (isKotlinProject) {
             //project.dependencies.add("kapt", "io.fabianterhorst:fastlayout-annotations:${Version.VERSION}")
             project.dependencies.add("kapt", "io.fabianterhorst:fastlayout-processor:${Version.VERSION}")
         } else {
             //project.dependencies.add("apt", "io.fabianterhorst:fastlayout-annotations:${Version.VERSION}")
-            project.dependencies.add("apt", "io.fabianterhorst:fastlayout-processor:${Version.VERSION}")
+            project.dependencies.add("annotationProcessor", "io.fabianterhorst:fastlayout-processor:${Version.VERSION}")
         }
     }
 
