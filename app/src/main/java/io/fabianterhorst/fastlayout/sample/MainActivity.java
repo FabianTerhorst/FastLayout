@@ -11,7 +11,7 @@ public class MainActivity extends AppCompatActivity {
         //Default
         //setContentView(new ActivityMainLayout(this));
         //The cache is reusing the object to improve the performance
-        ActivityMainLayout layout = LayoutCache.getInstance().getLayout(this, LayoutCache.Activity_Main_Layout);
+        ItemSampleLayout layout = LayoutCache.getInstance().getLayout(this, LayoutCache.Item_Sample_Layout);
         setContentView(layout);
     }
 }
